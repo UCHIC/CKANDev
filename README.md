@@ -9,7 +9,7 @@ Sponsors
 ---------
 This project is receiving or has received support from a number of agencies and complementary efforts including:
 
-![iUTAH](/doc/images/iutah_eu_horz_sm.png)    ![CUAHSI](/doc/images/cuahsi_logo_sm.gif)    ![NSF](/doc/images/nsf.gif)
+![iUTAH](/doc/images/iutah_eu_horz_sm.png)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![NSF](/doc/images/nsf.gif)
 
 This material is based on work supported by the National Science Foundation Grant EPS 1208732 awarded to Utah State University.  Additional support was previously provided by National Science Foundation grant EAR 0622374.  Any opinions, findings, and conclusions or recommendations expressed are those of the author(s) and do not necessarily reflect the views of the National Science Foundation.
 
