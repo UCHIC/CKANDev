@@ -1,0 +1,26 @@
+{# See https://github.com/project-open-data/project-open-data.github.io/blob/master/schema.md#expanded-fields #}
+
+{% import "macros/form.html" as form %}
+
+{% set data = data or {} %}
+{% set errors = errors or {} %}
+
+{% block data_source_metadata %}
+       
+
+ {#
+{{ form.input('access_information', id='field-access_information', label=_('Access Information'), placeholder=_('How can the data be accessed - e.g., is there an existing website or web service from which the data can be accessed?'), value=data.common_core.access_information, error=errors.accinfo, classes=['control-full', 'control-medium'], attrs={'title': 'Can the data be accessed in an alternate location.'}, is_required=true) }}
+
+
+{{ form.input('publication_status', label=_('Publication Status'), id='field-publication_status', placeholder=_(''), value=data.publication_status, error=errors.pubstat, classes=['control-medium'], attrs={'title': 'Is the data formally published? Is so, provide details.'} )}}
+ 
+
+{{ form.input('citation', label=_('Citation'), id='field-citation', placeholder=_(''), value=data.citation, error=errors.citation, classes=['control-medium'], attrs={'title': 'What is the citation of the data'} )}}
+
+{% set citation = 'this is a test' %}
+#}
+{{ form.hidden('citation', 'this is a test') }}
+{{data.citation}}
+
+{% endblock data_source_metadata %}
+

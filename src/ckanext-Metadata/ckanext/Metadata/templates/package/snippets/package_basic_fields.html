@@ -1,0 +1,88 @@
+{% ckan_extends %}
+{#
+{% block package_basic_fields_title %}
+{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. A descriptive title'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'Human-readable name of the asset. Should be in plain English and include sufficient detail to facilitate search and discovery.'}, is_required=true) }}
+{% endblock package_basic_fields_title%}
+
+#}
+
+
+
+{% block package_basic_fields_description %}
+{{ form.markdown('notes', id='field-notes', label=_('Abstract'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'}, is_required=true) }}
+{% endblock package_basic_fields_description%}
+
+{% block package_basic_fields_tags %}
+{% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?', 'title':'Tags (or keywords) help users discover your dataset, please include terms that would be used by technical and non-technical users.'} %}
+{{ form.input('tag_string', id='field-tags', label=_('Keywords'), placeholder=_('eg. water, temperature, Little Bear River'), value=data.tag_string, error=errors.tags, classes=['control-full'], attrs=tag_attrs, is_required=true) }}
+{% endblock package_basic_fields_tags %}
+
+{% block package_basic_fields_license %}
+<div class="control-group">
+  {% set error = errors.license_id %}
+  <label class="control-label" for="field-license">
+  	<span title="This field is required" class="control-required">*</span>
+  	{{ _("License") }}</label>
+  <div class="controls">
+    <select id="field-license" name="license_id" data-module="autocomplete">
+      {% for license_desc, license_id in licenses|sort if license_desc  %}
+        <option value="{{ license_id }}" {% if data.get('license_id', 'notspecified') == license_id %}selected="selected"{% endif %}>{{ license_desc }}</option>
+      {% endfor %}
+    </select>
+    {% if error %}<span class="error-block">{{ error }}</span>{% endif %}
+    <span class="info-block info-inline">
+      <i class="icon-info-sign"></i>
+      {% trans %}
+        License definitions and additional information can be found
+        at <a href="http://opendefinition.org/licenses/">opendefinition.org</a>
+      {% endtrans %}
+    </span>
+  </div>
+</div>
+{% endblock %}
+
+ 
+    
+      
+    
+
+
+
+
+
+{% block package_metadata_fields_visibility %}
+ {{ super() }}
+     {% set data = h.load_data_into_dict(data) %}
+     {% set active = data.state == 'active' %}
+     
+
+    {% if not active %}  		
+  		
+    	{% snippet 'package/snippets/general_fields.html', data=data, errors=errors%}
+    {#
+		<h2>Data Source</h2>
+        {% snippet 'package/snippets/data_source_fields.html', data=data, errors=errors%}
+    #}
+        <h2>Spatial Metadata</h2>
+        {% snippet 'package/snippets/location_fields.html', data=data, errors=errors%}
+        
+        <h2>Temporal Metadata</h2>
+        {% snippet 'package/snippets/temporal_fields.html', data=data, errors=errors%}
+    
+       	<h2>Variable & Method Information</h2>
+        {% snippet 'package/snippets/variable_fields.html', data=data, errors=errors%}
+    
+    	
+    
+    {#
+    	<h2>Data Format</h2>
+        {% snippet 'package/snippets/data_format_fields.html', data=data, errors=errors%}
+              
+     	<h2>Submitter Information</h2>
+        {% snippet 'package/snippets/submitter_info_fields.html', data=data, errors=errors%}
+    	#}
+    	
+    {% endif %}
+
+{% endblock  %}
+
