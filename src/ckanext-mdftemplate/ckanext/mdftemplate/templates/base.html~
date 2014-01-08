@@ -1,0 +1,21 @@
+{% ckan_extends %}
+
+{% block styles %}
+	{{ super() }}
+	<link rel="stylesheet" href="/css/mdf.css"></script>
+{% endblock %}
+
+
+{% block script %}
+	{{ super() }}
+	<script src="/js/custom.js"></script>
+{% endblock %}
+
+{% block page %}
+	<div id="main">	
+		{{ super() }}
+	</div>
+{% endblock %}
+
+
+
