@@ -1,0 +1,415 @@
+
+
+/*
+	General styles
+*/
+html { 
+  height: 100%;
+}
+
+body { 
+  font: normal .80em arial, sans-serif;
+  color: #444;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif !important;
+    background-color: #C2DBE8;
+      /* IE10 Consumer Preview */ 
+    background-image: -ms-linear-gradient(top, #FFFFFF 0%, #C2DBE8 100%);
+
+    /* Mozilla Firefox */ 
+    background-image: -moz-linear-gradient(top, #FFFFFF 0%, #C2DBE8 100%);
+
+    /* Opera */ 
+    background-image: -o-linear-gradient(top, #FFFFFF 0%, #C2DBE8 100%);
+
+    /* Webkit (Safari/Chrome 10) */ 
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FFFFFF), color-stop(1, #C2DBE8));
+
+    /* Webkit (Chrome 11+) */ 
+    background-image: -webkit-linear-gradient(top, #FFFFFF 0%, #C2DBE8 100%);
+
+    /* W3C Markup, IE10 Release Preview */ 
+    background-image: linear-gradient(to bottom, #FFFFFF 0%, #C2DBE8 100%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100%;
+}
+
+#content p {
+  font-size: 12px;
+}
+
+img {
+  border: 0;
+}
+
+h1, h2, h3, h4, h5, h6 { 
+  color: #362C20;
+  letter-spacing: 0em;
+}
+
+h1, h2, h3 { 
+  font: normal 180% "Lucida Sans Unicode", "Lucida Grande", sans-serif ;
+  color: #222;
+
+}
+
+#content h1 {
+  clear: both;
+  font-size: 160%;
+  color: #222;
+  font-weight: bold;
+  padding-top: 20px;
+}
+
+#content h2 {
+  clear: both;
+  font-size: 130%;
+  color: #788E1E;
+}
+
+h3 {
+  font-size: 140%;
+  padding: 5px 0 0 0;
+}
+
+a, a:hover { 
+  outline: none;
+  color: inherit;
+}
+
+a:hover {
+  color: #00A5E3;
+}
+
+#main, nav, #container, #logo, div[role=main], footer {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div[role=main], .main.homepage {
+  width: 943px;
+  overflow: hidden;
+  margin: auto;
+  background: #FFF;
+  padding: 10px 10px 10px 10px;
+}
+
+.wrapper {
+  box-shadow: 0px 0px 0px 0px rgba(0,0,0,0);
+}
+
+.module-heading {
+	width: inherit;
+}
+
+/*
+	Header banner styles
+*/
+#main_header { 
+  background: transparent;
+  height: 110px;
+  margin: auto;
+  width: 943px;
+}
+
+.account-masthead {
+  background: none;
+}
+
+.account-masthead li {
+  border-left: none !important;
+}
+
+.account-masthead .account ul li:hover {
+  background-color: #444 !important;
+}
+
+.account-masthead a {
+  color: #777 !important;
+}
+
+.account-masthead li.notifications a span {
+  background-color: #777  !important;
+  color: #fff;
+}
+
+.image img {
+  vertical-align: middle !important;
+}
+
+
+
+
+#logo {
+  margin-top: 8.5px;
+  height: inherit;
+  background: transparent;
+  color: #888;
+  padding: 0 0 0 0px;
+}
+
+#logo img {
+  position:absolute;
+  float:left;
+}
+
+#logo_text {
+  margin-left: 200px;
+  margin-top: 9px;
+  position: absolute;
+  float: left;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#logo h1, #logo h2 { 
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif !important; 
+  text-transform: none;
+  margin: 0;
+  padding: 0;
+}
+
+#logo_text h1 {
+    font-size: 250%;
+    line-height: 40px;
+}
+
+#logo_text h1, #logo_text h1 a, #logo_text h1 a:hover { 
+  padding: 0;
+  color: #444;
+  text-decoration: none;
+}
+
+#logo_text a:hover .logo_colour {
+  color: #444;
+}
+
+#logo_text h2 {
+  font-size: 125%;
+  padding: 0;
+  color: #222;
+}
+
+/*
+	Footer banner styles
+*/
+footer {
+  width: 963px;
+  font: 89% Tahoma, Geneva, sans-serif;
+  height: 68px;
+  padding: 9px 0 15px 0;
+  color: #FFF;
+  background: #333; /* Show a solid color for older browsers */
+  background: -moz-linear-gradient(#444, #222);
+  background: -o-linear-gradient(#444, #222);
+  background: -webkit-linear-gradient(#444, #222);
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  border: 1px solid #222;
+  margin-top: 10px;
+}
+
+#footer-left-image {
+    display: inline !important;
+    position: relative;
+    float: left !important;
+    margin-left: 15px;
+    padding-right: 15px;
+    border-right: 1px solid #888;
+}
+
+#footer-right-image {
+    display: inline !important;
+    position: relative;
+    float: right;
+    margin-right: 15px;
+    margin-top: -4px;
+}
+
+#footer-text {
+    display: inline !important;
+    float: left;
+    margin-left: 10px;
+    width: 630px;
+    position: relative;
+}
+
+
+/* 
+	Menu styles 
+*/
+
+#main_header nav {
+  height: 32px;
+  width: 940px;
+  float: right;
+  margin: -20px auto 20px auto;
+  background: #717073; /* Show a solid color for older browsers */
+  background: -moz-linear-gradient(#717073, #222);
+  background: -o-linear-gradient(#717073, #222);
+  background: -webkit-linear-gradient(#717073, #222);
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 2px;
+  border: 1px solid #4E4E4E;
+}
+
+nav.second_navigation {
+	position: relative;
+	float: right;
+}
+
+nav.second_navigation ul {
+	margin-bottom: 0px !important;
+}
+
+nav.second_navigation ul li a {
+	margin-top: 0px !important;
+}
+
+.hero .toolbar {
+  border-bottom: 1px solid rgb(204, 204, 204);
+}
+
+
+/* Configuration of menu width */
+
+html body ul.nice-menu ul,html body ul.nice-menu ul li {
+  width: 222px;
+  padding: 2px;
+}
+
+html body ul.nice-menu ul ul { 
+  margin: 0 0 0 220px;
+}
+
+
+
+/* Framework for proper showing/hiding/positioning */
+
+ul.nice-menu-down .menuparent a {
+    padding-right: 15px;
+}
+
+ul.nice-menu,ul.nice-menu * { 
+  margin: 0;
+  padding: 0;
+}
+
+ul.nice-menu { 
+  display: block;
+  position: relative;
+}
+
+ul.nice-menu li { 
+  display: block;
+  list-style: none;
+  float: left;
+  position: relative;
+  padding-bottom: 3px;
+  border: none;
+  background: none;
+}
+
+ul.nice-menu li:hover { 
+  visibility: inherit; /* fixes IE7 'sticky bug' */ 
+}
+
+ul.nice-menu-down li.menuparent {
+  background: none;
+}
+
+ul.nice-menu-down li.menuparent:hover {
+  background: none;
+}
+
+ul.nice-menu a { 
+  display: block;
+  position: relative;
+}
+
+ul.nice-menu ul {
+  position: absolute;
+  left: 0;
+  margin-left: 20px;
+  left: -999999px;
+  z-index: 999999;
+  border-top: 1px solid #222 !important;
+  top: 29px !important;
+}
+
+ul.nice-menu ul a { 
+  zoom: 1; /* IE6/7 fix */ 
+}
+
+ul.nice-menu ul li { 
+  float: left; /* Must always be floated otherwise there will be a rogue 1px margin-bottom in IE6/7 */
+  width: 150px;
+  padding-left: 10px !important;
+}
+
+ul.nice-menu ul ul { 
+  top: 0;
+  margin: 0 0 0 150px;
+}
+
+ul.nice-menu li:hover ul,ul.nice-menu li:focus ul,ul.nice-menu li.sf-hover ul, 
+ul.nice-menu ul li:hover ul,ul.nice-menu ul li:focus ul,ul.nice-menu ul li.sf-hover ul,
+ul.nice-menu ul ul li:hover ul,ul.nice-menu ul ul li:focus ul,ul.nice-menu ul ul li.sf-hover ul,
+ul.nice-menu ul ul ul li:hover ul,ul.nice-menu ul ul ul li:focus ul,ul.nice-menu ul ul ul li.sf-hover ul { 
+  left: auto;
+}
+
+ul.nice-menu li:hover ul ul,ul.nice-menu li:focus ul ul,ul.nice-menu li.sf-hover ul ul,
+ul.nice-menu ul li:hover ul ul,ul.nice-menu ul li:focus ul ul,ul.nice-menu ul li.sf-hover ul ul,
+ul.nice-menu ul ul li:hover ul ul,ul.nice-menu ul ul li:focus ul ul,ul.nice-menu ul ul li.sf-hover ul ul,
+ul.nice-menu ul ul ul li:hover ul ul,ul.nice-menu ul ul ul li:focus ul ul,ul.nice-menu ul ul ul li.sf-hover ul ul { 
+  left: -999999px;
+}
+
+ul.nice-menu ul { 
+  background: #717073;
+  margin-top: 3px;
+  padding-bottom: 15px;
+}
+
+ul.nice-menu li a { 
+  padding: 0px 25px 6px 25px;
+  font: 125% "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  text-decoration: none;
+  color: #FFF;
+  margin-right: -1px;
+  margin-top: 4px;
+}
+
+ul.nice-menu li a:hover, ul.nice-menu li a:focus, ul.nice-menu li.selected a, ul.nice-menu li.selected a:hover, ul.nice-menu li.selected a:focus { 
+  color: #788E1E;
+  text-shadow: none;
+}
+
+ul.nice-menu ul li a { 
+  color: #FFF;
+  font-size: 109%;
+  padding-left: 10px;
+  margin-right: 20px;
+  border-bottom: #504f51 1px solid;
+
+}
+
+ul.nice-menu.active {
+  color: #788E1E;
+}
+
+ul.nice-menu ul li.last a {
+    border-bottom: none;
+}
+
+ul.nice-menu ul li.last {
+  border-bottom: none;
+}
+
+ul.nice-menu ul li a:hover { 
+  color: #788E1E;
+}
+
