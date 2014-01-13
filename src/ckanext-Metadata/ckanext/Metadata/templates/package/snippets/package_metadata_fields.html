@@ -1,4 +1,9 @@
 {% ckan_extends %}
+ {% block package_metadata_author %}
+    {{ form.input('author', label=_('Creator'), id='field-author', placeholder=_('Joe Bloggs'), value=data.author, error=errors.author, classes=['control-medium']) }}
+
+    {{ form.input('author_email', label=_('Creator Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email, error=errors.author_email, classes=['control-medium']) }}
+ {% endblock %}
 
 {% block package_metadata_fields_custom %}
     {# call helper function that moves any common core fields from 'extras' to the 'common_core' key #}
@@ -10,6 +15,9 @@
  {#
 	{% snippet 'snippets/custom_form_fields.html', extras=data.extras, errors=errors, limit=3 %}
 #}
+
+
+
 {% endblock package_metadata_fields_custom %}
 
 

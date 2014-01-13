@@ -8,6 +8,14 @@ import formencode.validators as v
 import copy
 import ckan.logic as l
 from formencode.validators import validators
+from pylons import config
+
+
+import datetime
+#imports to add user to organization
+import urllib2
+import urllib
+import json
 
 log = getLogger(__name__)
 # class log():
@@ -66,9 +74,13 @@ expanded_metadata = ( {'id':'collection', 'validators': [v.String(max=1000)]},
                    
                      {'id':'purpose', 'validators': [v.String(max=100)]},
                    
-                     #{'id':'creator_organization', 'validators': [v.String(max=100)]},
-                     #{'id':'creator_address', 'validators': [v.String(max=100)]},
-                     #{'id':'creator_phone', 'validators': [v.PhoneNumber(), v.String(max=15)]},
+                     {'id':'sub_name', 'validators': [v.String(max=100)]},
+                     {'id':'sub_email', 'validators': [v.String(max=100)]},
+                     
+                     {'id':'sub_organization', 'validators': [v.String(max=100)]},
+                     {'id':'sub_address', 'validators': [v.String(max=100)]},
+                     {'id':'sub_phone', 'validators': [v.PhoneNumber(), v.String(max=15)]},
+                                          
                       
                      {'id':'feature_types', 'validators': [v.String(max=100)]},
                      {'id':'north_extent', 'validators': [v.String(max=100)]},
@@ -85,6 +97,7 @@ expanded_metadata = ( {'id':'collection', 'validators': [v.String(max=1000)]},
                      {'id':'units', 'validators': [v.String(max=100)]},
                      {'id':'data_processing_method', 'validators': [v.String(max=100)]},
                      {'id':'data_collection_method', 'validators': [v.String(max=100)]},
+                     {'id':'citation', 'validators': [v.String(max=100)]},
                       
                      # set by system{'id':'citation', 'validators': [v.String(max=100)]},
                      # set by system{'id':'publisher', 'validators': [v.String(max=100)]},
@@ -273,7 +286,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
-            vocab = cls.__create_vocabulary(u'type', u'Time Series', u'shapefile', u'database', u'model', u'collection', u'raster')
+            vocab = cls.__create_vocabulary(u'type', u'Time Series', u'shapefile', u'database', u'model', u'collection', u'raster', u'other')
  
         types = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % types)
@@ -322,7 +335,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
     #See ckan.plugins.interfaces.IDatasetForm
     def _modify_package_schema(self, schema):
-        log.debug("_modify_package_schema called")
+        #log.debug("_modify_package_schema called")
 
         for update in schema_updates_for_create:
             schema.update(update)
@@ -330,7 +343,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return schema
 
     def _modify_package_schema_update_show(self, schema):
-        log.debug("_modify_package_schema_update_show called")
+        #log.debug("_modify_package_schema_update_show called")
 
         for update in schema_updates_for_update_show:
             schema.update(update)
@@ -346,7 +359,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
     #See ckan.plugins.interfaces.IDatasetForm
     def update_package_schema(self):
-        log.debug('update_package_schema')
+        #log.debug('update_package_schema')
         schema = super(MetadataPlugin, self).update_package_schema()
 #TODO uncomment, should be using schema for updates, but it's causing problems during resource creation
         #schema = self._modify_package_schema_update_show(schema)
@@ -355,7 +368,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
     #See ckan.plugins.interfaces.IDatasetForm
     def show_package_schema(self):
-        log.debug('show_package_schema')
+        #log.debug('show_package_schema')
         schema = super(MetadataPlugin, self).show_package_schema()
 
         # Don't show vocab tags mixed in with normal 'free' tags
@@ -367,7 +380,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     
     #Method below allows functions and other methods to be called from the Jinja template using the h variable
     def get_helpers(self):
-        log.debug('get_helpers() called')
+        #log.debug('get_helpers() called')
         return {'get_research_focus': self.get_research_focus, 
                 'required_metadata': required_metadata,
                 'load_data_into_dict':  self.load_data_into_dict,
@@ -380,15 +393,81 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     #See ckan.plugins.interfaces.IActions    
     def get_actions(self):
         log.debug('get_actions() called') 
-        return  {'package_create':pkg_create}
+        return  {'package_create':pkg_create,
+                 'package_update':pkg_update,
+                # 'user_create':user_create
+                 }
+ 
+
+#class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
+      
+def user_create(context, data_dict):   
+        log.debug('my very own user_create() called') 
+        p.toolkit.check_access('user_create',context, data_dict)
+        obj = l.action.create.user_create(context,data_dict)
+         
+         
+        print "obj",obj
+        dataset_dict = {# id of the organization to be added to
+                        'id': 'bed6525d-dbe9-4a9b-9c31-791323f749b1',
+                        #id of the user to be added to the group
+                        'object': obj['id'],
+                        'object_type':'user',
+                        'capacity':'editor'
+        }
+ 
+        # Use the json module to dump the dictionary to a string for posting.
+        data_string = urllib.quote(json.dumps(dataset_dict))
+ 
+        # We'll use the member_create function to create a new user to the default organization.
+        request = urllib2.Request('http://127.0.0.1:5000/api/3/action/member_create')
+        #apikey of an admin user of the default organization
+        request.add_header('Authorization', '648783bc-ab2b-4489-a526-5e56d802de8a')
+        response = urllib2.urlopen(request, data_string)
+        assert response.code == 200
+     
+        response_dict = json.loads(response.read())
+        assert response_dict['success'] is True
+        result = response_dict['result']
+        return obj
     
+def pkg_update(context, data_dict):
+    log.debug('my very own package_update() called') 
+    #print data_dict.updategibberishforerror
+    #if data_dict['citation']= 'missing all data':
+    if data_dict['author']:
+        creator = data_dict['author']
+    else: 
+        creator = data_dict['sub_name']    
+        
+    url = config.get('package_%s_return_url' % 'edit')
+    if url:
+            url = url.replace('<NAME>', data_dict['name'])
+    
+    
+    dateval = data_dict['metadata_created']  
+    dateval= datetime.strptime(dateval.split(".")[0], "%Y-%d-%mT%H:%M:%S%f")
+    
+    citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = dateval.year, title = data_dict['title'], version = data_dict['version'], url = url)
+    
+    print citation  
+    print citation.gibberish
+    data_dict['citation']= citation
+    
+
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    print " hellow world i am in my very own package create"
-    print "pkg_create", data_dict.keys()   
-    data_dict['citation']= 'this is a test'
-    print p.toolkit.check_access('package_create',context, data_dict)
-    l.action.create.package_create(context,data_dict)
+    print data_dict.creategibberishforerror
+    data_dict['citation']= "missing all data"
+    data_dict['sub_name']=context['auth_user_obj'].fullname
+    data_dict['sub_email']=context['auth_user_obj'].email
+    data_dict['sub_organization']=data_dict['owner_org']
+    data_dict['sub_address']=""
+    data_dict['sub_phone']=""
+    data_dict['private']='true'
+                       
+    p.toolkit.check_access('package_create',context, data_dict)
+    return l.action.create.package_create(context,data_dict)
     
     
     
