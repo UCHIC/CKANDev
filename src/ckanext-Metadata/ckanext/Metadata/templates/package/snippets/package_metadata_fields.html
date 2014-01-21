@@ -1,25 +1,27 @@
 {% ckan_extends %}
- {% block package_metadata_author %}
-    {{ form.input('author', label=_('Creator'), id='field-author', placeholder=_('Joe Bloggs'), value=data.author, error=errors.author, classes=['control-medium']) }}
+{% block package_metadata_author %}
+{{ form.input('author', label=_('Creator'), id='field-author', placeholder=_('Joe Bloggs'), value=data.author, error=errors.author, classes=['control-medium'], attrs={'title': 'FirstName LastName'}) }}
 
-    {{ form.input('author_email', label=_('Creator Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email, error=errors.author_email, classes=['control-medium']) }}
- {% endblock %}
+{{ form.input('author_email', label=_('Creator Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email, error=errors.author_email, classes=['control-medium']) }}
+{% endblock %}
+
+{% block package_metadata_fields_maintainer %}
+{{ form.input('maintainer', label=_('Maintainer'), id='field-maintainer', placeholder=_('Joe Bloggs'), value=data.maintainer, error=errors.maintainer, classes=['control-medium'], attrs={'title': 'FirstName LastName'} )}}
+{{ form.input('maintainer_email', label=_('Maintainer Email'), id='field-maintainer-email', placeholder=_('joe@example.com'), value=data.maintainer_email, error=errors.maintainer_email, classes=['control-medium']) }}
+{% endblock %}
+
+
 
 {% block package_metadata_fields_custom %}
-    {# call helper function that moves any common core fields from 'extras' to the 'common_core' key #}
+{# call helper function that moves any common core fields from 'extras' to the 'common_core' key #}
 {# TODO uncomment below, need to filter out the custom form fields, but right now, if we don't include them in the form, then they get
-        deleted from the database!!
-        #}
-    {% set data = h.load_data_into_dict(data) %}
- 
- {#
-	{% snippet 'snippets/custom_form_fields.html', extras=data.extras, errors=errors, limit=3 %}
+deleted from the database!!
+#}
+{% set data = h.load_data_into_dict(data) %}
+
+{#
+{% snippet 'snippets/custom_form_fields.html', extras=data.extras, errors=errors, limit=3 %}
 #}
 
-
-
 {% endblock package_metadata_fields_custom %}
-
-
-
 

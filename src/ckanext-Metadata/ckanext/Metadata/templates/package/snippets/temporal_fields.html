@@ -7,36 +7,38 @@
 
 {% block package_temporal_metadata %}
 
-{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('2000-01-15 00:45:00,2010-01-15 00:06:00'), value=data.common_core.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the resource'}) }}
-
-<div class="control-group">
-  <label class="control-label" for="field-update_frequency">
-      {{ _("Update Frequency") }}</label>
-  <div class="controls">
-    <select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="Frequency with which dataset is published.">
-        {% for level in h.update_frequency() %}
-      <option value="{{ level }}" {% if level == data.common_core.update_frequency %}selected{% endif %} >
-        {{ level }}
-      </option>
-        {% endfor %}
-    </select>
-  </div>
+<div class="panel panel-default">
+	<div>
+		<h2 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#temporalDiv"> Temporal metadata </a> </h4>
+	</div>
+	<div id="temporalDiv" class="panel-collapse collapse out">
+		<p>
+		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('2000-01-15 00:45:00,2010-01-15 00:06:00'), value=data.common_core.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the resource'}) }}
+		</p>
+		<p>
+			<div class="control-group">
+				<label class="control-label" for="field-update_frequency"> {{ _("Update Frequency") }}</label>
+				<div class="controls">
+					<select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="Frequency with which dataset is published.">
+						{% for level in h.update_frequency() %}
+						<option value="{{ level }}" {% if level == data.common_core.update_frequency %}selected{% endif %} > {{ level }} </option>
+						{% endfor %}
+					</select>
+				</div>
+			</div>
+		</p>
+	</div>
 </div>
 
 <div class="control-group">
-  <label class="control-label" for="field-status">
-      <span title="This field is required" class="control-required">*</span>
-      {{ _("Status") }}</label>
-  <div class="controls">
-    <select id="field-status" name="status" data-module="autocomplete" title="Is data collection ongoing, completed, or planned?">
-        {% for status in h.get_status() %}
-      <option value="{{ status }}" {% if type == data.common_core.status %}selected{% endif %} >
-        {{ status }}
-      </option>
-        {% endfor %}
-    </select>
-  </div>
+	<label class="control-label" for="field-status"> <span title="This field is required" class="control-required">*</span> {{ _("Status") }}</label>
+	<div class="controls">
+		<select id="field-status" name="status" data-module="autocomplete" title="Is data collection ongoing, completed, or planned?">
+			{% for status in h.get_status() %}
+			<option value="{{ status }}" {% if type == data.common_core.status %}selected{% endif %} > {{ status }} </option>
+			{% endfor %}
+		</select>
+	</div>
 </div>
-
 
 {% endblock package_temporal_metadata %}

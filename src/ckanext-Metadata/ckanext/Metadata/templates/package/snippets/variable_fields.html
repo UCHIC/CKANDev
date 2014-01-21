@@ -6,15 +6,25 @@
 {% set errors = errors or {} %}
 
 {% block package_variable_metadata %}
+<div class="panel panel-default">
+	<div>
+		<h2 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#vmDiv"> Variable & Method Information </a> </h4>
+	</div>
+	<div id="vmDiv" class="panel-collapse collapse out">
+
+		<p>
+			{{ form.input('units', label=_('Units'), id='field-units', placeholder=_(''), value=data.units, error=errors.units, classes=['control-medium'], attrs={'title': 'What units are the data expressed in?'} )}}
+		</p>
+		<p>
+			{{ form.input('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_(''), value=data.data_collection_method, error=errors.data_collection_method, classes=['control-medium'], attrs={'title': 'How were the data collected, generated, or otherwise produced?'} )}}
+		</p>
+		<p>
+			{{ form.input('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_(''), value=data.data_processing_method, error=errors.data_processing_method, classes=['control-medium'], attrs={'title': 'Were the data processed with a model or an analytical tool? (e.g., ArcGIS, R, SAS, etc.)? What were the processing steps?'} )}}
+		</p>
+	</div>
+</div>
 
 {{ form.input('observed_variables', id='field-observed_variables', label=_('Observed Variables'), placeholder=_('e.g., temperature, streamflow, land cover, elevation'), value=data.common_core.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}, is_required=true) }}
-
-{{ form.input('units', label=_('Units'), id='field-units', placeholder=_(''), value=data.units, error=errors.units, classes=['control-medium'], attrs={'title': 'What units are the data expressed in?'} )}}
-
-{{ form.input('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_(''), value=data.data_collection_method, error=errors.data_collection_method, classes=['control-medium'], attrs={'title': 'How were the data collected, generated, or otherwise produced?'} )}}
-
-{{ form.input('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_(''), value=data.data_processing_method, error=errors.data_processing_method, classes=['control-medium'], attrs={'title': 'Were the data processed with a model or an analytical tool? (e.g., ArcGIS, R, SAS, etc.)? What were the processing steps?'} )}}
-
 
 {% endblock package_variable_metadata %}
 

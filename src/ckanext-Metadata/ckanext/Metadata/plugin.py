@@ -11,7 +11,7 @@ from formencode.validators import validators
 from pylons import config
 
 
-import datetime
+from datetime import datetime
 #imports to add user to organization
 import urllib2
 import urllib
@@ -220,7 +220,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for research focus doesn't exist")
-            vocab = cls.__create_vocabulary('research_focus',u'RFA1', u'RFA2', u'RFA3')
+            vocab = cls.__create_vocabulary('research_focus',u'RFA1', u'RFA2', u'RFA3',u'other')
 
         research_focus = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % research_focus)
@@ -265,7 +265,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
-            vocab = cls.__create_vocabulary(u'study_area', u'None',u'WRMA(wasatch Range Metropolitan Area)', u'Logan River Watershed', u'Red Butte Creek Watershed', u'Provo River Watershed', u'Multiple Watersheds')
+            vocab = cls.__create_vocabulary(u'study_area', u'none',u'WRMA-Wasatch Range Metropolitan Area', u'Logan River Watershed', u'Red Butte Creek Watershed', u'Provo River Watershed', u'Multiple Watersheds')
  
         study_area = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % study_area)
@@ -394,8 +394,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def get_actions(self):
         log.debug('get_actions() called') 
         return  {'package_create':pkg_create,
-                 'package_update':pkg_update,
-                # 'user_create':user_create
+                 #package_update':pkg_update,
+                 #'user_create':user_create
                  }
  
 
@@ -409,7 +409,7 @@ def user_create(context, data_dict):
          
         print "obj",obj
         dataset_dict = {# id of the organization to be added to
-                        'id': 'bed6525d-dbe9-4a9b-9c31-791323f749b1',
+                        'id': '69549d56-bb25-4fda-84ff-949fd1c25787',
                         #id of the user to be added to the group
                         'object': obj['id'],
                         'object_type':'user',
@@ -422,7 +422,7 @@ def user_create(context, data_dict):
         # We'll use the member_create function to create a new user to the default organization.
         request = urllib2.Request('http://127.0.0.1:5000/api/3/action/member_create')
         #apikey of an admin user of the default organization
-        request.add_header('Authorization', '648783bc-ab2b-4489-a526-5e56d802de8a')
+        request.add_header('Authorization', 'bcdd4f18-5468-459e-a1b0-5a637245b84d')
         response = urllib2.urlopen(request, data_string)
         assert response.code == 200
      
@@ -431,40 +431,45 @@ def user_create(context, data_dict):
         result = response_dict['result']
         return obj
     
+    
+import ckan.lib.helpers as h 
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called') 
     #print data_dict.updategibberishforerror
-    #if data_dict['citation']= 'missing all data':
+#     print data_dict['extras']
+#     if (data_dict['extras'][0]['citation']== 'incomplete'):
     if data_dict['author']:
-        creator = data_dict['author']
+        name = data_dict['author']
     else: 
-        creator = data_dict['sub_name']    
-        
-    url = config.get('package_%s_return_url' % 'edit')
-    if url:
-            url = url.replace('<NAME>', data_dict['name'])
+        name = data_dict['sub_name']    
     
+    creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi = name.split(" ")[0][0])
+    url = h.url_for(controller='package', action='read', id=data_dict['name'])
+       
+
+    if data_dict['version']:
+        version = data_dict['version']
+    else: version = '' 
     
     dateval = data_dict['metadata_created']  
     dateval= datetime.strptime(dateval.split(".")[0], "%Y-%d-%mT%H:%M:%S%f")
-    
-    citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = dateval.year, title = data_dict['title'], version = data_dict['version'], url = url)
-    
+
+    citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = dateval.year, title = data_dict['title'], version = data_dict['version'], url = "http://127.0.0.1:5000/"+url)
+
     print citation  
-    print citation.gibberish
     data_dict['citation']= citation
+    p.toolkit.check_access('package_update',context, data_dict)
+    return l.action.update.package_update(context,data_dict)
     
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    print data_dict.creategibberishforerror
-    data_dict['citation']= "missing all data"
+    data_dict['citation']= "incomplete"
     data_dict['sub_name']=context['auth_user_obj'].fullname
     data_dict['sub_email']=context['auth_user_obj'].email
     data_dict['sub_organization']=data_dict['owner_org']
     data_dict['sub_address']=""
     data_dict['sub_phone']=""
-    data_dict['private']='true'
                        
     p.toolkit.check_access('package_create',context, data_dict)
     return l.action.create.package_create(context,data_dict)

@@ -413,3 +413,6 @@ ul.nice-menu ul li a:hover {
   color: #788E1E;
 }
 
+.tab-content {
+	display: block !important;
+}
