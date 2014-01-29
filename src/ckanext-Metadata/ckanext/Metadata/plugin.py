@@ -7,6 +7,8 @@ import ckan.plugins as p
 import formencode.validators as v
 import copy
 import ckan.logic as l
+from ckan.logic.action.create import user_create, package_create
+from ckan.logic.action.update import package_update
 from formencode.validators import validators
 from pylons import config
 
@@ -97,7 +99,7 @@ expanded_metadata = ( {'id':'collection', 'validators': [v.String(max=1000)]},
                      {'id':'units', 'validators': [v.String(max=100)]},
                      {'id':'data_processing_method', 'validators': [v.String(max=100)]},
                      {'id':'data_collection_method', 'validators': [v.String(max=100)]},
-                     {'id':'citation', 'validators': [v.String(max=100)]},
+                     {'id':'citation', 'validators': [v.String(max=300)]},
                       
                      # set by system{'id':'citation', 'validators': [v.String(max=100)]},
                      # set by system{'id':'publisher', 'validators': [v.String(max=100)]},
@@ -362,7 +364,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         #log.debug('update_package_schema')
         schema = super(MetadataPlugin, self).update_package_schema()
 #TODO uncomment, should be using schema for updates, but it's causing problems during resource creation
-        #schema = self._modify_package_schema_update_show(schema)
+        schema = self._modify_package_schema_update_show(schema)
 
         return schema
 
@@ -394,28 +396,28 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def get_actions(self):
         log.debug('get_actions() called') 
         return  {'package_create':pkg_create,
-                 #package_update':pkg_update,
-                 #'user_create':user_create
+                 'package_update':pkg_update,
+                 'user_create':user_create
                  }
  
 
 #class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
       
 def user_create(context, data_dict):   
-        log.debug('my very own user_create() called') 
-        p.toolkit.check_access('user_create',context, data_dict)
-        obj = l.action.create.user_create(context,data_dict)
+        log.debug('my very own user_create() called')
+        obj = user_create(context,data_dict)
          
          
         print "obj",obj
         dataset_dict = {# id of the organization to be added to
-                        'id': '69549d56-bb25-4fda-84ff-949fd1c25787',
+                        #'id': '69549d56-bb25-4fda-84ff-949fd1c25787',
+                        'id': 'iutah',
                         #id of the user to be added to the group
                         'object': obj['id'],
                         'object_type':'user',
                         'capacity':'editor'
         }
- 
+        result= p.toolkit.get_action('member_create')(dataset_dict)
         # Use the json module to dump the dictionary to a string for posting.
         data_string = urllib.quote(json.dumps(dataset_dict))
  
@@ -432,47 +434,86 @@ def user_create(context, data_dict):
         return obj
     
     
-import ckan.lib.helpers as h 
+
 def pkg_update(context, data_dict):
-    log.debug('my very own package_update() called') 
-    #print data_dict.updategibberishforerror
-#     print data_dict['extras']
-#     if (data_dict['extras'][0]['citation']== 'incomplete'):
-    if data_dict['author']:
-        name = data_dict['author']
-    else: 
-        name = data_dict['sub_name']    
+    log.debug('my very own package_update() called')   
+   
+    data_dict['citation']= createcitation(context, data_dict)
+    p.toolkit.check_access('package_update',context, data_dict)
+    return package_update(context,data_dict)
+
+import ckan.lib.helpers as h    
+def createcitation(context, data_dict, year=None):
+    
+    url = "http://127.0.0.1:5000"+h.url_for(controller='package', action='read', id=data_dict['name'])
+    name = context['auth_user_obj'].fullname
+    try:
+        if len(data_dict['author'])>0:
+            name = data_dict['author']
+    except:
+        #name = context.get('user').fullname
+        name = context['auth_user_obj'].fullname
+        print "no author"            
     
     creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi = name.split(" ")[0][0])
-    url = h.url_for(controller='package', action='read', id=data_dict['name'])
-       
-
-    if data_dict['version']:
+    version = 0       
+    try:
         version = data_dict['version']
-    else: version = '' 
+    except:
+        version = 0 
+        print "no version" 
     
-    dateval = data_dict['metadata_created']  
-    dateval= datetime.strptime(dateval.split(".")[0], "%Y-%d-%mT%H:%M:%S%f")
+    if not year:
+        
+        year=getdate(context, data_dict) 
+    citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = year, title = data_dict['title'], version = version, url = url)
+    return citation
 
-    citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = dateval.year, title = data_dict['title'], version = data_dict['version'], url = "http://127.0.0.1:5000/"+url)
 
-    print citation  
-    data_dict['citation']= citation
-    p.toolkit.check_access('package_update',context, data_dict)
-    return l.action.update.package_update(context,data_dict)
+
+def getdate(context, data_dict):
+    try:
+        r= p.toolkit.get_action('package_show')(context,data_dict)
+        print r
+        print "get_action: ", r.metadata_created
+    except:
+        print" get action didn't work for package_show"
     
+   
+    dataset_dict = {'id': data_dict['name']}
+ 
+    data_string = urllib.quote(json.dumps(dataset_dict)) 
+    
+    request = urllib2.Request('http://127.0.0.1:5000/api/3/action/package_show')
+    request.add_header('Authorization', context['auth_user_obj'].apikey)
+    
+    response = urllib2.urlopen(request, data_string)
+    assert response.code == 200
+     
+    response_dict = json.loads(response.read())
+    assert response_dict['success'] is True
+    result = response_dict['result']
+    
+    dateval = result['metadata_created']  
+    year= dateval.split("-")[0]
+    return year
+
+
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    data_dict['citation']= "incomplete"
+    data_dict['citation']= createcitation(context, data_dict, datetime.now().year)
     data_dict['sub_name']=context['auth_user_obj'].fullname
     data_dict['sub_email']=context['auth_user_obj'].email
     data_dict['sub_organization']=data_dict['owner_org']
     data_dict['sub_address']=""
     data_dict['sub_phone']=""
+    #if organization is iutah
+    if data_dict['owner_org']== '69549d56-bb25-4fda-84ff-949fd1c25787':
+        data_dict['private']=True
                        
     p.toolkit.check_access('package_create',context, data_dict)
-    return l.action.create.package_create(context,data_dict)
+    return package_create(context,data_dict)
     
     
     

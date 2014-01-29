@@ -3,33 +3,48 @@
 	{% block content_iutah_metadata %}
 
 	<BR>
-	<tr>
-		<h5><th scope="row" class="dataset-label">{{ _("Citation:") }}</th></h5>
-		<td class="dataset-details">{{ pkg_dict.common_core.citation }}</td>
-	</tr>
 
+		<p class="inlineLabel">{{ _("Citation:") }}</p>
+		<p>{{ pkg_dict.common_core.citation }}</p>
+<BR>
 	<ul class="nav nav-tabs">
 		<li>
-			<a href="#generalTab" data-toggle="tab">General</a>
+			<a href="#generalTab" data-toggle="tab"> 
+				<i class="icon-edit"></i> 
+				General
+			</a>
 		</li>
 		<li>
-			<a href="#spatialTab" data-toggle="tab">Spatial</a>
+			<a href="#spatialTab" data-toggle="tab">
+				<i class="icon-globe"></i>
+				Spatial</a>
 		</li>
 		<li>
-			<a href="#temporalTab" data-toggle="tab">Temporal</a>
+			<a href="#temporalTab" data-toggle="tab">
+				<i class="icon-clock"></i>
+				Temporal</a>
 		</li>
 		<li>
-			<a href="#varmethTab" data-toggle="tab">Variable & Method</a>
+			<a href="#varmethTab" data-toggle="tab">
+				<i class="icon-book-open"></i>
+				Variable & Method</a>
 		</li>
 		<li>
-			<a href="#contactTab" data-toggle="tab">Contact Info</a>
+			<a href="#contactTab" data-toggle="tab">
+				<i class="icon-user"></i>
+				Contact Info</a>
+		</li>
+		<li>
+			<a href="#addTab" data-toggle= "tab">
+				<i class="icon-blog"></i>
+				Additional Info</a>
 		</li>
 	</ul>
 
 	<!-- Tab panes -->
 	<div class="tab-content">
 		<div class="tab-pane active" id="generalTab">
-			<table class="table table-condensed">
+			<table class="table table-condensed table-no-border-top">
 
 				<tbody>
 					{% if pkg_dict.common_core.purpose %}
@@ -230,7 +245,7 @@
 		<div class="tab-pane" id="contactTab">
 
 			<table class="table  table-condensed">
-				
+
 				<tbody>
 					<tr>
 						<th scope="row" class="dataset-label">{{ _("Submitter Name") }}</th>

@@ -1,13 +1,382 @@
+
 {% ckan_extends %}
+
 
 {% block package_additional_info %}
 
-    {% set pkg = h.load_data_into_dict(pkg) %}
+{% set pkg_dict = h.load_data_into_dict(pkg) %}
 
-  		
-    {# display common core metadata #}
-    {% snippet "package/snippets/metadata_info.html", pkg_dict=pkg %}
+{# display common core metadata #}
+	
+	<div class="citation-block">
+		<span class="citation-label">{{ _("Citation:") }}</span>
+		<span class="citation-text">{{ pkg_dict.common_core.citation }}</span>
+	</div>
+	<div style="clear:both"></div>
+	<div class="panel panel-default">
+		<div class="panel-tabs">
+			<ul class="nav nav-tabs">
+				<li class="active">
+					<a href="#generalTab" data-toggle="tab">
+						<i class="icon-edit"></i> 
+						General
+					</a>
+				</li>
+				<li>
+					<a href="#spatialTab" data-toggle="tab">
+						<i class="icon-globe"></i>
+						Spatial</a>
+				</li>
+				<li>
+					<a href="#temporalTab" data-toggle="tab">
+						<i class="icon-time"></i>
+						Temporal</a>
+				</li>
+				<li>
+					<a href="#varmethTab" data-toggle="tab">
+						<i class="icon-book"></i>
+						Variable & Method</a>
+				</li>
+				<li>
+					<a href="#contactTab" data-toggle="tab">
+						<i class="icon-user"></i>
+						Contact</a>
+				</li>
+				<li>
+					<a href="#addTab" data-toggle= "tab">
+						<i class="icon-table"></i>
+						Additional</a>
+				</li>
+			</ul>
+		</div>
+		<div class="tabs-body">
+			<!-- Tab panes -->
+			<div class="tab-content">
+				<div class="tab-pane active" id="generalTab">
+					<table class="table table-condensed table-no-border-top">
+			
+						<tbody>
+							{% if pkg_dict.common_core.purpose %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Purpose") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.purpose }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.collection %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Collection") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.collection }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.language %}
+							<tr>
+								<th scope="row" class=" dataset-label">{{ _("Language") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.language }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.research_focus %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Research Focus Area") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.research_focus }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.intended_use %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Intended Use") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.intended_use }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.rights %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Rights") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.rights }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.type %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Type") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.type }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.required_software %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Required Software") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.required_software }}</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+				<div class="tab-pane" id="spatialTab">
+			
+					<table class="table  table-condensed table-no-border-top">
+			
+						<tbody>
+							{% if pkg_dict.common_core.spatial %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Spatial Extent") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.spatial }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.study_area %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Study Area") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.study_area }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.north_extent %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("North Extent") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.north_extent }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.south_extent %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("South Extent") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.south_extent }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.east_extent %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("East Extent") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.east_extent }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.west_extent %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("West Extent") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.west_extent }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.feature_types %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Feature Types") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.feature_types}}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.horz_coord_system %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Hoorizantal Coordinate") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.horz_coord_system }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.vert_coord_system %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Vertical Coordiante") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.vert_coord_system }}</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+				<div class="tab-pane" id="temporalTab">
+			
+					<table class="table  table-condensed table-no-border-top">
+			
+						<tbody>
+							{% if pkg_dict.common_core.temporal %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Temporal  Extent") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.temporal }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.update_frequency %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Update Frequency") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.update_frequency }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.status %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Status") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.status }}</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+				<div class="tab-pane" id="varmethTab">
+					<table class="table  table-condensed table-no-border-top">
+						<tbody>
+							{% if pkg_dict.common_core.observed_variables %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Observed Variables") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.observed_variables }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.units %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Units") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.units }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.data_collection_method %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Data Collection Method") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.data_collection_method }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.common_core.data_processing_method %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Data Processing Method") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.data_processing_method }}</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+				
+				
+			
+				<div class="tab-pane" id="contactTab">
+			
+					<table class="table  table-condensed table-no-border-top">
+			
+						<tbody>
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Submitter Name") }}</th>
+								<td class="dataset-details">{{ pkg_dict.sub_name }}</td>
+							</tr>
+			
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Submitter Email") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.sub_email }}</td>
+							</tr>
+			
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Submitter Organization") }}</th>
+								<td class="dataset-details">{{ pkg_dict.common_core.sub_organization }}</td>
+							</tr>
+			
+							{% if pkg_dict.author_email %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Author") }}</th>
+								<td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.author_email, name=pkg_dict.author) }}</td>
+							</tr>
+							{% elif pkg_dict.author %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Author") }}</th>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.author }}</td>
+							</tr>
+							{% endif %}
+			
+							{% if pkg_dict.maintainer_email %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _('Maintainer') }}</th>
+								<td class="dataset-details" property="dc:contributor">{{ h.mail_to(email_address=pkg_dict.maintainer_email, name=pkg_dict.maintainer) }}</td>
+							</tr>
+							{% elif pkg_dict.maintainer %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _('Maintainer') }}</th>
+								<td class="dataset-details" property="dc:contributor">{{ pkg_dict.maintainer }}</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+			
+			
+			
+				<div class="tab-pane" id="addTab">
+			
+					<section class="additional-info">
+			
+						<table class="table table-condensed table-no-border-top">
+							
+							<tbody>
+								
+								{% if pkg_dict.url %}
+								<tr>
+									<th scope="row" class="dataset-label">{{ _('Source') }}</th>
+									<td class="dataset-details" property="foaf:homepage">{{ h.link_to(pkg_dict.url, pkg_dict.url, rel='foaf:homepage', target='_blank') }}</td>
+								</tr>
+								{% endif %}
+			
+								{% if pkg_dict.version %}
+								<tr>
+									<th scope="row" class="dataset-label">{{ _("Version") }}</th>
+									<td class="dataset-details">{{ pkg_dict.version }}</td>
+								</tr>
+								{% endif %}
+			
+								{% if h.check_access('package_update',{'id':pkg_dict.id}) %}
+								<tr>
+									<th scope="row" class="dataset-label">{{ _("State") }}</th>
+									<td class="dataset-details">{{ pkg_dict.state }}</td>
+								</tr>
+								{% endif %}
+			
+								{% block extras scoped %}
+								{% for extra in h.sorted_extras(pkg_dict.extras) %}
+								{% set key, value = extra %}
+								<tr rel="dc:relation" resource="_:extra{{ i }}">
+									<th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
+									<td class="dataset-details" property="rdf:value">{{ value }}</td>
+								</tr>
+								{% endfor %}
+								{% endblock %}
+			
+								
+							</tbody>
+						</table>
+					</section>
+				</div>
+			
+			</div>
+		</div>
+		
+	</div>
 
-    {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
+	
+
 {% endblock %}
+
+
+
+
+
+
+
+{#{% ckan_extends %}
+
+{% block package_additional_info %}
+
+{% set pkg = h.load_data_into_dict(pkg) %}
+
+{# display common core metadata 
+{% snippet "package/snippets/metadata_info.html", pkg_dict=pkg %}
+
+{% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
+{% endblock %}
+
+#}
 

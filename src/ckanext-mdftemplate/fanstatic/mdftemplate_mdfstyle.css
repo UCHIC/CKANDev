@@ -34,6 +34,10 @@ body {
     height: 100%;
 }
 
+table.table-no-border-top tbody tr:first-child th, table.table-no-border-top tbody tr:first-child td{
+	border-top:0px;
+}
+
 #content p {
   font-size: 12px;
 }
@@ -236,9 +240,44 @@ footer {
 }
 
 
+
 /* 
 	Menu styles 
 */
+
+.nav{
+	margin-bottom: 0;
+}
+
+.tabs-body {
+	border: 1px solid #dddddd;
+	border-top: 0;
+	padding: 10px;
+	
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.citation-block {
+	padding-top: 20px;
+}
+
+.citation-label {
+	font-weight: bold;
+	color: #444;
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif !important;
+}
+
+.citation-text {
+	display: inline-block;
+	width: 90%;
+	float: right;
+	margin-bottom: 30px;
+}
 
 #main_header nav {
   height: 32px;
@@ -415,4 +454,33 @@ ul.nice-menu ul li a:hover {
 
 .tab-content {
 	display: block !important;
+}
+
+.panel-title {
+	width: 28%;
+	text-align: right;
+	float: left;
+}
+
+.panel-collapse {
+	clear:left;
+}
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('/fonts/glyphicons-halflings-regular.eot');
+  src: url('/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('/fonts/glyphicons-halflings-regular.woff') format('woff'), url('/fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+/* Glyphicons for collapsible panels*/
+.panel-heading .accordion-toggle:after {
+	font-family: 'Glyphicons Halflings';
+	content: "\e114";
+	float: right;
+	color: grey;
+	margin-left: 5px;
+}
+.panel-heading .accordion-toggle.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
 }
