@@ -18,7 +18,7 @@ import urllib2
 import urllib
 import json
 
-siteurl="http://127.0.0.1:5000"
+siteurl="http://iutah-ckan-test.uwrl.usu.edu"
 log = getLogger(__name__)
 # class log():
 #     @classmethod
@@ -410,7 +410,7 @@ def user_create(context, data_dict):
                         'capacity':'editor'        }
                 
         #apikey of an admin user of the default organization
-        apikey='bcdd4f18-5468-459e-a1b0-5a637245b84d'
+        apikey='95e8ce3d-2f70-4288-8f8c-aaa9aac3590d'
         # We'll use the member_create function to create a new user to the default organization.
         result = apicall('member_create', dataset_dict, apikey)
         
@@ -421,7 +421,6 @@ def user_create(context, data_dict):
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')   
    
-    data_dict['citation']= createcitation(context, data_dict)
     origpkg=p.toolkit.get_action('package_show')(context,data_dict)
     for dict in origpkg['extras']: 
         if dict['key'] =='sub_name': 
@@ -430,21 +429,24 @@ def pkg_update(context, data_dict):
             data_dict['sub_email']=dict['value']
         elif dict['key']=='sub_organization':
             data_dict['sub_organization']=dict['value']
+
+    data_dict['citation']= createcitation(context, data_dict, name=data_dict['sub_name'])
+    
     return package_update(context,data_dict)
 
 
 import ckan.lib.helpers as h    
-def createcitation(context, data_dict, year=None):    
+def createcitation(context, data_dict, subname =None, year=None):    
     
     url = h.url_for(controller='package', action='read', id=data_dict['name'], qualified=True)
+    origpkg= p.toolkit.get_action('package_show')(context,data_dict)
     
-    name = context['auth_user_obj'].fullname
+    name=subname
     try:
         if len(data_dict['author'])>0:
             name = data_dict['author']
     except:
-        #name = context.get('user').fullname
-        name = context['auth_user_obj'].fullname
+        name = subname
         print "no author"            
     
     creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi = name.split(" ")[0][0])
@@ -468,7 +470,7 @@ def createcitation(context, data_dict, year=None):
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    data_dict['citation']= createcitation(context, data_dict, datetime.now().year)
+    data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
     data_dict['sub_name']=context['auth_user_obj'].fullname
     data_dict['sub_email']=context['auth_user_obj'].email
     data_dict['sub_organization']=apicall('organization_show',{'id': data_dict['owner_org']},context['auth_user_obj'].apikey)['name']
