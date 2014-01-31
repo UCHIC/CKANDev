@@ -264,7 +264,7 @@
 						<tbody>
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Submitter Name") }}</th>
-								<td class="dataset-details">{{ pkg_dict.sub_name }}</td>
+								<td class="dataset-details">{{ pkg_dict.common_core.sub_name }}</td>
 							</tr>
 			
 							<tr>
@@ -365,18 +365,4 @@
 
 
 
-
-{#{% ckan_extends %}
-
-{% block package_additional_info %}
-
-{% set pkg = h.load_data_into_dict(pkg) %}
-
-{# display common core metadata 
-{% snippet "package/snippets/metadata_info.html", pkg_dict=pkg %}
-
-{% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
-{% endblock %}
-
-#}
 

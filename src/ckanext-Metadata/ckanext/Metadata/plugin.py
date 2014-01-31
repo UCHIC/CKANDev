@@ -6,7 +6,6 @@ from logging import getLogger
 import ckan.plugins as p
 import formencode.validators as v
 import copy
-import ckan.logic as l
 from ckan.logic.action.create import user_create, package_create
 from ckan.logic.action.update import package_update
 from formencode.validators import validators
@@ -19,6 +18,7 @@ import urllib2
 import urllib
 import json
 
+siteurl="http://127.0.0.1:5000"
 log = getLogger(__name__)
 # class log():
 #     @classmethod
@@ -70,18 +70,14 @@ for meta in required_if_applicable_metadata:
     meta['validators'].append(p.toolkit.get_validator('ignore_empty'))
 
 #some of these could be excluded (e.g. related_documents) which can be captured from other ckan default data
-expanded_metadata = ( {'id':'collection', 'validators': [v.String(max=1000)]},
-                      #{'id':'research_focus', 'validators': [v.String(max=1000)]},
-                      #{'id':'publication_status', 'validators': [v.String(max=100)]},
-                   
+expanded_metadata = (                   
                      {'id':'purpose', 'validators': [v.String(max=100)]},
+                     {'id':'collection', 'validators': [v.String(max=1000)]},
                    
                      {'id':'sub_name', 'validators': [v.String(max=100)]},
                      {'id':'sub_email', 'validators': [v.String(max=100)]},
                      
-                     {'id':'sub_organization', 'validators': [v.String(max=100)]},
-                     {'id':'sub_address', 'validators': [v.String(max=100)]},
-                     {'id':'sub_phone', 'validators': [v.PhoneNumber(), v.String(max=15)]},
+                     {'id':'sub_organization', 'validators': [v.String(max=100)]},                     
                                           
                       
                      {'id':'feature_types', 'validators': [v.String(max=100)]},
@@ -401,51 +397,47 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                  }
  
 
-#class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
-      
 def user_create(context, data_dict):   
         log.debug('my very own user_create() called')
-        obj = user_create(context,data_dict)
-         
+        obj = user_create(context,data_dict)        
          
         print "obj",obj
         dataset_dict = {# id of the organization to be added to
-                        #'id': '69549d56-bb25-4fda-84ff-949fd1c25787',
                         'id': 'iutah',
                         #id of the user to be added to the group
                         'object': obj['id'],
                         'object_type':'user',
-                        'capacity':'editor'
-        }
-        result= p.toolkit.get_action('member_create')(dataset_dict)
-        # Use the json module to dump the dictionary to a string for posting.
-        data_string = urllib.quote(json.dumps(dataset_dict))
- 
-        # We'll use the member_create function to create a new user to the default organization.
-        request = urllib2.Request('http://127.0.0.1:5000/api/3/action/member_create')
+                        'capacity':'editor'        }
+                
         #apikey of an admin user of the default organization
-        request.add_header('Authorization', 'bcdd4f18-5468-459e-a1b0-5a637245b84d')
-        response = urllib2.urlopen(request, data_string)
-        assert response.code == 200
-     
-        response_dict = json.loads(response.read())
-        assert response_dict['success'] is True
-        result = response_dict['result']
+        apikey='bcdd4f18-5468-459e-a1b0-5a637245b84d'
+        # We'll use the member_create function to create a new user to the default organization.
+        result = apicall('member_create', dataset_dict, apikey)
+        
         return obj
-    
+
     
 
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')   
    
     data_dict['citation']= createcitation(context, data_dict)
-    p.toolkit.check_access('package_update',context, data_dict)
+    origpkg=p.toolkit.get_action('package_show')(context,data_dict)
+    for dict in origpkg['extras']: 
+        if dict['key'] =='sub_name': 
+            data_dict['sub_name']=  dict['value'] 
+        elif dict['key']=='sub_email':
+            data_dict['sub_email']=dict['value']
+        elif dict['key']=='sub_organization':
+            data_dict['sub_organization']=dict['value']
     return package_update(context,data_dict)
 
+
 import ckan.lib.helpers as h    
-def createcitation(context, data_dict, year=None):
+def createcitation(context, data_dict, year=None):    
     
-    url = "http://127.0.0.1:5000"+h.url_for(controller='package', action='read', id=data_dict['name'])
+    url = h.url_for(controller='package', action='read', id=data_dict['name'], qualified=True)
+    
     name = context['auth_user_obj'].fullname
     try:
         if len(data_dict['author'])>0:
@@ -463,40 +455,14 @@ def createcitation(context, data_dict, year=None):
         version = 0 
         print "no version" 
     
-    if not year:
+    if not year:        
+        dateval= p.toolkit.get_action('package_show')(context,data_dict)['metadata_created']         
+        year= dateval.split("-")[0]
         
-        year=getdate(context, data_dict) 
     citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = year, title = data_dict['title'], version = version, url = url)
     return citation
 
 
-
-def getdate(context, data_dict):
-    try:
-        r= p.toolkit.get_action('package_show')(context,data_dict)
-        print r
-        print "get_action: ", r.metadata_created
-    except:
-        print" get action didn't work for package_show"
-    
-   
-    dataset_dict = {'id': data_dict['name']}
- 
-    data_string = urllib.quote(json.dumps(dataset_dict)) 
-    
-    request = urllib2.Request('http://127.0.0.1:5000/api/3/action/package_show')
-    request.add_header('Authorization', context['auth_user_obj'].apikey)
-    
-    response = urllib2.urlopen(request, data_string)
-    assert response.code == 200
-     
-    response_dict = json.loads(response.read())
-    assert response_dict['success'] is True
-    result = response_dict['result']
-    
-    dateval = result['metadata_created']  
-    year= dateval.split("-")[0]
-    return year
 
 
 
@@ -505,15 +471,40 @@ def pkg_create(context, data_dict):
     data_dict['citation']= createcitation(context, data_dict, datetime.now().year)
     data_dict['sub_name']=context['auth_user_obj'].fullname
     data_dict['sub_email']=context['auth_user_obj'].email
-    data_dict['sub_organization']=data_dict['owner_org']
-    data_dict['sub_address']=""
-    data_dict['sub_phone']=""
+    data_dict['sub_organization']=apicall('organization_show',{'id': data_dict['owner_org']},context['auth_user_obj'].apikey)['name']
+
     #if organization is iutah
-    if data_dict['owner_org']== '69549d56-bb25-4fda-84ff-949fd1c25787':
+    org= p.toolkit.get_action('package_show')(context,data_dict)['name'] 
+    print org
+    if data_dict['owner_org']== apicall('organization_show',{'id': 'iutah'},context['auth_user_obj'].apikey)['id']:
         data_dict['private']=True
                        
     p.toolkit.check_access('package_create',context, data_dict)
     return package_create(context,data_dict)
+
+
+
+
+def apicall(name, dataset_dict, apikey):   
+        log.debug('my very own apicall() called')
+#         
+        testurl = h.url_for(controller='api', action=name, ver=3, qualified=True)
+        
+        # Use the json module to dump the dictionary to a string for posting.
+        data_string = urllib.quote(json.dumps(dataset_dict))
+ 
+        # We'll use the member_create function to create a new user to the default organization.
+        request = urllib2.Request(siteurl+'/api/3/action/{apicall}'.format(apicall=name))
+        #apikey of an admin user of the default organization
+        request.add_header('Authorization', apikey)
+        response = urllib2.urlopen(request, data_string)
+        assert response.code == 200
+     
+        response_dict = json.loads(response.read())
+        assert response_dict['success'] is True
+        result = response_dict['result']
+        
+        return result 
     
     
     

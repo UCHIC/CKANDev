@@ -102,8 +102,8 @@
   
 	{% set data = h.load_data_into_dict(data) %}
 	{% set active = data.state == 'active' %}
-
-		{% if not active %}
+{#
+		{% if not active %}#}
 
 			{% snippet 'package/snippets/general_fields.html', data=data, errors=errors%}
 
@@ -115,8 +115,9 @@
 
 			<h2>Variable & Method Information</h2>
 			{% snippet 'package/snippets/variable_fields.html', data=data, errors=errors%}
-
+{#
 		{% endif %}
+		#}
 
 {% endblock %}
 
