@@ -270,22 +270,38 @@
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Submitter Email") }}</th>
 								<td class="dataset-details">{{ pkg_dict.common_core.sub_email }}</td>
-							</tr>
-			
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Submitter Organization") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.sub_organization }}</td>
-							</tr>
+							</tr>			
+							
 			
 							{% if pkg_dict.author_email %}
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("Author") }}</th>
+								<th scope="row" class="dataset-label">{{ _("Creator") }}</th>
 								<td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.author_email, name=pkg_dict.author) }}</td>
 							</tr>
 							{% elif pkg_dict.author %}
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("Author") }}</th>
+								<th scope="row" class="dataset-label">{{ _("Creator") }}</th>
 								<td class="dataset-details" property="dc:creator">{{ pkg_dict.author }}</td>
+							</tr>
+							
+							{% endif %}
+							
+							{% if pkg_dict.common_core.creator_organization %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Creator Organization") }}</th>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.common_core.creator_organization }}</td>
+							</tr>
+							{% endif %}
+							{% if pkg_dict.common_core.creator_address %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Creator Address") }}</th>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.common_core.creator_address }}</td>
+							</tr>
+							{% endif %}
+							{% if pkg_dict.common_core.creator_phone %}
+							<tr>
+								<th scope="row" class="dataset-label">{{ _("Creator Phone") }}</th>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.common_core.creator_phone }}</td>
 							</tr>
 							{% endif %}
 			

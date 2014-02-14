@@ -2,7 +2,7 @@
 
 
 {% block package_basic_fields_description %}
-{{ form.markdown('notes', id='field-notes', label=_('Abstract'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'}, is_required=true) }}
+{{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'}, is_required=true) }}
 {% endblock package_basic_fields_description%}
 
 {% block package_basic_fields_tags %}
@@ -12,9 +12,10 @@
 
 
 {% block package_basic_fields_license %}
+{#
 <div class="control-group">
 	{% set error = errors.license_id %}
-	<label class="control-label" for="field-license"> <span title="This field is required" class="control-required">*</span> {{ _("License") }}</label>
+	<label class="control-label" for="field-license"> <span title="This field is required" class="control-required">*</span> {{ _("Rights") }}</label>
 	<div class="controls">
 		<select id="field-license" name="license_id" data-module="autocomplete">
 			{% for license_desc, license_id in licenses|sort if license_desc  %}
@@ -26,6 +27,7 @@
 			at <a href="http://opendefinition.org/licenses/">opendefinition.org</a> {% endtrans %} </span>
 	</div>
 </div>
+#}
 {% endblock %}
 
 

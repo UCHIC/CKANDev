@@ -18,7 +18,7 @@ import urllib2
 import urllib
 import json
 
-siteurl="http://iutah-ckan-test.uwrl.usu.edu"
+siteurl="http://127.0.0.1:5000"
 log = getLogger(__name__)
 # class log():
 #     @classmethod
@@ -35,7 +35,7 @@ required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
                      {'id':'language', 'validators': [v.String(max=100)]},
                      
                      {'id':'type', 'validators': [v.String(max=100)]},
-                     {'id':'rights', 'validators': [v.String(max=100)]},#use_constraints
+                     {'id':'access_information', 'validators': [v.String(max=100)]},#use_constraints
                      {'id':'intended_use', 'validators': [v.String(max=100)]},
                      {'id':'status', 'validators': [v.String(max=100)]},
                      {'id':'observed_variables', 'validators': [v.String(max=100)]},
@@ -75,9 +75,10 @@ expanded_metadata = (
                      {'id':'collection', 'validators': [v.String(max=1000)]},
                    
                      {'id':'sub_name', 'validators': [v.String(max=100)]},
-                     {'id':'sub_email', 'validators': [v.String(max=100)]},
-                     
-                     {'id':'sub_organization', 'validators': [v.String(max=100)]},                     
+                     {'id':'sub_email', 'validators': [v.String(max=100)]},                     
+                     {'id':'creator_organization', 'validators': [v.String(max=100)]},    
+                     {'id':'creator_address', 'validators': [v.String(max=100)]},  
+                     {'id':'creator_phone', 'validators': [v.String(max=100)]},                
                                           
                       
                      {'id':'feature_types', 'validators': [v.String(max=100)]},
@@ -218,7 +219,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for research focus doesn't exist")
-            vocab = cls.__create_vocabulary('research_focus',u'RFA1', u'RFA2', u'RFA3',u'other')
+            vocab = cls.__create_vocabulary('research_focus',u'RFA1', u'RFA2', u'RFA3',u'other', u'CI', u'EOD')
 
         research_focus = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % research_focus)
@@ -229,7 +230,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def get_update_frequency(cls):
         '''
         log.debug('get_update_frequency() called')
-            Jinja2 template helper function, gets the vocabulary for accrual periodicity
+            Jinja2 template helper function, gets the vocabulary for update_frequency
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
@@ -239,8 +240,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             data = {'id': 'update_frequency'} #we can use the id or name for id param
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for accrual periodicity doesn't exist")
-            vocab = cls.__create_vocabulary('update_frequency', u'hourly', u'daily', u'weekly', u'yearly', u'other')
+            log.debug("vocabulary_show failed, meaning the vocabulary for update_frequency doesn't exist")
+            vocab = cls.__create_vocabulary('update_frequency', u'hourly', u'daily', u'weekly', u'yearly',u'monthly', u'real time', u'other')
 
         update_frequency = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % update_frequency)
@@ -263,7 +264,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
-            vocab = cls.__create_vocabulary(u'study_area', u'none',u'WRMA-Wasatch Range Metropolitan Area', u'Logan River Watershed', u'Red Butte Creek Watershed', u'Provo River Watershed', u'Multiple Watersheds')
+            vocab = cls.__create_vocabulary(u'study_area', u'other',u'WRMA-Wasatch Range Metropolitan Area', u'Logan River Watershed', u'Red Butte Creek Watershed', u'Provo River Watershed', u'Multiple Watersheds')
  
         study_area = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % study_area)
@@ -273,7 +274,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     @classmethod
     def get_types(cls):
         '''        log.debug('get_study_area() called')
-            Jinja2 template helper function, gets the vocabulary for access levels
+            Jinja2 template helper function, gets the vocabulary for type
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
@@ -283,8 +284,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             data = {'id': 'type'} #we can use the id or name for id param
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
-            vocab = cls.__create_vocabulary(u'type', u'Time Series', u'shapefile', u'database', u'model', u'collection', u'raster', u'other')
+            log.debug("vocabulary_show failed, meaning the vocabulary for type doesn't exist")
+            vocab = cls.__create_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
  
         types = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % types)
@@ -294,7 +295,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     @classmethod
     def get_status(cls):
         '''        log.debug('get_study_area() called')
-            Jinja2 template helper function, gets the vocabulary for access levels
+            Jinja2 template helper function, gets the vocabulary for status
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
@@ -304,7 +305,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             data = {'id': 'status'} #we can use the id or name for id param
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
+            log.debug("vocabulary_show failed, meaning the vocabulary for status doesn't exist")
             vocab = cls.__create_vocabulary(u'status', u'complete', u'ongoing', u'planned', u'unknown')
  
         status = [x['display_name'] for x in vocab['tags']]
@@ -393,7 +394,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         log.debug('get_actions() called') 
         return  {'package_create':pkg_create,
                  'package_update':pkg_update,
-                 'user_create':user_create
+                 #'user_create':user_create
                  }
  
 
@@ -427,10 +428,14 @@ def pkg_update(context, data_dict):
             data_dict['sub_name']=  dict['value'] 
         elif dict['key']=='sub_email':
             data_dict['sub_email']=dict['value']
-        elif dict['key']=='sub_organization':
-            data_dict['sub_organization']=dict['value']
+        elif dict['key']=='creator_organization':
+            data_dict['creator_organization']=dict['value']
+        elif dict['key']=='creator_phone':
+            data_dict['creator_phone']=dict['value']
+        elif dict['key']=='creator_address':
+            data_dict['creator_address']=dict['value']
 
-    data_dict['citation']= createcitation(context, data_dict, name=data_dict['sub_name'])
+    data_dict['citation']= createcitation(context, data_dict, subname=data_dict['sub_name'])
     
     return package_update(context,data_dict)
 
@@ -446,8 +451,7 @@ def createcitation(context, data_dict, subname =None, year=None):
         if len(data_dict['author'])>0:
             name = data_dict['author']
     except:
-        name = subname
-        print "no author"            
+        name = subname           
     
     creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi = name.split(" ")[0][0])
     version = 0       
@@ -455,7 +459,6 @@ def createcitation(context, data_dict, subname =None, year=None):
         version = data_dict['version']
     except:
         version = 0 
-        print "no version" 
     
     if not year:        
         dateval= p.toolkit.get_action('package_show')(context,data_dict)['metadata_created']         
@@ -470,33 +473,50 @@ def createcitation(context, data_dict, subname =None, year=None):
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
+    
     data_dict['sub_name']=context['auth_user_obj'].fullname
     data_dict['sub_email']=context['auth_user_obj'].email
-    data_dict['sub_organization']=apicall('organization_show',{'id': data_dict['owner_org']},context['auth_user_obj'].apikey)['name']
+    data_dict['creator_organization']=u''
+    data_dict['creator_address'] =u''
+    data_dict['creator_phone']=u''
+    data_dict['version']=u'1.0'
+    data_dict['license_id']=u'cc-by'
+    data_dict['citation']=u''
 
     #if organization is iutah
-    org= p.toolkit.get_action('package_show')(context,data_dict)['name'] 
-    print org
+
     if data_dict['owner_org']== apicall('organization_show',{'id': 'iutah'},context['auth_user_obj'].apikey)['id']:
         data_dict['private']=True
                        
     p.toolkit.check_access('package_create',context, data_dict)
-    return package_create(context,data_dict)
+    pkg= package_create(context,data_dict)
+    data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
+    package_update(context,data_dict)
+    return pkg
 
 
 
+from routes import request_config
+def getbaseurl():
+    config = request_config()
+        
+    host = config.host
+    protocol = config.protocol
+    url = protocol + '://' + host 
+    return url
 
 def apicall(name, dataset_dict, apikey):   
         log.debug('my very own apicall() called')
 #         
-        testurl = h.url_for(controller='api', action=name, ver=3, qualified=True)
+        testurl = h.url_for(controller='api',action= 'action', ver=3, qualified=True)
+        testurl2 = getbaseurl()
+        url = testurl.split('package')[0]
         
         # Use the json module to dump the dictionary to a string for posting.
         data_string = urllib.quote(json.dumps(dataset_dict))
  
         # We'll use the member_create function to create a new user to the default organization.
-        request = urllib2.Request(siteurl+'/api/3/action/{apicall}'.format(apicall=name))
+        request = urllib2.Request(url+'api/action/{apicall}'.format(apicall=name))
         #apikey of an admin user of the default organization
         request.add_header('Authorization', apikey)
         response = urllib2.urlopen(request, data_string)

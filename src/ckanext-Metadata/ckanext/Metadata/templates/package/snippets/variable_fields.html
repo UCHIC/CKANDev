@@ -8,7 +8,7 @@
 {% block package_variable_metadata %}
 
 
-{{ form.input('observed_variables', id='field-observed_variables', label=_('Observed Variables'), placeholder=_('e.g., temperature, streamflow, land cover, elevation'), value=data.common_core.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}, is_required=true) }}
+{{ form.input('observed_variables', id='field-observed_variables', label=_('Observed Variables'), placeholder=_('temperature, streamflow, land cover, elevation'), value=data.common_core.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}, is_required=true) }}
 
 {#optional Metadata#}
 <div class="panel panel-default">
@@ -20,13 +20,13 @@
 	<div id="vmDiv" class="panel-collapse collapse out">
 
 		<p>
-			{{ form.input('units', label=_('Units'), id='field-units', placeholder=_(''), value=data.units, error=errors.units, classes=['control-medium'], attrs={'title': 'What units are the data expressed in?'} )}}
+			{{ form.input('units', label=_('Units'), id='field-units', placeholder=_('Celsius, feet, percentage'), value=data.units, error=errors.units, classes=['control-medium'], attrs={'title': 'What units are the data expressed in?'} )}}
 		</p>
 		<p>
-			{{ form.input('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_(''), value=data.data_collection_method, error=errors.data_collection_method, classes=['control-medium'], attrs={'title': 'How were the data collected, generated, or otherwise produced?'} )}}
+			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('YSI EXO sonde used to measuer temperature. Values logged using a Campbell Scientivic datalogger and streamd to iUTAH servers. Calibration conducted weekly'), value=data.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
 		</p>
 		<p>
-			{{ form.input('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_(''), value=data.data_processing_method, error=errors.data_processing_method, classes=['control-medium'], attrs={'title': 'Were the data processed with a model or an analytical tool? (e.g., ArcGIS, R, SAS, etc.)? What were the processing steps?'} )}}
+			{{ form.markdown('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_('Data quality control and post processing conducted with ODM tools Python by watershed technicians'), value=data.data_processing_method, error=errors.data_processing_method,  attrs={'title': 'The methods and programs used and specific steps undertaken to process the data.'} )}}
 		</p>
 	</div>
 </div>

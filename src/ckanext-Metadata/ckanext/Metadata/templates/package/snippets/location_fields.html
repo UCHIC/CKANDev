@@ -46,13 +46,13 @@
 			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_(''), value=data.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={'title': 'What is the west extent of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('points, lines, polygons, regularly spaced grid, etc.'), value=data.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'For geospatial data, the type of geographic feature'} )}}
+			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('points, lines, polygons, raster, etc.'), value=data.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'For geospatial data, the type of geographic feature'} )}}
 		</p>
 		<p>
-			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_(''), value=data.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'What is the horizontal coordinate system of the data'} )}}
+			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_('NAD83'), value=data.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'What is the horizontal coordinate system of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('vert_coord_system', label=_('Vertical Coordinate System'), id='field-vert_coord_system', placeholder=_(''), value=data.vert_coord_system, error=errors.vert_coord_system, classes=['control-medium'], attrs={'title': 'What is the vertical coordinate system of the data'} )}}
+			{{ form.input('vert_coord_system', label=_('Vertical Coordinate System'), id='field-vert_coord_system', placeholder=_('EGM84'), value=data.vert_coord_system, error=errors.vert_coord_system, classes=['control-medium'], attrs={'title': 'What is the vertical coordinate system of the data'} )}}
 		</p>
 	</div>
 </div>
