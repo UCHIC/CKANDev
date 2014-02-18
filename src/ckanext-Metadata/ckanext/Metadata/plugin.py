@@ -18,7 +18,7 @@ import urllib2
 import urllib
 import json
 
-siteurl="http://127.0.0.1:5000"
+
 log = getLogger(__name__)
 # class log():
 #     @classmethod
@@ -204,7 +204,27 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             data = {'name': tag, 'vocabulary_id': vocab['id']}
             p.toolkit.get_action('tag_create')(context, data)
         return vocab
+    
+    @classmethod
+    def __update_vocabulary(cls, name, *values):
+        user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
+        context = {'user': user['name']}
 
+        log.debug("Updating vocab '{0}'".format(name))
+        data = {'id': name}
+        vocab = p.toolkit.get_action('vocabulary_show')(context, data)
+        data = {'name': name, 'id': vocab['id']}
+        vocab = p.toolkit.get_action('vocabulary_update')(context, data)
+
+        log.debug('Vocab updated: {0}'.format(vocab))
+        for tag in values:
+            log.debug(
+                "Adding tag {0} to vocab {1}'".format(tag, name))
+            data = {'name': tag, 'vocabulary_id': vocab['id']}
+            p.toolkit.get_action('tag_create')(context, data)
+        return vocab
+        
+        
     @classmethod
     def get_research_focus(cls):
         '''        log.debug('get_research_focus() called')
@@ -286,7 +306,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for type doesn't exist")
             vocab = cls.__create_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
- 
+        #vocab = cls.__update_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
+        
         types = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % types)
  
@@ -434,6 +455,14 @@ def pkg_update(context, data_dict):
             data_dict['creator_phone']=dict['value']
         elif dict['key']=='creator_address':
             data_dict['creator_address']=dict['value']
+            
+            
+    if 'creator_address'  not in  data_dict:
+        data_dict['creator_address'] =''
+    if 'creator_organization'  not in  data_dict:
+        data_dict['creator_organization']=''
+    if 'creator_phone'  not in  data_dict:   
+        data_dict['creator_phone']=''        
 
     data_dict['citation']= createcitation(context, data_dict, subname=data_dict['sub_name'])
     
@@ -473,23 +502,30 @@ def createcitation(context, data_dict, subname =None, year=None):
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    
+    print context.keys()
+    print context['user']
+    user= apicall('user_show', {'id': context['user']}, context['auth_user_obj'].apikey)
     data_dict['sub_name']=context['auth_user_obj'].fullname
     data_dict['sub_email']=context['auth_user_obj'].email
-    data_dict['creator_organization']=u''
-    data_dict['creator_address'] =u''
-    data_dict['creator_phone']=u''
+    data_dict['creator_organization']=''
+    data_dict['creator_address'] =''
+    data_dict['creator_phone']=''
     data_dict['version']=u'1.0'
     data_dict['license_id']=u'cc-by'
     data_dict['citation']=u''
 
     #if organization is iutah
-
-    if data_dict['owner_org']== apicall('organization_show',{'id': 'iutah'},context['auth_user_obj'].apikey)['id']:
+    iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
+    print iutahorg
+    print iutahorg['id']
+    val = apicall('organization_show',{'id': 'iutah'},context['auth_user_obj'].apikey)['id']
+    if data_dict['owner_org']== iutahorg['id']:
         data_dict['private']=True
                        
     p.toolkit.check_access('package_create',context, data_dict)
     pkg= package_create(context,data_dict)
+    
+    
     data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
     package_update(context,data_dict)
     return pkg
@@ -506,17 +542,16 @@ def getbaseurl():
     return url
 
 def apicall(name, dataset_dict, apikey):   
-        log.debug('my very own apicall() called')
+        log.debug('my very own apicall() called, ', name)
 #         
-        testurl = h.url_for(controller='api',action= 'action', ver=3, qualified=True)
-        testurl2 = getbaseurl()
-        url = testurl.split('package')[0]
+        
+        url = getbaseurl()
         
         # Use the json module to dump the dictionary to a string for posting.
         data_string = urllib.quote(json.dumps(dataset_dict))
  
         # We'll use the member_create function to create a new user to the default organization.
-        request = urllib2.Request(url+'api/action/{apicall}'.format(apicall=name))
+        request = urllib2.Request(url+'/api/action/{apicall}'.format(apicall=name))
         #apikey of an admin user of the default organization
         request.add_header('Authorization', apikey)
         response = urllib2.urlopen(request, data_string)

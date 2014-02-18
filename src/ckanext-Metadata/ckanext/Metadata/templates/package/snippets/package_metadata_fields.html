@@ -4,9 +4,9 @@
 
 {{ form.input('author_email', label=_('Creator Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email, error=errors.author_email, classes=['control-medium']) }}
 
-{{ form.input('creator_organization', label=_('Creator Organization'), id='field-creator-organization', placeholder=_('Utah State University'), value=data.common_core.creator_organization, error=errors.corg, classes=['control-medium'])}}
+{{ form.input('creator_organization', label=_('Creator Organization'), id='field-creator-organization', placeholder=_('Utah State University'), value=data.creator_organization, error=errors.corg, classes=['control-medium'])}}
 {{ form.input('creator_address', label=_('Creator Address'), id='field-creator-address', placeholder=_('795 E DRAGRAM TUCSON AZ 85705'), value=data.creator_address, error=errors.caddress, classes=['control-medium'] )}}
-{{ form.input('creator_phone', label=_('Creator Phone'), id='field-creator-phone', placeholder=_('123-456-7890'), value=data.common_core.creator_phone, error=errors.cphone, classes=['control-medium'])}}
+{{ form.input('creator_phone', label=_('Creator Phone'), id='field-creator-phone', placeholder=_('123-456-7890'), value=data.creator_phone, error=errors.cphone, classes=['control-medium'])}}
 	
 {% endblock %}
 

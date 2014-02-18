@@ -286,22 +286,22 @@
 							
 							{% endif %}
 							
-							{% if pkg_dict.common_core.creator_organization %}
+							{% if pkg_dict.creator_organization %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Organization") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.common_core.creator_organization }}</td>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.creator_organization }}</td>
 							</tr>
 							{% endif %}
-							{% if pkg_dict.common_core.creator_address %}
+							{% if pkg_dict.creator_address %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Address") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.common_core.creator_address }}</td>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.creator_address }}</td>
 							</tr>
 							{% endif %}
-							{% if pkg_dict.common_core.creator_phone %}
+							{% if pkg_dict.creator_phone %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Phone") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.common_core.creator_phone }}</td>
+								<td class="dataset-details" property="dc:creator">{{ pkg_dict.creator_phone }}</td>
 							</tr>
 							{% endif %}
 			
