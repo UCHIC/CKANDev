@@ -502,11 +502,10 @@ def createcitation(context, data_dict, subname =None, year=None):
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    print context.keys()
-    print context['user']
-    user= apicall('user_show', {'id': context['user']}, context['auth_user_obj'].apikey)
-    data_dict['sub_name']=context['auth_user_obj'].fullname
-    data_dict['sub_email']=context['auth_user_obj'].email
+    
+    user=p.toolkit.get_action('user_show')(context,{'id': context['user']})
+    data_dict['sub_name']=user['fullname']
+    data_dict['sub_email']=user['email']
     data_dict['creator_organization']=''
     data_dict['creator_address'] =''
     data_dict['creator_phone']=''
@@ -517,8 +516,8 @@ def pkg_create(context, data_dict):
     #if organization is iutah
     iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
     print iutahorg
-    print iutahorg['id']
-    val = apicall('organization_show',{'id': 'iutah'},context['auth_user_obj'].apikey)['id']
+    print 
+    val = iutahorg['id']
     if data_dict['owner_org']== iutahorg['id']:
         data_dict['private']=True
                        
@@ -526,8 +525,8 @@ def pkg_create(context, data_dict):
     pkg= package_create(context,data_dict)
     
     
-    data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
-    package_update(context,data_dict)
+#     data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
+#     package_update(context,data_dict)
     return pkg
 
 
