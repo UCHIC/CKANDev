@@ -31,11 +31,11 @@ log = getLogger(__name__)
 required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
                      #{'id':'contact_email', 'validators': [v.Email(),v.String(max=50)]},
                      ## iUtah
-                     #{'id':'access_information', 'validators': [v.String(max=100)]},
+                    
                      {'id':'language', 'validators': [v.String(max=100)]},
                      
                      {'id':'type', 'validators': [v.String(max=100)]},
-                     {'id':'access_information', 'validators': [v.String(max=100)]},#use_constraints
+                     {'id':'access_information', 'validators': [v.String(max=500)]},#use_constraints
                      {'id':'intended_use', 'validators': [v.String(max=100)]},
                      {'id':'status', 'validators': [v.String(max=100)]},
                      {'id':'observed_variables', 'validators': [v.String(max=100)]},
