@@ -10,7 +10,7 @@
 	
 	<div class="citation-block">
 		<span class="citation-label">{{ _("Citation:") }}</span>
-		<span class="citation-text">{{ pkg_dict.common_core.citation }}</span>
+		<span class="citation-text">{{ pkg_dict.custom_meta.citation }}</span>
 	</div>
 	<div style="clear:both"></div>
 	<div class="panel panel-default">
@@ -56,59 +56,59 @@
 					<table class="table table-condensed table-no-border-top">
 			
 						<tbody>
-							{% if pkg_dict.common_core.purpose %}
+							{% if pkg_dict.custom_meta.purpose %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Purpose") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.purpose }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.purpose }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.collection %}
+							{% if pkg_dict.custom_meta.collection %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Collection") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.collection }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.collection }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.language %}
+							{% if pkg_dict.custom_meta.language %}
 							<tr>
 								<th scope="row" class=" dataset-label">{{ _("Language") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.language }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.language }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.research_focus %}
+							{% if pkg_dict.custom_meta.research_focus %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Research Focus Area") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.research_focus }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.research_focus }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.intended_use %}
+							{% if pkg_dict.custom_meta.intended_use %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Intended Use") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.intended_use }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.intended_use }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.access_information %}
+							{% if pkg_dict.custom_meta.access_information %}
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("access_information") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.access_information }}</td>
+								<th scope="row" class="dataset-label">{{ _("Access Information") }}</th>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.access_information }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.type %}
+							{% if pkg_dict.custom_meta.type %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Type") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.type }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.type }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.required_software %}
+							{% if pkg_dict.custom_meta.required_software %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Required Software") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.required_software }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.required_software }}</td>
 							</tr>
 							{% endif %}
 						</tbody>
@@ -122,66 +122,66 @@
 					<table class="table  table-condensed table-no-border-top">
 			
 						<tbody>
-							{% if pkg_dict.common_core.spatial %}
+							{% if pkg_dict.custom_meta.spatial %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Spatial Extent") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.spatial }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.spatial }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.study_area %}
+							{% if pkg_dict.custom_meta.study_area %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Study Area") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.study_area }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.study_area }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.north_extent %}
+							{% if pkg_dict.custom_meta.north_extent %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("North Extent") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.north_extent }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.north_extent }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.south_extent %}
+							{% if pkg_dict.custom_meta.south_extent %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("South Extent") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.south_extent }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.south_extent }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.east_extent %}
+							{% if pkg_dict.custom_meta.east_extent %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("East Extent") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.east_extent }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.east_extent }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.west_extent %}
+							{% if pkg_dict.custom_meta.west_extent %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("West Extent") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.west_extent }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.west_extent }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.feature_types %}
+							{% if pkg_dict.custom_meta.feature_types %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Feature Types") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.feature_types}}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.feature_types}}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.horz_coord_system %}
+							{% if pkg_dict.custom_meta.horz_coord_system %}
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("Hoorizantal Coordinate") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.horz_coord_system }}</td>
+								<th scope="row" class="dataset-label">{{ _("Hoorizontal Coordinate") }}</th>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.horz_coord_system }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.vert_coord_system %}
+							{% if pkg_dict.custom_meta.vert_coord_system %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Vertical Coordiante") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.vert_coord_system }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.vert_coord_system }}</td>
 							</tr>
 							{% endif %}
 						</tbody>
@@ -195,24 +195,24 @@
 					<table class="table  table-condensed table-no-border-top">
 			
 						<tbody>
-							{% if pkg_dict.common_core.temporal %}
+							{% if pkg_dict.custom_meta.temporal %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Temporal  Extent") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.temporal }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.temporal }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.update_frequency %}
+							{% if pkg_dict.custom_meta.update_frequency %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Update Frequency") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.update_frequency }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.update_frequency }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.status %}
+							{% if pkg_dict.custom_meta.status %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Status") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.status }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.status }}</td>
 							</tr>
 							{% endif %}
 						</tbody>
@@ -224,31 +224,31 @@
 				<div class="tab-pane" id="varmethTab">
 					<table class="table  table-condensed table-no-border-top">
 						<tbody>
-							{% if pkg_dict.common_core.observed_variables %}
+							{% if pkg_dict.custom_meta.observed_variables %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Observed Variables") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.observed_variables }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.observed_variables }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.units %}
+							{% if pkg_dict.custom_meta.units %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Units") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.units }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.units }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.data_collection_method %}
+							{% if pkg_dict.custom_meta.data_collection_method %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Data Collection Method") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.data_collection_method }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.data_collection_method }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.common_core.data_processing_method %}
+							{% if pkg_dict.custom_meta.data_processing_method %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Data Processing Method") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.data_processing_method }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.data_processing_method }}</td>
 							</tr>
 							{% endif %}
 						</tbody>
@@ -264,12 +264,12 @@
 						<tbody>
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Submitter Name") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.sub_name }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.sub_name }}</td>
 							</tr>
 			
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Submitter Email") }}</th>
-								<td class="dataset-details">{{ pkg_dict.common_core.sub_email }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.sub_email }}</td>
 							</tr>			
 							
 			
@@ -286,25 +286,22 @@
 							
 							{% endif %}
 							
-							{% if pkg_dict.creator_organization %}
+							
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Organization") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.creator_organization }}</td>
+								<td class="dataset-details" >{{ pkg_dict.creator_organization }}</td>
 							</tr>
-							{% endif %}
-							{% if pkg_dict.creator_address %}
+							
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Address") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.creator_address }}</td>
+								<td class="dataset-details" >{{ pkg_dict.creator_address }}</td>
 							</tr>
-							{% endif %}
-							{% if pkg_dict.creator_phone %}
+							
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Phone") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.creator_phone }}</td>
+								<td class="dataset-details" >{{ pkg_dict.creator_phone }}</td>
 							</tr>
-							{% endif %}
-			
+							
 							{% if pkg_dict.maintainer_email %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _('Maintainer') }}</th>

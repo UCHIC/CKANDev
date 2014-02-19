@@ -8,7 +8,7 @@
 {% block package_variable_metadata %}
 
 
-{{ form.input('observed_variables', id='field-observed_variables', label=_('Observed Variables'), placeholder=_('temperature, streamflow, land cover, elevation'), value=data.common_core.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}, is_required=true) }}
+{{ form.input('observed_variables', id='field-observed_variables', label=_('Observed Variables'), placeholder=_('temperature, streamflow, land cover, elevation'), value=data.custom_meta.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}, is_required=true) }}
 
 {#optional Metadata#}
 <div class="panel panel-default">

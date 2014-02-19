@@ -14,7 +14,7 @@
 	<div class="controls">
 		<select id="field-status" name="status" data-module="autocomplete" title="Is data collection ongoing, completed, or planned?">
 			{% for status in h.get_status() %}
-			<option value="{{ status }}" {% if type == data.common_core.status %}selected{% endif %} > {{ status }} </option>
+			<option value="{{ status }}" {% if type == data.custom_meta.status %}selected{% endif %} > {{ status }} </option>
 			{% endfor %}
 		</select>
 	</div>
@@ -30,7 +30,7 @@
 	</div>
 	<div id="temporalDiv" class="panel-collapse collapse out">
 		<p>
-		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('2000-01-15 00:45:00,2010-01-15 00:06:00'), value=data.common_core.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the resource'}) }}
+		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('2000-01-15 00:45:00,2010-01-15 00:06:00'), value=data.custom_meta.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the resource'}) }}
 		</p>
 		<p>
 			<div class="control-group">
@@ -38,7 +38,7 @@
 				<div class="controls">
 					<select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="Frequency with which dataset is published.">
 						{% for level in h.update_frequency() %}
-						<option value="{{ level }}" {% if level == data.common_core.update_frequency %}selected{% endif %} > {{ level }} </option>
+						<option value="{{ level }}" {% if level == data.custom_meta.update_frequency %}selected{% endif %} > {{ level }} </option>
 						{% endfor %}
 					</select>
 				</div>

@@ -19,7 +19,7 @@
 	<div id="spatialDiv" class="panel-collapse collapse out">
 
 		<p>
-			{{ form.input('spatial', label=_('Spatial Coverage'), id='field-spatial', placeholder=_('Salt Lake City, Utah'), value=data.common_core.spatial, error=errors.spatial, classes=['control-medium'], attrs={'title': 'The range of spatial applicability of a dataset. Could include a spatial region like a bounding box or a named place.'}) }}
+			{{ form.input('spatial', label=_('Spatial Coverage'), id='field-spatial', placeholder=_('Salt Lake City, Utah'), value=data.custom_meta.spatial, error=errors.spatial, classes=['control-medium'], attrs={'title': 'The range of spatial applicability of a dataset. Could include a spatial region like a bounding box or a named place.'}) }}
 		</p>
 		<p>
 			<div class="control-group">
