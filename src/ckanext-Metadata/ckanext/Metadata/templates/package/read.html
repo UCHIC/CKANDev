@@ -65,17 +65,16 @@
 			
 							{% if pkg_dict.custom_meta.collection %}
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("Collection") }}</th>
+								<th scope="row" class="dataset-label">{{ _("Relation") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.collection }}</td>
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.custom_meta.language %}
+							
 							<tr>
 								<th scope="row" class=" dataset-label">{{ _("Language") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.language }}</td>
 							</tr>
-							{% endif %}
 			
 							{% if pkg_dict.custom_meta.research_focus %}
 							<tr>
@@ -91,19 +90,15 @@
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.custom_meta.access_information %}
+							
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Access Information") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.access_information }}</td>
 							</tr>
-							{% endif %}
-			
-							{% if pkg_dict.custom_meta.type %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Type") }}</th>
-								<td class="dataset-details">{{ pkg_dict.custom_meta.type }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.data_type }}</td>
 							</tr>
-							{% endif %}
 			
 							{% if pkg_dict.custom_meta.required_software %}
 							<tr>
@@ -209,12 +204,11 @@
 							</tr>
 							{% endif %}
 			
-							{% if pkg_dict.custom_meta.status %}
+							
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Status") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.status }}</td>
 							</tr>
-							{% endif %}
 						</tbody>
 					</table>
 				</div>
@@ -224,12 +218,12 @@
 				<div class="tab-pane" id="varmethTab">
 					<table class="table  table-condensed table-no-border-top">
 						<tbody>
-							{% if pkg_dict.custom_meta.observed_variables %}
+							
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Observed Variables") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.observed_variables }}</td>
 							</tr>
-							{% endif %}
+							
 			
 							{% if pkg_dict.custom_meta.units %}
 							<tr>
@@ -263,16 +257,10 @@
 			
 						<tbody>
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("Submitter Name") }}</th>
-								<td class="dataset-details">{{ pkg_dict.custom_meta.sub_name }}</td>
+								<th scope="row" class="dataset-label">{{ _("Submitter") }}</th>
+								<td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.custom_meta.sub_email, name=pkg_dict.custom_meta.sub_name) }}</td>
 							</tr>
-			
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Submitter Email") }}</th>
-								<td class="dataset-details">{{ pkg_dict.custom_meta.sub_email }}</td>
-							</tr>			
-							
-			
+
 							{% if pkg_dict.author_email %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator") }}</th>
@@ -286,21 +274,26 @@
 							
 							{% endif %}
 							
-							
+							{% if pkg_dict.custom_meta.creator_organization %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Organization") }}</th>
-								<td class="dataset-details" >{{ pkg_dict.creator_organization }}</td>
+								<td class="dataset-details" >{{ pkg_dict.custom_meta.creator_organization }}</td>
 							</tr>
+							{% endif %}
 							
+							{% if pkg_dict.custom_meta.creator_address %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Address") }}</th>
-								<td class="dataset-details" >{{ pkg_dict.creator_address }}</td>
+								<td class="dataset-details" >{{ pkg_dict.custom_meta.creator_address }}</td>
 							</tr>
+							{% endif %}
 							
+							{% if pkg_dict.custom_meta.creator_phone %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Creator Phone") }}</th>
-								<td class="dataset-details" >{{ pkg_dict.creator_phone }}</td>
+								<td class="dataset-details" >{{ pkg_dict.custom_meta.creator_phone }}</td>
 							</tr>
+							{% endif %}
 							
 							{% if pkg_dict.maintainer_email %}
 							<tr>
