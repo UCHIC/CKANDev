@@ -465,7 +465,10 @@ def pkg_update(context, data_dict):
              sub_name = dict['value']
              
 
-            
+    iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
+    if data_dict['owner_org']== iutahorg['id']:
+        data_dict['private']=origpkg['private']
+                               
             
 
 
@@ -520,9 +523,6 @@ def pkg_create(context, data_dict):
 
     #if organization is iutah
     iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
-    print iutahorg
-    print 
-    val = iutahorg['id']
     if data_dict['owner_org']== iutahorg['id']:
         data_dict['private']=True
                        
