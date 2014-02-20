@@ -34,7 +34,7 @@ required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
                     
                      {'id':'language', 'validators': [v.String(max=100)]},
                      
-                     {'id':'data_type', 'validators': [v.String(max=100)]},
+                     {'id':'type', 'validators': [v.String(max=100)]},
                      {'id':'access_information', 'validators': [v.String(max=500)]},#use_constraints
                      {'id':'intended_use', 'validators': [v.String(max=100)]},
                      {'id':'status', 'validators': [v.String(max=100)]},
@@ -119,7 +119,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IConfigurer)
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
-    p.implements(p.IMapper)
+    #p.implements(p.IMapper)
 
 
 
@@ -288,8 +288,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return study_area
     
     @classmethod
-    def get_data_types(cls):
-        '''        log.debug('data_type() called')
+    def get_types(cls):
+        '''        log.debug('type() called')
             Jinja2 template helper function, gets the vocabulary for type
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
@@ -301,7 +301,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for type doesn't exist")
-            vocab = cls.__create_vocabulary(u'data_type', u'dataset', u'model', u'collection', u'other')
+            vocab = cls.__create_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
         #vocab = cls.__update_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
         
         types = [x['display_name'] for x in vocab['tags']]
@@ -311,7 +311,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     
     @classmethod
     def get_status(cls):
-        '''        log.debug('get_status() called')
+        '''        log.debug('get_study_area() called')
             Jinja2 template helper function, gets the vocabulary for status
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
@@ -403,7 +403,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 'load_data_into_dict':  self.load_data_into_dict,
                 'study_area': self.get_study_area,
                 'get_status':self.get_status,
-                'get_data_types':self.get_data_types,
+                'get_types':self.get_types,
                 'update_frequency': self.get_update_frequency}
         
         

@@ -95,10 +95,12 @@
 								<th scope="row" class="dataset-label">{{ _("Access Information") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.access_information }}</td>
 							</tr>
+							{% if pkg_dict.custom_meta.type %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Type") }}</th>
-								<td class="dataset-details">{{ pkg_dict.custom_meta.data_type }}</td>
+								<td class="dataset-details">{{ pkg_dict.custom_meta.type }}</td>
 							</tr>
+							{% endif %}
 			
 							{% if pkg_dict.custom_meta.required_software %}
 							<tr>
