@@ -102,7 +102,6 @@ expanded_metadata = (
                      {'id':'required_software', 'validators': [v.String(max=100)]},
                      #{'id':'file_format', 'validators': [v.String(max=100)]},
 
-
 )
 
 for meta in expanded_metadata:
@@ -122,7 +121,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IConfigurer)
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
-#     p.implements(p.IMapper)
+    #p.implements(p.IMapper)
 
 
 
@@ -293,7 +292,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     
     @classmethod
     def get_types(cls):
-        '''        log.debug('get_study_area() called')
+        '''        log.debug('type() called')
             Jinja2 template helper function, gets the vocabulary for type
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
@@ -423,20 +422,20 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                  'package_update':pkg_update,
                  'user_create':user_create_local
                  }
-#     def before_insert(self, mapper, connection, instance):
-#         print "before insert",instance
-#         
-#         
-#     def after_insert(self, mapper, connection, instance):
-#         print "after insert",instance
-#         
-#         
-#     def before_update(self, mapper, connection, instance):
-#         print "before update",instance
-#        
-#         
-#     def after_update(self, mapper, connection, instance):
-#         print "after update", instance
+        
+     #See ckan.plugins.interfaces.IMapper   
+    def before_insert(self, mapper, connection, instance):
+        print "before insert",instance
+    def after_insert(self, mapper, connection, instance):
+        print "after insert",instance
+    def before_update(self, mapper, connection, instance):
+        print "before update",instance
+    def after_update(self, mapper, connection, instance):
+        print "after update", instance
+    def before_delete(self, mapper, connection, instance):
+        print "before delete",instance         
+    def after_delete(self, mapper, connection, instance):
+        print "after delete", instance
         
                                                 
  
