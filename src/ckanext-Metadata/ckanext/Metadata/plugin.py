@@ -55,7 +55,8 @@ def get_req_metadata_for_create():
     return new_req_meta
 
 def get_req_metadata_for_show_update():
-    new_req_meta = copy.copy(required_metadata)
+    #new_req_meta = copy.copy(required_metadata)
+    new_req_meta = copy.deepcopy(required_metadata)
     validator = p.toolkit.get_validator('ignore_missing')
     for meta in new_req_meta:
         meta['validators'].append(validator)
@@ -99,8 +100,8 @@ expanded_metadata = (
                      # set by system{'id':'publisher', 'validators': [v.String(max=100)]},
                         
                      {'id':'required_software', 'validators': [v.String(max=100)]},
-                     #{'id':'file_format', 'validators': [v.String(max=100)]},                     
-                    
+                     #{'id':'file_format', 'validators': [v.String(max=100)]},
+
 
 )
 
@@ -112,8 +113,6 @@ schema_updates_for_create = [{meta['id']: meta['validators']+[p.toolkit.get_conv
 schema_updates_for_update_show = [{meta['id']: meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
 schema_updates_for_show = [{meta['id']: [p.toolkit.get_converter('convert_from_extras')] + meta['validators']} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
 
-
-
 class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     '''This plugin adds fields for the metadata (known as the Common Core) defined at
     https://github.com/project-open-data/project-open-data.github.io/blob/master/schema.md
@@ -123,7 +122,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IConfigurer)
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
-    #p.implements(p.IMapper)
+#     p.implements(p.IMapper)
 
 
 
@@ -294,7 +293,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     
     @classmethod
     def get_types(cls):
-        '''        log.debug('type() called')
+        '''        log.debug('get_study_area() called')
             Jinja2 template helper function, gets the vocabulary for type
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
@@ -397,7 +396,6 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         # Don't show vocab tags mixed in with normal 'free' tags
         # (e.g. on dataset pages, or on the search page)
         schema['tags']['__extras'].append(p.toolkit.get_converter('free_tags_only'))
-        
 
         for update in schema_updates_for_show:
             schema.update(update)
@@ -425,20 +423,20 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                  'package_update':pkg_update,
                  'user_create':user_create_local
                  }
-        
-     #See ckan.plugins.interfaces.IMapper   
-    def before_insert(self, mapper, connection, instance):
-        print "before insert",instance
-    def after_insert(self, mapper, connection, instance):
-        print "after insert",instance
-    def before_update(self, mapper, connection, instance):
-        print "before update",instance
-    def after_update(self, mapper, connection, instance):
-        print "after update", instance
-    def before_delete(self, mapper, connection, instance):
-        print "before delete",instance         
-    def after_delete(self, mapper, connection, instance):
-        print "after delete", instance
+#     def before_insert(self, mapper, connection, instance):
+#         print "before insert",instance
+#         
+#         
+#     def after_insert(self, mapper, connection, instance):
+#         print "after insert",instance
+#         
+#         
+#     def before_update(self, mapper, connection, instance):
+#         print "before update",instance
+#        
+#         
+#     def after_update(self, mapper, connection, instance):
+#         print "after update", instance
         
                                                 
  
@@ -466,12 +464,9 @@ def user_create_local(context, data_dict):
 
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')
+
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
     sub_name = origpkg.get('sub_name', None)
-
-    iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
-    if data_dict['owner_org']== iutahorg['id']:
-        data_dict['private']=origpkg['private']
 
     context['return_minimal'] = True
     user = p.toolkit.get_action('user_show')(context,{'id': context['user']})
@@ -542,6 +537,8 @@ def pkg_create(context, data_dict):
 
     #if organization is iutah
     iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
+    print iutahorg
+    print 
 
     if data_dict['owner_org']== iutahorg['id']:
         data_dict['private']=True
@@ -553,7 +550,6 @@ def pkg_create(context, data_dict):
 #     data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
 #     package_update(context,data_dict)
     return pkg
-
 
 
 from routes import request_config
