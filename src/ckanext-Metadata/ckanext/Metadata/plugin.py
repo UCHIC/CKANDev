@@ -294,7 +294,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     
     @classmethod
     def get_types(cls):
-        '''        log.debug('get_study_area() called')
+        '''        log.debug('type() called')
             Jinja2 template helper function, gets the vocabulary for type
         '''
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
@@ -466,9 +466,12 @@ def user_create_local(context, data_dict):
 
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')
-
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
     sub_name = origpkg.get('sub_name', None)
+
+    iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
+    if data_dict['owner_org']== iutahorg['id']:
+        data_dict['private']=origpkg['private']
 
     context['return_minimal'] = True
     user = p.toolkit.get_action('user_show')(context,{'id': context['user']})
@@ -539,8 +542,6 @@ def pkg_create(context, data_dict):
 
     #if organization is iutah
     iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
-    print iutahorg
-    print 
 
     if data_dict['owner_org']== iutahorg['id']:
         data_dict['private']=True
