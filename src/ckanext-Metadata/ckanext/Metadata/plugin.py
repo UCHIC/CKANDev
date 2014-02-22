@@ -6,7 +6,7 @@ from logging import getLogger
 import ckan.plugins as p
 import formencode.validators as v
 import copy
-from ckan.logic.action.create import user_create, package_create
+from ckan.logic.action.create import user_create as core_user_create, package_create
 from ckan.logic.action.update import package_update
 from formencode.validators import validators
 from pylons import config
@@ -34,7 +34,7 @@ required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
                     
                      {'id':'language', 'validators': [v.String(max=100)]},
                      
-                     {'id':'type', 'validators': [v.String(max=100)]},
+                     {'id':'data_type', 'validators': [v.String(max=100)]},
                      {'id':'access_information', 'validators': [v.String(max=500)]},#use_constraints
                      {'id':'intended_use', 'validators': [v.String(max=100)]},
                      {'id':'status', 'validators': [v.String(max=100)]},
@@ -47,14 +47,16 @@ required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
 
 #all required_metadata should be required
 def get_req_metadata_for_create():
-    new_req_meta = copy.copy(required_metadata)
+    #new_req_meta = copy.copy(required_metadata)
+    new_req_meta = copy.deepcopy(required_metadata)
     validator = p.toolkit.get_validator('not_empty')
     for meta in new_req_meta:
         meta['validators'].append(validator)
     return new_req_meta
 
 def get_req_metadata_for_show_update():
-    new_req_meta = copy.copy(required_metadata)
+    #new_req_meta = copy.copy(required_metadata)
+    new_req_meta = copy.deepcopy(required_metadata)
     validator = p.toolkit.get_validator('ignore_missing')
     for meta in new_req_meta:
         meta['validators'].append(validator)
@@ -73,8 +75,9 @@ expanded_metadata = (
                      {'id':'sub_email', 'validators': [v.String(max=100)]},                     
                      {'id':'creator_organization', 'validators': [v.String(max=100)]},    
                      {'id':'creator_address', 'validators': [v.String(max=100)]},  
-                     {'id':'creator_phone', 'validators': [v.String(max=50)]},                
-                                          
+                     {'id':'creator_phone', 'validators': [v.String(max=50)]},
+                     {'id':'license_id', 'validators': [v.String(max=50)]},
+                     {'id':'version', 'validators': [v.String(max=50)]},
                       
                      {'id':'feature_types', 'validators': [v.String(max=100)]},
                      {'id':'north_extent', 'validators': [v.String(max=100)]},
@@ -97,8 +100,8 @@ expanded_metadata = (
                      # set by system{'id':'publisher', 'validators': [v.String(max=100)]},
                         
                      {'id':'required_software', 'validators': [v.String(max=100)]},
-                     #{'id':'file_format', 'validators': [v.String(max=100)]},                     
-                    
+                     #{'id':'file_format', 'validators': [v.String(max=100)]},
+
 
 )
 
@@ -106,9 +109,9 @@ for meta in expanded_metadata:
     meta['validators'].append(p.toolkit.get_validator('ignore_missing'))
 
 
-
-schema_updates_for_create = [{meta['id'] : meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_create()+ expanded_metadata)]
-schema_updates_for_update_show = [{meta['id'] : meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
+schema_updates_for_create = [{meta['id']: meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_create()+ expanded_metadata)]
+schema_updates_for_update_show = [{meta['id']: meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
+schema_updates_for_show = [{meta['id']: [p.toolkit.get_converter('convert_from_extras')] + meta['validators']} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
 
 class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     '''This plugin adds fields for the metadata (known as the Common Core) defined at
@@ -123,7 +126,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
 
 
-    @classmethod
+    #@classmethod
     def load_data_into_dict(cls, data_dict):
         '''
         a jinja2 template helper function.
@@ -137,7 +140,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         '''
 
-        new_dict = data_dict.copy()
+        #new_dict = data_dict.copy()
+        new_dict = copy.deepcopy(data_dict)
         common_metadata = [x['id'] for x in required_metadata+expanded_metadata]
 
         try:
@@ -181,7 +185,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         return new_dict
 
-    @classmethod
+    #@classmethod
     def __create_vocabulary(cls, name, *values):
         '''Create vocab and tags, if they don't exist already.
             name: the name or unique id of the vocabulary  e.g. 'flower_colors'
@@ -201,7 +205,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             p.toolkit.get_action('tag_create')(context, data)
         return vocab
     
-    @classmethod
+    #@classmethod
     def __update_vocabulary(cls, name, *values):
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
@@ -221,7 +225,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return vocab
         
         
-    @classmethod
+    #@classmethod
     def get_research_focus(cls):
         '''        log.debug('get_research_focus() called')
             Jinja2 template helper function, gets the vocabulary for research focus
@@ -242,7 +246,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         return research_focus
 
-    @classmethod
+    #@classmethod
     def get_update_frequency(cls):
         '''
         log.debug('get_update_frequency() called')
@@ -266,7 +270,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         
 
 
-    @classmethod
+    #@classmethod
     def get_study_area(cls):
         '''        log.debug('get_study_area() called')
             Jinja2 template helper function, gets the vocabulary for access levels
@@ -342,7 +346,10 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         # registers itself as the default (above).
         #
         #return ['dataset', 'package']
-        return []
+        return ['dataset']
+
+    def package_form(self):
+        return super(MetadataPlugin, self).package_form()
 
     #See ckan.plugins.interfaces.IDatasetForm
     def update_config(self, config):
@@ -378,7 +385,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         #log.debug('update_package_schema')
         schema = super(MetadataPlugin, self).update_package_schema()
 #TODO uncomment, should be using schema for updates, but it's causing problems during resource creation
-        #schema = self._modify_package_schema_update_show(schema)
+        schema = self._modify_package_schema(schema)
 
         return schema
 
@@ -390,7 +397,9 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         # Don't show vocab tags mixed in with normal 'free' tags
         # (e.g. on dataset pages, or on the search page)
         schema['tags']['__extras'].append(p.toolkit.get_converter('free_tags_only'))
-        
+
+        for update in schema_updates_for_show:
+            schema.update(update)
 
         return schema
     
@@ -410,9 +419,10 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     #See ckan.plugins.interfaces.IActions    
     def get_actions(self):
         log.debug('get_actions() called') 
-        return  {'package_create':pkg_create,
+        return  {
+                 'package_create':pkg_create,
                  'package_update':pkg_update,
-                 #'user_create':user_create_local
+                 'user_create':user_create_local
                  }
 #     def before_insert(self, mapper, connection, instance):
 #         print "before insert",instance
@@ -434,7 +444,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
 def user_create_local(context, data_dict):   
         log.debug('my very own user_create() called')
-        obj = user_create(context,data_dict)        
+        obj = core_user_create(context, data_dict)
          
         print "obj",obj
         dataset_dict = {# id of the organization to be added to
@@ -454,24 +464,30 @@ def user_create_local(context, data_dict):
     
 
 def pkg_update(context, data_dict):
-    log.debug('my very own package_update() called')   
-    origpkg=p.toolkit.get_action('package_show')(context,data_dict)
-    
-    #origpkg['extras']=data_dict
-    for dict in origpkg['extras']:
-#         data_dict[dict['key']] = dict['value'] 
-         if dict['key'] =='sub_name': 
-             data_dict['sub_name']=  dict['value'] 
-             sub_name = dict['value']
-             
+    log.debug('my very own package_update() called')
 
-            
-            
+    #sub_name = data_dict.get('sub_name', None)
+    #if not sub_name:
+    origpkg = p.toolkit.get_action('package_show')(context, data_dict)
+    sub_name = origpkg.get('sub_name', None)
 
+    context['return_minimal'] = True
+    user = p.toolkit.get_action('user_show')(context,{'id': context['user']})
 
-    data_dict['citation']= createcitation(context, data_dict, subname=sub_name)
-    
-    return package_update(context,data_dict)
+    data_dict['sub_name'] = user['fullname']
+    data_dict['sub_email']=user['email']
+    #data_dict['creator_organization']=''
+    #data_dict['creator_address'] =''
+    #data_dict['creator_phone']=''
+    data_dict['version']=u'1.0'
+    data_dict['license_id']=u'cc-by'
+    data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
+
+    iutahorg = p.toolkit.get_action('organization_show')(context, {'id': 'iutah'})
+    if data_dict['owner_org'] == iutahorg['id']:
+        data_dict['private'] = origpkg['private']
+
+    return package_update(context, data_dict)
 
 
 import ckan.lib.helpers as h    
@@ -507,8 +523,12 @@ def createcitation(context, data_dict, subname =None, year=None):
 
 def pkg_create(context, data_dict):
     log.debug('my very own package_create() called') 
-    
-    user=p.toolkit.get_action('user_show')(context,{'id': context['user']})
+
+    # 'return_minimal' will only get the user information and not any dataset associated with the user
+    # without return_minimal' the context object will change and point to some other dataset
+    # which will get overwritten
+    context['return_minimal'] = True
+    user = p.toolkit.get_action('user_show')(context,{'id': context['user']})
     data_dict['sub_name']=user['fullname']
     data_dict['sub_email']=user['email']
     data_dict['creator_organization']=''
@@ -522,14 +542,14 @@ def pkg_create(context, data_dict):
     iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
     print iutahorg
     print 
-    val = iutahorg['id']
+
     if data_dict['owner_org']== iutahorg['id']:
         data_dict['private']=True
                        
     p.toolkit.check_access('package_create',context, data_dict)
-    pkg= package_create(context,data_dict)
-    
-    
+
+    pkg = package_create(context, data_dict)
+
 #     data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
 #     package_update(context,data_dict)
     return pkg
