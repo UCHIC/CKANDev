@@ -126,7 +126,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
 
 
-    #@classmethod
+    @classmethod
     def load_data_into_dict(cls, data_dict):
         '''
         a jinja2 template helper function.
@@ -185,7 +185,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         return new_dict
 
-    #@classmethod
+    @classmethod
     def __create_vocabulary(cls, name, *values):
         '''Create vocab and tags, if they don't exist already.
             name: the name or unique id of the vocabulary  e.g. 'flower_colors'
@@ -205,7 +205,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             p.toolkit.get_action('tag_create')(context, data)
         return vocab
     
-    #@classmethod
+    @classmethod
     def __update_vocabulary(cls, name, *values):
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
@@ -225,7 +225,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return vocab
         
         
-    #@classmethod
+    @classmethod
     def get_research_focus(cls):
         '''        log.debug('get_research_focus() called')
             Jinja2 template helper function, gets the vocabulary for research focus
@@ -246,7 +246,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         return research_focus
 
-    #@classmethod
+    @classmethod
     def get_update_frequency(cls):
         '''
         log.debug('get_update_frequency() called')
@@ -270,7 +270,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         
 
 
-    #@classmethod
+    @classmethod
     def get_study_area(cls):
         '''        log.debug('get_study_area() called')
             Jinja2 template helper function, gets the vocabulary for access levels
@@ -384,7 +384,6 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def update_package_schema(self):
         #log.debug('update_package_schema')
         schema = super(MetadataPlugin, self).update_package_schema()
-#TODO uncomment, should be using schema for updates, but it's causing problems during resource creation
         schema = self._modify_package_schema(schema)
 
         return schema
@@ -466,8 +465,6 @@ def user_create_local(context, data_dict):
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')
 
-    #sub_name = data_dict.get('sub_name', None)
-    #if not sub_name:
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
     sub_name = origpkg.get('sub_name', None)
 
@@ -553,7 +550,6 @@ def pkg_create(context, data_dict):
 #     data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
 #     package_update(context,data_dict)
     return pkg
-
 
 
 from routes import request_config
