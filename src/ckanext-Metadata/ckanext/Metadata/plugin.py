@@ -337,7 +337,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def is_fallback(self):
         # Return True so that we use the extension's dataset form instead of CKAN's default for
         # /dataset/new and /dataset/edit
-        return True
+        return False
   
     #See ckan.plugins.interfaces.IDatasetForm
     def package_types(self):
@@ -453,7 +453,7 @@ def user_create_local(context, data_dict):
                         'capacity':'editor'        }
                 
         #apikey of an admin user of the default organization
-        apikey='95e8ce3d-2f70-4288-8f8c-aaa9aac3590d'
+        apikey='ca7d6fbf-baad-4257-bbf2-3612cbf8616b'
         # We'll use the member_create function to create a new user to the default organization.
         result = apicall('member_create', dataset_dict, apikey)
         
@@ -478,6 +478,8 @@ def pkg_update(context, data_dict):
     data_dict['version']=u'1.0'
     data_dict['license_id']=u'cc-by'
     data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
+
+    log.debug(data_dict)
 
     iutahorg = p.toolkit.get_action('organization_show')(context, {'id': 'iutah'})
     if data_dict['owner_org'] == iutahorg['id']:
