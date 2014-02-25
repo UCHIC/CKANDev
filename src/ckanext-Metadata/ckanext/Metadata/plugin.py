@@ -1,6 +1,5 @@
 # {% set dataset_is_draft = data.get('state', 'draft').startswith('draft') or data.get('state', 'none') ==  'none' %}
 #   {% set dataset_has_organization = data.owner_org or data.group_id %}
-  
 
 from logging import getLogger
 import ckan.plugins as p
@@ -8,30 +7,12 @@ import formencode.validators as v
 import copy
 from ckan.logic.action.create import user_create as core_user_create, package_create
 from ckan.logic.action.update import package_update
-from formencode.validators import validators
-from pylons import config
-
-
-from datetime import datetime
-#imports to add user to organization
-import urllib2
-import urllib
-import json
-
+import ckan.lib.helpers as h
 
 log = getLogger(__name__)
-# class log():
-#     @classmethod
-#     def debug(value, message, extra = ""):
-#         print message
-        
-
 
 #excluded title, description, tags and last update as they're part of the default ckan dataset metadata
-required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
-                     #{'id':'contact_email', 'validators': [v.Email(),v.String(max=50)]},
-                     ## iUtah
-                    
+required_metadata = (
                      {'id':'language', 'validators': [v.String(max=100)]},
                      
                      {'id':'data_type', 'validators': [v.String(max=100)]},
@@ -39,78 +20,71 @@ required_metadata = (#{'id':'contact_name', 'validators': [v.String(max=100)]},
                      {'id':'intended_use', 'validators': [v.String(max=100)]},
                      {'id':'status', 'validators': [v.String(max=100)]},
                      {'id':'observed_variables', 'validators': [v.String(max=100)]},
-                     
-                     
+
                      #TODO should this unique_id be validated against any other unique IDs for this agency?
                      #{'id':'unique_id', 'validators': [v.String(max=100)]}
 )
 
+#optional metadata
+expanded_metadata = (
+                        {'id':'spatial', 'validators': [v.String(max=500)]},
+                        {'id':'temporal', 'validators': [v.String(max=300)]},
+                        {'id':'purpose', 'validators': [v.String(max=100)]},
+                        {'id':'collection', 'validators': [v.String(max=1000)]},
+
+                        {'id':'sub_name', 'validators': [v.String(max=100)]},
+                        {'id':'sub_email', 'validators': [v.String(max=100)]},
+                        {'id':'creator_organization', 'validators': [v.String(max=100)]},
+                        {'id':'creator_address', 'validators': [v.String(max=100)]},
+                        {'id':'creator_phone', 'validators': [v.String(max=50)]},
+                        {'id':'license_id', 'validators': [v.String(max=50)]},
+                        {'id':'version', 'validators': [v.String(max=50)]},
+
+                        {'id':'feature_types', 'validators': [v.String(max=100)]},
+                        {'id':'north_extent', 'validators': [v.String(max=100)]},
+                        {'id':'south_extent', 'validators': [v.String(max=100)]},
+                        {'id':'east_extent', 'validators': [v.String(max=100)]},
+                        {'id':'west_extent', 'validators': [v.String(max=100)]},
+                        {'id':'horz_coord_system', 'validators': [v.String(max=100)]},
+                        {'id':'vert_coord_system', 'validators': [v.String(max=100)]},
+
+                        {'id':'update_frequency', 'validators': [v.Regex(r'^([Dd]aily)|([Hh]ourly)|([Ww]eekly)|([yY]early)|([oO]ther)$')]},
+
+                        {'id':'study_area', 'validators': [v.String(max=100)]},
+                        {'id':'units', 'validators': [v.String(max=100)]},
+                        {'id':'data_processing_method', 'validators': [v.String(max=500)]},
+                        {'id':'data_collection_method', 'validators': [v.String(max=500)]},
+                        {'id':'citation', 'validators': [v.String(max=500)]},
+
+                        {'id':'required_software', 'validators': [v.String(max=100)]},
+
+)
+
+
 #all required_metadata should be required
 def get_req_metadata_for_create():
-    #new_req_meta = copy.copy(required_metadata)
     new_req_meta = copy.deepcopy(required_metadata)
     validator = p.toolkit.get_validator('not_empty')
     for meta in new_req_meta:
         meta['validators'].append(validator)
     return new_req_meta
 
+
 def get_req_metadata_for_show_update():
-    #new_req_meta = copy.copy(required_metadata)
     new_req_meta = copy.deepcopy(required_metadata)
     validator = p.toolkit.get_validator('ignore_missing')
     for meta in new_req_meta:
         meta['validators'].append(validator)
     return new_req_meta
 
-
-
-#optional metadata
-expanded_metadata = (
-                     {'id':'spatial', 'validators': [v.String(max=500)]},
-                     {'id':'temporal', 'validators': [v.String(max=300)]},                   
-                     {'id':'purpose', 'validators': [v.String(max=100)]},
-                     {'id':'collection', 'validators': [v.String(max=1000)]},
-                   
-                     {'id':'sub_name', 'validators': [v.String(max=100)]},
-                     {'id':'sub_email', 'validators': [v.String(max=100)]},                     
-                     {'id':'creator_organization', 'validators': [v.String(max=100)]},    
-                     {'id':'creator_address', 'validators': [v.String(max=100)]},  
-                     {'id':'creator_phone', 'validators': [v.String(max=50)]},
-                     {'id':'license_id', 'validators': [v.String(max=50)]},
-                     {'id':'version', 'validators': [v.String(max=50)]},
-                      
-                     {'id':'feature_types', 'validators': [v.String(max=100)]},
-                     {'id':'north_extent', 'validators': [v.String(max=100)]},
-                     {'id':'south_extent', 'validators': [v.String(max=100)]},
-                     {'id':'east_extent', 'validators': [v.String(max=100)]},
-                     {'id':'west_extent', 'validators': [v.String(max=100)]},                     
-                     {'id':'horz_coord_system', 'validators': [v.String(max=100)]},
-                     {'id':'vert_coord_system', 'validators': [v.String(max=100)]},
-                      
-                     {'id':'update_frequency', 'validators': [v.Regex(r'^([Dd]aily)|([Hh]ourly)|([Ww]eekly)|([yY]early)|([oO]ther)$')]},
-                      
-                     
-                     {'id':'study_area', 'validators': [v.String(max=100)]},
-                     {'id':'units', 'validators': [v.String(max=100)]},
-                     {'id':'data_processing_method', 'validators': [v.String(max=500)]},
-                     {'id':'data_collection_method', 'validators': [v.String(max=500)]},
-                     {'id':'citation', 'validators': [v.String(max=500)]},
-                      
-                     # set by system{'id':'citation', 'validators': [v.String(max=100)]},
-                     # set by system{'id':'publisher', 'validators': [v.String(max=100)]},
-                        
-                     {'id':'required_software', 'validators': [v.String(max=100)]},
-                     #{'id':'file_format', 'validators': [v.String(max=100)]},
-
-)
-
 for meta in expanded_metadata:
     meta['validators'].append(p.toolkit.get_validator('ignore_missing'))
 
+schema_updates_for_create = [{meta['id']: meta['validators']+[p.toolkit.get_converter('convert_to_extras')]}
+                             for meta in (get_req_metadata_for_create() + expanded_metadata)]
 
-schema_updates_for_create = [{meta['id']: meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_create()+ expanded_metadata)]
-schema_updates_for_update_show = [{meta['id']: meta['validators']+[p.toolkit.get_converter('convert_to_extras')]} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
-schema_updates_for_show = [{meta['id']: [p.toolkit.get_converter('convert_from_extras')] + meta['validators']} for meta in (get_req_metadata_for_show_update()+ expanded_metadata)]
+schema_updates_for_show = [{meta['id']: [p.toolkit.get_converter('convert_from_extras')] + meta['validators']}
+                           for meta in (get_req_metadata_for_show_update() + expanded_metadata)]
 
 class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     '''This plugin adds fields for the metadata (known as the Common Core) defined at
@@ -121,9 +95,6 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IConfigurer)
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
-    #p.implements(p.IMapper)
-
-
 
     @classmethod
     def load_data_into_dict(cls, data_dict):
@@ -222,8 +193,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             data = {'name': tag, 'vocabulary_id': vocab['id']}
             p.toolkit.get_action('tag_create')(context, data)
         return vocab
-        
-        
+
     @classmethod
     def get_research_focus(cls):
         '''        log.debug('get_research_focus() called')
@@ -238,7 +208,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for research focus doesn't exist")
-            vocab = cls.__create_vocabulary('research_focus',u'RFA1', u'RFA2', u'RFA3',u'other', u'CI', u'EOD')
+            vocab = cls.__create_vocabulary('research_focus', u'RFA1', u'RFA2', u'RFA3', u'other', u'CI', u'EOD')
 
         research_focus = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % research_focus)
@@ -260,14 +230,13 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for update_frequency doesn't exist")
-            vocab = cls.__create_vocabulary('update_frequency', u'hourly', u'daily', u'weekly', u'yearly',u'monthly', u'real time', u'other')
+            vocab = cls.__create_vocabulary('update_frequency', u'hourly', u'daily', u'weekly', u'yearly', u'monthly',
+                                            u'real time', u'other')
 
         update_frequency = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % update_frequency)
 
         return update_frequency
-        
-
 
     @classmethod
     def get_study_area(cls):
@@ -283,7 +252,9 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
-            vocab = cls.__create_vocabulary(u'study_area', u'other',u'WRMA-Wasatch Range Metropolitan Area', u'Logan River Watershed', u'Red Butte Creek Watershed', u'Provo River Watershed', u'Multiple Watersheds')
+            vocab = cls.__create_vocabulary(u'study_area', u'other', u'WRMA-Wasatch Range Metropolitan Area',
+                                            u'Logan River Watershed', u'Red Butte Creek Watershed',
+                                            u'Provo River Watershed', u'Multiple Watersheds')
  
         study_area = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % study_area)
@@ -300,13 +271,12 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
  
         vocab = None
         try:
-            data = {'id': 'type'} #we can use the id or name for id param
+            data = {'id': 'type'}   # we can use the id or name for id param
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for type doesn't exist")
             vocab = cls.__create_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
-        #vocab = cls.__update_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
-        
+
         types = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % types)
  
@@ -337,7 +307,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def is_fallback(self):
         # Return True so that we use the extension's dataset form instead of CKAN's default for
         # /dataset/new and /dataset/edit
-        return True
+        return False
   
     #See ckan.plugins.interfaces.IDatasetForm
     def package_types(self):
@@ -360,14 +330,6 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         #log.debug("_modify_package_schema called")
 
         for update in schema_updates_for_create:
-            schema.update(update)
-
-        return schema
-
-    def _modify_package_schema_update_show(self, schema):
-        #log.debug("_modify_package_schema_update_show called")
-
-        for update in schema_updates_for_update_show:
             schema.update(update)
 
         return schema
@@ -400,11 +362,9 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             schema.update(update)
 
         return schema
-    
-    
+
     #Method below allows functions and other methods to be called from the Jinja template using the h variable
     def get_helpers(self):
-        #log.debug('get_helpers() called')
         return {'get_research_focus': self.get_research_focus, 
                 'required_metadata': required_metadata,
                 'load_data_into_dict':  self.load_data_into_dict,
@@ -412,54 +372,32 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 'get_status':self.get_status,
                 'get_types':self.get_types,
                 'update_frequency': self.get_update_frequency}
-        
-        
+
     #See ckan.plugins.interfaces.IActions    
     def get_actions(self):
         log.debug('get_actions() called') 
-        return  {
-                 'package_create':pkg_create,
-                 'package_update':pkg_update,
-                 'user_create':user_create_local
-                 }
-        
-     #See ckan.plugins.interfaces.IMapper   
-    def before_insert(self, mapper, connection, instance):
-        print "before insert",instance
-    def after_insert(self, mapper, connection, instance):
-        print "after insert",instance
-    def before_update(self, mapper, connection, instance):
-        print "before update",instance
-    def after_update(self, mapper, connection, instance):
-        print "after update", instance
-    def before_delete(self, mapper, connection, instance):
-        print "before delete",instance         
-    def after_delete(self, mapper, connection, instance):
-        print "after delete", instance
-        
-                                                
- 
+        return {
+                 'package_create': pkg_create,
+                 'package_update': pkg_update,
+                 'user_create': user_create_local
+        }
+
 
 def user_create_local(context, data_dict):   
         log.debug('my very own user_create() called')
-        obj = core_user_create(context, data_dict)
-         
-        print "obj",obj
-        dataset_dict = {# id of the organization to be added to
-                        'id': 'iutah',
-                        #id of the user to be added to the group
-                        'object': obj['id'],
-                        'object_type':'user',
-                        'capacity':'editor'        }
-                
-        #apikey of an admin user of the default organization
-        apikey='95e8ce3d-2f70-4288-8f8c-aaa9aac3590d'
-        # We'll use the member_create function to create a new user to the default organization.
-        result = apicall('member_create', dataset_dict, apikey)
-        
-        return obj
+        user_obj = core_user_create(context, data_dict)
 
-    
+        data_dict = {
+            'id': 'iutah',
+            'username': user_obj['name'],
+            'role': 'editor'
+        }
+
+        context['ignore_auth'] = True
+        context['user'] = 'default'  # this is CKAN' default sysadmin account username needed for adding a user to an organization
+        p.toolkit.get_action('organization_member_create')(context, data_dict)
+        return user_obj
+
 
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')
@@ -468,15 +406,13 @@ def pkg_update(context, data_dict):
     sub_name = origpkg.get('sub_name', None)
 
     context['return_minimal'] = True
-    user = p.toolkit.get_action('user_show')(context,{'id': context['user']})
+    user = p.toolkit.get_action('user_show')(context, {'id': context['user']})
 
     data_dict['sub_name'] = user['fullname']
-    data_dict['sub_email']=user['email']
-    #data_dict['creator_organization']=''
-    #data_dict['creator_address'] =''
-    #data_dict['creator_phone']=''
-    data_dict['version']=u'1.0'
-    data_dict['license_id']=u'cc-by'
+    data_dict['sub_email'] = user['email']
+
+    data_dict['version'] = u'1.0'
+    data_dict['license_id'] = u'cc-by'
     data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
 
     iutahorg = p.toolkit.get_action('organization_show')(context, {'id': 'iutah'})
@@ -486,20 +422,19 @@ def pkg_update(context, data_dict):
     return package_update(context, data_dict)
 
 
-import ckan.lib.helpers as h    
-def createcitation(context, data_dict, subname =None, year=None):    
+def createcitation(context, data_dict, subname=None, year=None):
     
     url = h.url_for(controller='package', action='read', id=data_dict['name'], qualified=True)
-    origpkg= p.toolkit.get_action('package_show')(context,data_dict)
+    origpkg = p.toolkit.get_action('package_show')(context, data_dict)
     
-    name=subname
+    name = subname
     try:
         if len(data_dict['author'])>0:
             name = data_dict['author']
     except:
         name = subname           
     
-    creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi = name.split(" ")[0][0])
+    creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi=name.split(" ")[0][0])
     version = 0       
     try:
         version = data_dict['version']
@@ -507,14 +442,12 @@ def createcitation(context, data_dict, subname =None, year=None):
         version = 0 
     
     if not year:        
-        dateval= p.toolkit.get_action('package_show')(context,data_dict)['metadata_created']         
-        year= dateval.split("-")[0]
+        dateval = p.toolkit.get_action('package_show')(context, data_dict)['metadata_created']
+        year = dateval.split("-")[0]
         
-    citation = "{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, {url}".format(creator = creator, year = year, title = data_dict['title'], version = version, url = url)
+    citation = '{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, ' \
+               '{url}'.format(creator=creator, year=year, title=data_dict['title'], version=version, url=url)
     return citation
-
-
-
 
 
 def pkg_create(context, data_dict):
@@ -524,66 +457,23 @@ def pkg_create(context, data_dict):
     # without return_minimal' the context object will change and point to some other dataset
     # which will get overwritten
     context['return_minimal'] = True
-    user = p.toolkit.get_action('user_show')(context,{'id': context['user']})
-    data_dict['sub_name']=user['fullname']
-    data_dict['sub_email']=user['email']
-    data_dict['creator_organization']=''
-    data_dict['creator_address'] =''
-    data_dict['creator_phone']=''
-    data_dict['version']=u'1.0'
-    data_dict['license_id']=u'cc-by'
-    data_dict['citation']=u''
+    user = p.toolkit.get_action('user_show')(context, {'id': context['user']})
+    data_dict['sub_name'] = user['fullname']
+    data_dict['sub_email'] = user['email']
+    data_dict['creator_organization'] = ''
+    data_dict['creator_address'] = ''
+    data_dict['creator_phone'] = ''
+    data_dict['version'] = u'1.0'
+    data_dict['license_id'] = u'cc-by'
+    data_dict['citation'] = u''
 
     #if organization is iutah
-    iutahorg=p.toolkit.get_action('organization_show')(context,{'id': 'iutah'})
-    print iutahorg
-    print 
+    iutahorg = p.toolkit.get_action('organization_show')(context, {'id': 'iutah'})
 
-    if data_dict['owner_org']== iutahorg['id']:
-        data_dict['private']=True
+    if data_dict['owner_org'] == iutahorg['id']:
+        data_dict['private'] = True
                        
     p.toolkit.check_access('package_create',context, data_dict)
-
     pkg = package_create(context, data_dict)
-
-#     data_dict['citation']= createcitation(context, data_dict, year=datetime.now().year)
-#     package_update(context,data_dict)
     return pkg
 
-
-from routes import request_config
-def getbaseurl():
-    config = request_config()
-        
-    host = config.host
-    protocol = config.protocol
-    url = protocol + '://' + host 
-    return url
-
-def apicall(name, dataset_dict, apikey):   
-        log.debug('my very own apicall() called, ', name)
-#         
-        
-        url = getbaseurl()
-        
-        # Use the json module to dump the dictionary to a string for posting.
-        data_string = urllib.quote(json.dumps(dataset_dict))
- 
-        # We'll use the member_create function to create a new user to the default organization.
-        request = urllib2.Request(url+'/api/action/{apicall}'.format(apicall=name))
-        #apikey of an admin user of the default organization
-        request.add_header('Authorization', apikey)
-        response = urllib2.urlopen(request, data_string)
-        assert response.code == 200
-     
-        response_dict = json.loads(response.read())
-        assert response_dict['success'] is True
-        result = response_dict['result']
-        
-        return result 
-    
-    
-    
-
-      
-    
