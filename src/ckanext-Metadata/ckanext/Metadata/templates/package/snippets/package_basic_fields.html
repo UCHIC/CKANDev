@@ -90,7 +90,7 @@
     </div>
   {% endif %}
 
-
+  {# PK: Commented out as this field as it doesn't exist for setting in ckan's original template and it is supposed to be set internally by CKAN
   {% if data.id and h.check_access('package_delete', {'id': data.id}) and data.state != 'active' %}
     <div class="control-group">
       <label for="field-state" class="control-label">{{ _('State') }}</label>
@@ -102,6 +102,7 @@
       </div>
     </div>
   {% endif %}
+  #}
   
   
 	{% set data = h.load_data_into_dict(data) %}
