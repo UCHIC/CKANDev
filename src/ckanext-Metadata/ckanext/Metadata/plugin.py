@@ -4,10 +4,12 @@
 from logging import getLogger
 import ckan.plugins as p
 import formencode.validators as v
+import ckan.new_authz as auth
 import copy
 from ckan.logic.action.create import user_create as core_user_create, package_create
 from ckan.logic.action.update import package_update
 import ckan.lib.helpers as h
+import helpers as meta_helper
 
 log = getLogger(__name__)
 
@@ -87,6 +89,7 @@ schema_updates_for_create = [{meta['id']: meta['validators']+[p.toolkit.get_conv
 schema_updates_for_show = [{meta['id']: [p.toolkit.get_converter('convert_from_extras')] + meta['validators']}
                            for meta in (get_req_metadata_for_show_update() + expanded_metadata)]
 
+
 class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     '''This plugin adds fields for the metadata (known as the Common Core) defined at
     https://github.com/project-open-data/project-open-data.github.io/blob/master/schema.md
@@ -97,6 +100,20 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
 
+    # template helper function
+    @classmethod
+    def check_if_user_owns_dataset(cls, package_id, username):
+        return meta_helper.is_user_owns_package(package_id, username)
+
+    # template helper function
+    @classmethod
+    def has_user_group_or_org_admin_role(cls, group_id, user_name):
+        """
+        Checks if the given user has admin role for the specified group/org
+        """
+        return auth.has_user_permission_for_group_or_org(group_id, user_name, 'admin')
+
+    # template helper function
     @classmethod
     def load_data_into_dict(cls, data_dict):
         '''
@@ -195,6 +212,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             p.toolkit.get_action('tag_create')(context, data)
         return vocab
 
+    # template helper function
     @classmethod
     def get_research_focus(cls):
         '''        log.debug('get_research_focus() called')
@@ -216,6 +234,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         return research_focus
 
+    # template helper function
     @classmethod
     def get_update_frequency(cls):
         '''
@@ -239,6 +258,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         return update_frequency
 
+    # template helper function
     @classmethod
     def get_study_area(cls):
         '''        log.debug('get_study_area() called')
@@ -261,7 +281,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         log.debug("vocab tags: %s" % study_area)
  
         return study_area
-    
+
+    # template helper function
     @classmethod
     def get_types(cls):
         '''        log.debug('type() called')
@@ -282,7 +303,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         log.debug("vocab tags: %s" % types)
  
         return types
-    
+
+    # template helper function
     @classmethod
     def get_status(cls):
         '''        log.debug('get_study_area() called')
@@ -351,7 +373,6 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
     #See ckan.plugins.interfaces.IDatasetForm
     def show_package_schema(self):
-        #log.debug('show_package_schema')
         schema = super(MetadataPlugin, self).show_package_schema()
 
         # Don't show vocab tags mixed in with normal 'free' tags
@@ -371,7 +392,9 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 'study_area': self.get_study_area,
                 'get_status':self.get_status,
                 'get_types':self.get_types,
-                'update_frequency': self.get_update_frequency}
+                'update_frequency': self.get_update_frequency,
+                'check_if_user_owns_dataset': self.check_if_user_owns_dataset,
+                'has_user_group_or_org_admin_role': self.has_user_group_or_org_admin_role}
 
     #See ckan.plugins.interfaces.IActions    
     def get_actions(self):

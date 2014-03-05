@@ -1,0 +1,9 @@
+{% ckan_extends %}
+
+{% block content_action %}
+  {% if h.check_access('package_update', {'id':pkg.id }) and (h.check_if_user_owns_dataset(pkg.id, c.user) or h.has_user_group_or_org_admin_role(pkg.owner_org, c.user)) %}
+    {% link_for _('Edit'), controller='package', action='edit', id=pkg.name, class_='btn', icon='wrench' %}
+  {% endif %}
+{% endblock %}
+
+
