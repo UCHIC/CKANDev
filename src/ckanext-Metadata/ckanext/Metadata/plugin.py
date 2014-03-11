@@ -99,6 +99,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IConfigurer)
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
+    p.implements(p.IPackageController, inherit=True)
 
     # template helper function
     @classmethod
@@ -405,6 +406,54 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                  'user_create': user_create_local
         }
 
+    # implements IPackageController
+    def before_search(self, search_params):
+        '''
+            Extensions will receive a dictionary with the query parameters,
+            and should return a modified (or not) version of it.
+
+            search_params will include an `extras` dictionary with all values
+            from fields starting with `ext_`, so extensions can receive user
+            input from specific fields.
+
+        '''
+
+        return search_params
+
+    # implements IPackageController
+    def after_search(self, search_results, search_params):
+        '''
+            Extensions will receive the search results, as well as the search
+            parameters, and should return a modified (or not) object with the
+            same structure:
+
+                {'count': '', 'results': '', 'facets': ''}
+
+            Note that count and facets may need to be adjusted if the extension
+            changed the results for some reason.
+
+            search_params will include an `extras` dictionary with all values
+            from fields starting with `ext_`, so extensions can receive user
+            input from specific fields.
+
+        '''
+
+        return search_results
+
+    # implements IPackageController
+    def after_show(self, context, pkg_dict):
+        '''
+            Extensions will receive the validated data dict after the package
+            is ready for display (Note that the read method will return a
+            package domain object, which may not include all fields).
+        '''
+        # We are cheating the system here by putting dummy data for the resources
+        # so that we can create dataset without resources. Then in our own local pkg_update()
+        # we are deleting this dummy data
+        if pkg_dict['state'] == 'draft' or pkg_dict['state'] == 'draft-complete':
+            if len(pkg_dict['resources']) == 0:
+                pkg_dict['resources'] = [{'dummy_resource': '****'}]
+
 
 def user_create_local(context, data_dict):   
         log.debug('my very own user_create() called')
@@ -450,6 +499,15 @@ def pkg_update(context, data_dict):
             data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
     else:
         data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
+
+    # This was added to allow creation metadata only dataset (dataset without resources)
+    # Here we are deleting our dummy resource if it exists
+    if origpkg['state'] == 'draft' or origpkg['state'] == 'draft-complete':
+        if len(data_dict['resources']) > 0:
+            dummy_resource = data_dict['resources'][0]
+            if dummy_resource.get('dummy_resource', None):
+                del data_dict['resources'][0]
+
 
     iutahorg = p.toolkit.get_action('organization_show')(context, {'id': 'iutah'})
 

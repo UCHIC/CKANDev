@@ -32,9 +32,13 @@ deleted from the database!!
 {#
 {% set data = h.load_data_into_dict(data) %}
 
-
 {% snippet 'snippets/custom_form_fields.html', extras=data.extras, errors=errors, limit=3 %}
 
 #}
 {% endblock package_metadata_fields_custom %}
-
+{% block dataset_fields %}
+   {{ super() }}
+   {% if not data.resources or data.resources[0].get('dummy_resource', None) %}
+        <span class="label label-info">Note:You have not added any resources for this dataset.</span>
+   {% endif %}
+{% endblock %}
