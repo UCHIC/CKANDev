@@ -417,6 +417,11 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             input from specific fields.
 
         '''
+        if not 'owner_org' in search_params['q']:
+            if len(search_params['q']) > 0:
+                search_params['q'] += ' private:false'
+            else:
+                search_params['q'] = 'private:false'
 
         return search_params
 
@@ -437,6 +442,51 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             input from specific fields.
 
         '''
+        if 'owner_org' in search_params['q']:
+            ds_count = 0
+            datasets = search_results['results']
+            for dataset in datasets:
+                if dataset['private'] and not (meta_helper.is_user_owns_package(dataset['id'], p.toolkit.c.user) or
+                                               self.has_user_group_or_org_admin_role(dataset['owner_org'],
+                                                                                     p.toolkit.c.user)):
+                    ds_count += 1
+
+                    # update dataset count for dataset groups
+                    for group in dataset['groups']:
+                        for item in search_results['search_facets']['groups']['items']:
+                            if item.get('name') == group['name']:
+                                item['count'] -= 1
+                                break
+
+                    # update dataset count for the organization
+                    search_results['search_facets']['organization']['items'][0]['count'] -= 1
+                    # update dataset counts by license
+                    for item in search_results['search_facets']['license_id']['items']:
+                        if item.get('name') == dataset['license_id']:
+                            item['count'] -= 1
+                            break
+
+                    # update dataset count by each tag
+                    for tag in dataset['tags']:
+                        for item in search_results['search_facets']['tags']['items']:
+                            if item.get('name') == tag['name']:
+                                item['count'] -= 1
+                                break
+
+                    # update resource format counts
+                    updated_formats = []
+                    for resource in dataset['resources']:
+                        res_format = resource['format']
+                        if res_format in updated_formats:
+                            continue
+                        search_results['facets']['res_format'][res_format] -= 1
+                        for item in search_results['search_facets']['res_format']['items']:
+                            if item.get('name') == res_format:
+                                item['count'] -= 1
+                                updated_formats.append(res_format)
+                                break
+
+            search_results['count'] -= ds_count
 
         return search_results
 
