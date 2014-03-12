@@ -33,6 +33,7 @@ expanded_metadata = (
                         {'id': 'temporal', 'validators': [v.String(max=300)]},
                         {'id': 'purpose', 'validators': [v.String(max=100)]},
                         {'id': 'collection', 'validators': [v.String(max=1000)]},
+                        {'id': 'research_focus', 'validators': [v.String(max=50)]},
 
                         {'id': 'sub_name', 'validators': [v.String(max=100)]},
                         {'id': 'sub_email', 'validators': [v.String(max=100)]},
@@ -144,7 +145,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             for extra in new_dict['extras']:
 
                 if extra['key'] in common_metadata:
-                    new_dict['custom_meta'][extra['key']]=extra['value']
+                    new_dict['custom_meta'][extra['key']] = extra['value']
                 else:
                     reduced_extras.append(extra)
 
@@ -166,7 +167,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 if key in common_metadata:
                     #TODO remove debug
                     log.debug('adding key: {0}'.format(key))
-                    new_dict['custom_meta'][key]=value
+                    new_dict['custom_meta'][key] = value
                     keys_to_remove.append(key)
 
             for key in keys_to_remove:

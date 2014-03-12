@@ -26,33 +26,34 @@
 				<label class="control-study" for="field-study_area"> {{ _("iUtah Study Area")}}</label>
 				<div class="controls">
 					<select id="field-study_area" name="study_area" data-module="autocomplete" title="iUtah Study Area.">
+                        <option value="" > {{ _('Select a value') }}</option>
 						{% for area in h.study_area() %}
-						<option value="{{ area }}" {% if area == data.study_area %}selected{% endif %} > {{ area }} </option>
+						<option value="{{ area }}" {% if area == data.custom_meta.study_area %}selected{% endif %} > {{ area }} </option>
 						{% endfor %}
 					</select>
 				</div>
 			</div>
 		</p>
 		<p>
-			{{ form.input('north_extent', label=_('North Extent'), id='field-north_extent', placeholder=_(''), value=data.north_extent, error=errors.north_extent, classes=['control-medium'], attrs={'title': 'What is the north extent of the data'} )}}
+			{{ form.input('north_extent', label=_('North Extent'), id='field-north_extent', placeholder=_(''), value=data.custom_meta.north_extent, error=errors.north_extent, classes=['control-medium'], attrs={'title': 'What is the north extent of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('south_extent', label=_('South Extent'), id='field-south_extent', placeholder=_(''), value=data.south_extent, error=errors.south_extent, classes=['control-medium'], attrs={'title': 'What is the south extent of the data'} )}}
+			{{ form.input('south_extent', label=_('South Extent'), id='field-south_extent', placeholder=_(''), value=data.custom_meta.south_extent, error=errors.south_extent, classes=['control-medium'], attrs={'title': 'What is the south extent of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_(''), value=data.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={'title': 'What is the east extent of the data'} )}}
+			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_(''), value=data.custom_meta.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={'title': 'What is the east extent of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_(''), value=data.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={'title': 'What is the west extent of the data'} )}}
+			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_(''), value=data.custom_meta.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={'title': 'What is the west extent of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('points, lines, polygons, raster, etc.'), value=data.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'For geospatial data, the type of geographic feature'} )}}
+			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('points, lines, polygons, raster, etc.'), value=data.custom_meta.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'For geospatial data, the type of geographic feature'} )}}
 		</p>
 		<p>
-			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_('NAD83'), value=data.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'What is the horizontal coordinate system of the data'} )}}
+			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_('NAD83'), value=data.custom_meta.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'What is the horizontal coordinate system of the data'} )}}
 		</p>
 		<p>
-			{{ form.input('vert_coord_system', label=_('Vertical Coordinate System'), id='field-vert_coord_system', placeholder=_('EGM84'), value=data.vert_coord_system, error=errors.vert_coord_system, classes=['control-medium'], attrs={'title': 'What is the vertical coordinate system of the data'} )}}
+			{{ form.input('vert_coord_system', label=_('Vertical Coordinate System'), id='field-vert_coord_system', placeholder=_('EGM84'), value=data.custom_meta.vert_coord_system, error=errors.vert_coord_system, classes=['control-medium'], attrs={'title': 'What is the vertical coordinate system of the data'} )}}
 		</p>
 	</div>
 </div>

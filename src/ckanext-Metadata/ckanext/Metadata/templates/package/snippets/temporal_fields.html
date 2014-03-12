@@ -14,7 +14,7 @@
 	<div class="controls">
 		<select id="field-status" name="status" data-module="autocomplete" title="Is data collection ongoing, completed, or planned?">
 			{% for status in h.get_status() %}
-			<option value="{{ status }}" {% if type == data.custom_meta.status %}selected{% endif %} > {{ status }} </option>
+			<option value="{{ status }}" {% if status == data.custom_meta.status %}selected{% endif %} > {{ status }} </option>
 			{% endfor %}
 		</select>
 	</div>
@@ -37,8 +37,9 @@
 				<label class="control-label" for="field-update_frequency"> {{ _("Update Frequency") }}</label>
 				<div class="controls">
 					<select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="Frequency with which dataset is published.">
-						{% for level in h.update_frequency() %}
-						<option value="{{ level }}" {% if level == data.custom_meta.update_frequency %}selected{% endif %} > {{ level }} </option>
+						<option value="" > {{ _('Select a value') }}</option>
+                        {% for level in h.update_frequency() %}
+						    <option value="{{ level }}" {% if level == data.custom_meta.update_frequency %}selected{% endif %} > {{ level }} </option>
 						{% endfor %}
 					</select>
 				</div>
