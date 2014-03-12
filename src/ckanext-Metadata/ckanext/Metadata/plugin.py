@@ -553,11 +553,16 @@ def pkg_update(context, data_dict):
     # This was added to allow creation metadata only dataset (dataset without resources)
     # Here we are deleting our dummy resource if it exists
     if origpkg['state'] == 'draft' or origpkg['state'] == 'draft-complete':
-        if len(data_dict['resources']) > 0:
-            dummy_resource = data_dict['resources'][0]
-            if dummy_resource.get('dummy_resource', None):
-                del data_dict['resources'][0]
-
+        if data_dict.get('resources', None):
+            if len(data_dict['resources']) > 0:
+                dummy_resource = data_dict['resources'][0]
+                if dummy_resource.get('dummy_resource', None):
+                    del data_dict['resources'][0]
+        elif origpkg.get('resources', None):
+            if len(origpkg['resources']) > 0:
+                dummy_resource = origpkg['resources'][0]
+                if dummy_resource.get('dummy_resource', None):
+                    del origpkg['resources'][0]
 
     iutahorg = p.toolkit.get_action('organization_show')(context, {'id': 'iutah'})
 
