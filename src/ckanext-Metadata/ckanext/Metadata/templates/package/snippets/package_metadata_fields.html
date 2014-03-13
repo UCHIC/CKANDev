@@ -25,19 +25,34 @@
 
 
 {% block package_metadata_fields_custom %}
-{# call helper function that moves any common core fields from 'extras' to the 'custom_meta' key #}
-{# TODO uncomment below, need to filter out the custom form fields, but right now, if we don't include them in the form, then they get
-deleted from the database!!
-#}
-{#
-{% set data = h.load_data_into_dict(data) %}
-
-{% snippet 'snippets/custom_form_fields.html', extras=data.extras, errors=errors, limit=3 %}
-
-#}
+{# need to hide this block which shows free form key/value entry for additional metadata as
+they don't work when you have custom dataset schema.on that moves any common core fields from 'extras' to the 'custom_meta' key #}
 {% endblock package_metadata_fields_custom %}
+
 {% block dataset_fields %}
-   {{ super() }}
+   {% if data.groups %}
+      <div class="control-group">
+        <label class="control-label">{{ _('Groups') }}</label>
+        <div class="controls">
+          {% for group in data.groups %}
+            <label class="checkbox" for="field-group-{{ loop.index0 }}">
+              <input id="field-group-{{ loop.index0 }}" type="checkbox" name="groups__{{ loop.index0 }}__id" value="{{ group.id }}" checked="checked" />
+              {{ group.title }}
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {# display dataset add to group control only if the user has admin role #}
+    {# since pylons context object (c) can't be accessed inside a snippet, I had to use a helper function. #}
+    {% set c = h.get_pylons_context_obj() %}
+    {% if h.has_user_group_or_org_admin_role(data.owner_org, c.user) %}
+        {% set group_name = 'groups__%s__id' % data.groups|length %}
+        {% set group_attrs = {'data-module': 'autocomplete', 'data-module-source': '/api/2/util/group/autocomplete?q=?', 'data-module-key': 'id', 'data-module-label': 'title'} %}
+        {{ form.input(group_name, label=_('Add Group'), id="field-group", value=data[group_name], classes=['control-medium'], attrs=group_attrs) }}
+    {% endif %}
+
    {% if not data.resources or data.resources[0].get('dummy_resource', None) %}
         <span class="label label-info">Note:You have not added any resources for this dataset.</span>
    {% endif %}

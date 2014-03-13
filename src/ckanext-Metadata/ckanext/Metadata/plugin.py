@@ -109,6 +109,14 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
     # template helper function
     @classmethod
+    def get_pylons_context_obj(cls):
+        """
+        This one will allow us to access the c object in a snippet template
+        """
+        return p.toolkit.c
+
+    # template helper function
+    @classmethod
     def has_user_group_or_org_admin_role(cls, group_id, user_name):
         """
         Checks if the given user has admin role for the specified group/org
@@ -396,6 +404,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 'get_types':self.get_types,
                 'update_frequency': self.get_update_frequency,
                 'check_if_user_owns_dataset': self.check_if_user_owns_dataset,
+                'get_pylons_context_obj': self.get_pylons_context_obj,
                 'has_user_group_or_org_admin_role': self.has_user_group_or_org_admin_role}
 
     #See ckan.plugins.interfaces.IActions    
