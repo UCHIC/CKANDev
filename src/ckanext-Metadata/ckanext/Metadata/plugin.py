@@ -8,6 +8,7 @@ import ckan.new_authz as auth
 import copy
 from ckan.logic.action.create import user_create as core_user_create, package_create
 from ckan.logic.action.update import package_update
+from ckan.logic.action.get import user_show
 import ckan.lib.helpers as h
 import helpers as meta_helper
 
@@ -413,7 +414,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return {
                  'package_create': pkg_create,
                  'package_update': pkg_update,
-                 'user_create': user_create_local
+                 'user_create': user_create_local,
+                 'user_show': show_user
         }
 
     # implements IPackageController
@@ -536,29 +538,48 @@ def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')
 
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
+
+    #get name of the author to use in citation
+    author = data_dict.get('author', None)
+
+    # get the name of the submitter to use in citation if author is not available
     sub_name = origpkg.get('sub_name', None)
+    sub_email = origpkg.get('sub_email', '')
+    if not sub_name:
+        context['return_minimal'] = True
+        user = p.toolkit.get_action('user_show')(context, {'id': context['user']})
+        data_dict['sub_name'] = user['fullname']
+        data_dict['sub_email'] = user['email']
+    else:
+        data_dict['sub_name'] = sub_name
+        data_dict['sub_email'] = sub_email
 
-    context['return_minimal'] = True
-    user = p.toolkit.get_action('user_show')(context, {'id': context['user']})
-
-    data_dict['sub_name'] = user['fullname']
-    data_dict['sub_email'] = user['email']
+    if not author:
+        author = data_dict['sub_name']
+        data_dict['author'] = data_dict['sub_name']
+        data_dict['author_email'] = data_dict['sub_email']
+        data_dict['creator_organization'] = u''
+        data_dict['creator_address'] = u''
+        data_dict['creator_phone'] = u''
 
     data_dict['version'] = u'1.0'
     data_dict['license_id'] = u'cc-by'
 
     if origpkg['state'] != 'active':
-        data_dict['citation'] = u''
-        if not data_dict.get('author', None):
-            data_dict['author'] = u''
-            data_dict['author_email'] = u''
-            data_dict['creator_organization'] = u''
-            data_dict['creator_address'] = u''
-            data_dict['creator_phone'] = u''
+        #data_dict['citation'] = u''
+        # if not data_dict.get('author', None):
+        #     data_dict['author'] = u''
+        #     data_dict['author_email'] = u''
+        #     data_dict['creator_organization'] = u''
+        #     data_dict['creator_address'] = u''
+        #     data_dict['creator_phone'] = u''
+        # else:
+        if data_dict.get('author', None):
+            data_dict['citation'] = createcitation(context, data_dict, subname=author)
         else:
-            data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
+            data_dict['citation'] = u''
     else:
-        data_dict['citation'] = createcitation(context, data_dict, subname=sub_name)
+        data_dict['citation'] = createcitation(context, data_dict, subname=author)
 
     # This was added to allow creation metadata only dataset (dataset without resources)
     # Here we are deleting our dummy resource if it exists
@@ -584,6 +605,19 @@ def pkg_update(context, data_dict):
             data_dict['private'] = origpkg['private']
 
     return package_update(context, data_dict)
+
+
+def show_user(context, data_dict):
+    # this function solves the missing value error
+    # when dataset schema is changed and we have old datasets
+    # that were created prior to the schema change
+
+    if not context.get('save', None):
+        context['validate'] = False
+    else:
+        context['validate'] = True
+
+    return user_show(context, data_dict)
 
 
 def createcitation(context, data_dict, subname=None, year=None):
