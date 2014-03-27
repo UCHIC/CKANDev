@@ -82,19 +82,14 @@
 								<td class="dataset-details">{{ pkg_dict.custom_meta.research_focus }}</td>
 							</tr>
 							{% endif %}
-			
-							{% if pkg_dict.custom_meta.intended_use %}
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Intended Use") }}</th>
-								<td class="dataset-details">{{ pkg_dict.custom_meta.intended_use }}</td>
-							</tr>
-							{% endif %}
-			
-							
+
+                            {% if pkg_dict.custom_meta.access_information %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Access Information") }}</th>
 								<td class="dataset-details">{{ pkg_dict.custom_meta.access_information }}</td>
 							</tr>
+                            {% endif %}
+
 							{% if pkg_dict.custom_meta.type %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _("Type") }}</th>
@@ -258,10 +253,12 @@
 					<table class="table  table-condensed table-no-border-top">
 			
 						<tbody>
-							<tr>
+							{% if pkg_dict.custom_meta.sub_email and pkg_dict.custom_meta.sub_name  %}
+                            <tr>
 								<th scope="row" class="dataset-label">{{ _("Submitter") }}</th>
 								<td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.custom_meta.sub_email, name=pkg_dict.custom_meta.sub_name) }}</td>
 							</tr>
+                            {% endif %}
 
 							{% if pkg_dict.author_email %}
 							<tr>
@@ -273,7 +270,6 @@
 								<th scope="row" class="dataset-label">{{ _("Creator") }}</th>
 								<td class="dataset-details" property="dc:creator">{{ pkg_dict.author }}</td>
 							</tr>
-							
 							{% endif %}
 							
 							{% if pkg_dict.custom_meta.creator_organization %}

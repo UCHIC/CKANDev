@@ -10,12 +10,8 @@
 {#  {{ form.input('language', label=_('Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset.'}, is_required=true )}}#}
 {{ form.input('language', label=_('* Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset.'} )}}
 
-{# {{ form.input('intended_use', id='field-intended_use', label=_('Intended Use'), placeholder=_('for research of ...'), value=data.custom_meta.intended_use, error=errors.intuse, classes=['control-medium'], attrs={'title': "How do you plan on using the data"}, is_required=true) }}#}
-{{ form.input('intended_use', id='field-intended_use', label=_('* Intended Use'), placeholder=_('for research of ...'), value=data.custom_meta.intended_use, error=errors.intuse, classes=['control-medium'], attrs={'title': "How do you plan on using the data"}) }}
-
 {# {{ form.markdown('access_information', id='field-access_information', label=_('Access Information'), placeholder=_('Are there constraints on who can access the data? Is it in the public or private domain? Are there associated costs?'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A statement or URL that points to the rights management or usage statement for the resource.'}, is_required=true) }}#}
 {{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('Are there constraints on who can access the data? Is it in the public or private domain? Are there associated costs?'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A statement or URL that points to the rights management or usage statement for the resource.'}) }}
-
 
 <div class="control-group">
 	<label class="control-label" for="field-data_type"> <span title="This field is required" class="control-required">*</span> {{ _("Type") }}</label>
@@ -28,8 +24,6 @@
 	</div>
 </div>
 
-
-
 {#optional Metadata#}
 <div class="panel panel-default">
 	<div class = "panel-heading">
@@ -37,8 +31,7 @@
 			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#generalDiv"> Optional Metadata  </a> 
 		</span>
 	</div>
-	
-	
+
 	<div id="generalDiv" class="panel-collapse collapse out">
 
 		<p>

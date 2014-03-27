@@ -8,7 +8,7 @@ import ckan.new_authz as auth
 import copy
 from ckan.logic.action.create import user_create as core_user_create, package_create
 from ckan.logic.action.update import package_update
-from ckan.logic.action.get import user_show
+from ckan.logic.action.get import user_show, package_show
 import ckan.lib.helpers as h
 import helpers as meta_helper
 
@@ -19,8 +19,7 @@ required_metadata = (
                      {'id': 'language', 'validators': [v.String(max=100)]},
                      
                      {'id': 'data_type', 'validators': [v.String(max=100)]},
-                     {'id': 'access_information', 'validators': [v.String(max=500)]},#use_constraints
-                     {'id': 'intended_use', 'validators': [v.String(max=100)]},
+                     {'id': 'access_information', 'validators': [v.String(max=500)]},   # use_constraints
                      {'id': 'status', 'validators': [v.String(max=100)]},
                      {'id': 'observed_variables', 'validators': [v.String(max=100)]},
 
@@ -415,7 +414,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                  'package_create': pkg_create,
                  'package_update': pkg_update,
                  'user_create': user_create_local,
-                 'user_show': show_user
+                 'user_show': show_user,
+                 'package_show': show_package
         }
 
     # implements IPackageController
@@ -537,7 +537,10 @@ def user_create_local(context, data_dict):
 def pkg_update(context, data_dict):
     log.debug('my very own package_update() called')
 
+    # turning context 'validate' key on/off to allow schema changes to work with existing dataset
+    context['validate'] = False
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
+    context['validate'] = True
 
     #get name of the author to use in citation
     author = data_dict.get('author', None)
@@ -547,7 +550,10 @@ def pkg_update(context, data_dict):
     sub_email = origpkg.get('sub_email', '')
     if not sub_name:
         context['return_minimal'] = True
+        # turning context 'validate' key on/off to allow schema changes to work with existing dataset
+        context['validate'] = False
         user = p.toolkit.get_action('user_show')(context, {'id': context['user']})
+        context['validate'] = True
         data_dict['sub_name'] = user['fullname']
         data_dict['sub_email'] = user['email']
     else:
@@ -566,14 +572,6 @@ def pkg_update(context, data_dict):
     data_dict['license_id'] = u'cc-by'
 
     if origpkg['state'] != 'active':
-        #data_dict['citation'] = u''
-        # if not data_dict.get('author', None):
-        #     data_dict['author'] = u''
-        #     data_dict['author_email'] = u''
-        #     data_dict['creator_organization'] = u''
-        #     data_dict['creator_address'] = u''
-        #     data_dict['creator_phone'] = u''
-        # else:
         if data_dict.get('author', None):
             data_dict['citation'] = createcitation(context, data_dict, subname=author)
         else:
@@ -614,17 +612,29 @@ def show_user(context, data_dict):
 
     if not context.get('save', None):
         context['validate'] = False
-    else:
-        context['validate'] = True
 
     return user_show(context, data_dict)
+
+
+def show_package(context, data_dict):
+    # this function solves the missing value error
+    # when dataset schema is changed and we have old datasets
+    # that were created prior to the schema change
+
+    if context.get('for_view', None) or context.get('for_edit', None) or context.get('pending', None) or \
+            context.get('allow_partial_update', None):
+        context['validate'] = False
+
+    return package_show(context, data_dict)
 
 
 def createcitation(context, data_dict, subname=None, year=None):
     
     url = h.url_for(controller='package', action='read', id=data_dict['name'], qualified=True)
+    # turning context 'validate' key on/off to allow schema changes to work with existing dataset
+    context['validate'] = False
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
-    
+    context['validate'] = True
     name = subname
     try:
         if len(data_dict['author']) > 0:
