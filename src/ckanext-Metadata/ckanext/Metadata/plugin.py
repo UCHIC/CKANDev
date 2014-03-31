@@ -11,6 +11,7 @@ from ckan.logic.action.update import package_update
 from ckan.logic.action.get import user_show, package_show
 import ckan.lib.helpers as h
 import helpers as meta_helper
+import os
 
 log = getLogger(__name__)
 
@@ -101,6 +102,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     p.implements(p.IDatasetForm)
     p.implements(p.IActions)
     p.implements(p.IPackageController, inherit=True)
+
+    p.toolkit.add_resource('public', 'metadata_resources')
 
     # template helper function
     @classmethod
@@ -356,6 +359,14 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     def update_config(self, config):
         # Instruct CKAN to look in the ```templates``` directory for customized templates and snippets
         p.toolkit.add_template_directory(config, 'templates')
+
+        # add the extension's public dir path so that
+        # ckan can find any resources used from this path
+        # get the current dir path (here) for this plugin
+        here = os.path.dirname(__file__)
+        rootdir = os.path.dirname(os.path.dirname(here))
+        our_public_dir = os.path.join(rootdir, 'ckanext', 'Metadata', 'public')
+        config['extra_public_paths'] = ','.join([our_public_dir, config.get('extra_public_paths', '')])
 
     #See ckan.plugins.interfaces.IDatasetForm
     def _modify_package_schema(self, schema):
