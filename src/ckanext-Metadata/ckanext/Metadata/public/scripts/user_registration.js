@@ -71,14 +71,6 @@ $(document).ready(function(){
              dataPublishAgree = false;
              sessionStorage.setItem('dataPublishAgree', dataPublishAgree);
         }
-
-//        if($(this).is(':checked')){
-//             $('#btnCreateAccount').attr('disabled', false);
-//
-//        }
-//        else{
-//              $('#btnCreateAccount').attr('disabled', true)
-//        }
     });
 
     $('#chkDataUseAgreement').click(function(){
