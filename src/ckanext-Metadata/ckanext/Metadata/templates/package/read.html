@@ -1,6 +1,20 @@
 
 {% ckan_extends %}
 
+{% block page_heading %}
+      {{ pkg.title or pkg.name }}
+      {% if pkg.state.startswith('draft') %}
+        [{{ _('Draft') }}]
+      {% endif %}
+    {% if not c.user %}
+        <div class="form-group">
+            <div class="checkbox">
+                  <input type="checkbox" id="chkDataUseAgreement"> <small><strong>Agree to data use agreement for data preview/download.</strong></small>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
 
 {% block package_additional_info %}
 
@@ -360,7 +374,105 @@
 		
 	</div>
 
-	
+	<div class="modal fade" id="showDataUseModal"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="false" style="z-index: -1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              {#  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> #}
+              <h4 class="modal-title">Data Use Agreement</h4>
+            </div>
+            <div class="modal-body">
+              {% block use_agreement %}
+                <p>
+                    This document outlines the provisions of a non-exclusive license for use of data shared through the
+                    iUTAH Modeling & Data Federation. Consistent with the objectives of iUTAH, the goal of the iUTAH
+                    Modeling & Data Federation is to make data originally acquired by iUTAH available to the community for
+                    further study. By receipt and use of data from the iUTAH Modeling & Data Federation, you agree to the
+                    following provisions for yourself and any collaborators with whom you share these data:
+                </p>
+                <p>
+                <strong><span style="color:blue">1.  Free use of iUTAH Data:</span></strong>  iUTAH Data Products* except those labeled
+                    Restricted** are released to the public under a Creative Commons Attribution copyright license
+                    <a href="http://creativecommons.org/licenses/by/3.0/us/" target="_blank">(http://creativecommons.org/licenses/by/3.0/us/)</a>
+                    and may be freely copied, distributed, edited,
+                    and otherwise modified under the condition that you give acknowledgment as described below.
+                    Non-iUTAH data products, such as those produced by state and federal agencies have their own use
+                    policies that should be followed.
+                </p>
+                <p>
+                    * iUTAH Data Products are defined as data collected with any monetary or logistical support from iUTAH.
+                    <br>
+                    <br>
+                    ** Restricted data are defined as data that cannot be released publicly due to privacy granted by
+                    human subjects legislation or other concerns.  To enquire about potential use of restricted data, please contact us.
+                </p>
+                <p>
+                    <strong><span style="color:blue">2.  Data Guarantee:</span></strong>  These data and metadata are provided by the iUTAH Modeling &
+                    Data Federation and the data contributors “as is.” The Data User holds all parties involved in the
+                    production or distribution of the data and metadata harmless for any damages resulting from its use
+                    or interpretation.
+                </p>
+
+                <p>
+                 <strong><span style="color:blue">3.  Publication / Acknowledgement of Data Use:</span></strong>  Acknowledgement of iUTAH and the data
+                    provider(s) is expected as standard practice in scientific publication or presentation of findings
+                    based upon these data. For iUTAH Data Products, the Data User should acknowledge the institutional
+                    support and funding award for the iUTAH project in any publication where the data contributed
+                    significantly to its content.  For example:
+                    <br>
+                    <br>
+                    <i>“Data were provided by the iUTAH project and were accessed through the iUTAH Modeling & Data
+                    Federation.  Significant funding for collection of these data was provided by the National
+                    Science Foundation (NSF EPS - 1208732).” </i>
+                    <br>
+                    <br>
+                    Whenever practical, the individual data providers should be acknowledged, including
+                    citing datasets as follows (see <a href="http://www.datacite.org/whycitedata" target="_blank">http://www.datacite.org/whycitedata </a>):
+                    <br>
+                    <br>
+                    <i>Creator(s), year of publication, title of dataset, name of publisher (iUTAH Modeling & Data
+                    Federation), edition or version, and URL or other identifier.</i>
+                    <br>
+                    <br>
+                    When impractical to do so because of the number of datasets used, use of data from the iUTAH
+                    Modeling & Data Federation should be acknowledged.
+                    <br>
+                    <br>
+                    Data Users agree to provide to iUTAH a bibliographic citation of the final published presentation
+                    or article for inclusion in the iUTAH literature archive. I will submit this information
+                    via the iUTAH website at <a href="http://iutahepscor.org/contact_us_form.php" target="_blank">http://iutahepscor.org/contact_us_form.php </a>.
+                </p>
+                <p>
+                    <strong><span style="color:blue">4.  Redistribution of Data:</span> </strong> Redistribution of original data is permitted so
+                    long as the data are redistributed under the same terms and conditions as described in this Data
+                    Use Agreement.  Data derived from original data may be distributed under terms and conditions
+                    established by the creators of such derived data. Users must comply with the terms and conditions
+                    of use set by the creators of these derived data.
+                </p>
+                <p>
+                <strong><span style="color:blue">5.  Collaboration:</span></strong>  iUTAH researchers have released data in the spirit of open
+                    scientific collaboration.  Data Users are strongly encouraged to consider consultation,
+                    collaboration, and/or co-authorship with dataset creators.
+                <br>
+                <br>
+                    By accepting this Data Set, the Data User agrees to abide by the terms of this agreement. The Data
+                    Owner shall have the right to terminate this agreement immediately by written notice upon the Data
+                    User's breach of, or non-compliance with, any of its terms. The Data User may be held responsible
+                    for any misuse that is caused or encouraged by the Data User's failure to abide by the terms of
+                    this agreement.
+                </p>
+              {% endblock %}
+            </div>
+
+            <div class="modal-footer" >
+              <button type="button" id="btnDataUseAgree" class="btn btn-success" data-dismiss="modal">Agree</button>
+              <button type="button" id="btnDataUseDecline" class="btn btn-default" data-dismiss="modal">Decline</button>
+            </div>
+
+          </div><!-- /.modal-content -->
+
+        </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 {% endblock %}
 

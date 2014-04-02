@@ -9,7 +9,7 @@ $(document).ready(function(){
     var error = $("#field-error").val();
     if (error != "{}")
     {
-          if(sessionStorage.length >1)
+        if(sessionStorage.length >1)
         {
             dataUseAgree = sessionStorage.getItem('dataUseAgree');
             dataPublishAgree = sessionStorage.getItem('dataPublishAgree');
@@ -88,11 +88,13 @@ $(document).ready(function(){
 function showDataPublishAgreementDialog()
 	{
 		$('#showDataPublishModal').css('z-index', 1050);
+        $('#showDataPublishModal').modal({'backdrop': 'static', 'keyboard': 'false'});
 		$('#showDataPublishModal').modal('show');
 	}
 
 function showDataUseAgreementDialog()
 	{
 		$('#showDataUseModal').css('z-index', 1050);
+        $('#showDataUseModal').modal({'backdrop': 'static', 'keyboard': 'false'});
 		$('#showDataUseModal').modal('show');
 	}
