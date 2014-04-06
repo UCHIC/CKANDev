@@ -5,80 +5,86 @@ var dataUseAgree = false;
 
 $(document).ready(function(){
 
-    if(sessionStorage.length >0)
-    {
-        dataUseAgree = sessionStorage.getItem('dataUseAgree');
-        if(sessionStorage.getItem('dataUseAgree') == "false"){
-            dataUseAgree = false;
-        }
-        else{
-            dataUseAgree = true;
-        }
-    }
-    else
-    {
-        dataUseAgree = false;
-    }
+    // if the data use agreement checkbox exists, then it must be a user not registered
+    if ($('#chkDataUseAgreement').length){
+        if(sessionStorage.length >0){
+            dataUseAgree = sessionStorage.getItem('dataUseAgree');
+            if(sessionStorage.getItem('dataUseAgree') == "false"){
+                dataUseAgree = false;
+            }
+            else{
+                dataUseAgree = true;
+            }
+            }
+            else
+            {
+                dataUseAgree = false;
+            }
 
-    if (!dataUseAgree){
-        $("a.resource-url-analytics").hide();
-        $("a.btn").hide();
-        $("a.heading").css({cursor:"default"});
-    }
-    else
-    {
-        $("a.resource-url-analytics").show();
-        $("a.btn").show();
-        $("a.heading").css({cursor:"pointer"});
-    }
-
-    if (dataUseAgree){
-        $('#chkDataUseAgreement').attr('checked', true);
-    }
-    else{
-        $('#chkDataUseAgreement').attr('checked', false);
-    }
-
-    $("a.heading").click(function(event){
         if (!dataUseAgree){
-            $(this).css({cursor:"default"});
-            event.preventDefault();
+            $("a.resource-url-analytics").hide();
+            $("a.btn").hide();
+            $("a.heading").css({cursor:"default"});
         }
         else
         {
-            $(this).css({cursor:"pointer"});
+            $("a.resource-url-analytics").show();
+            $("a.btn").show();
+            $("a.heading").css({cursor:"pointer"});
         }
-    });
 
-    $('#btnDataUseAgree').click(function(){
-        dataUseAgree = true;
-        sessionStorage.setItem('dataUseAgree', dataUseAgree)
-        $("a.resource-url-analytics").show();
-        $("a.heading").css({cursor:"pointer"});
-        $("a.btn").show();
-    });
+        if (dataUseAgree){
+            $('#chkDataUseAgreement').attr('checked', true);
+        }
+        else{
+            $('#chkDataUseAgreement').attr('checked', false);
+        }
 
-    $('#btnDataUseDecline').click(function(){
-        dataUseAgree = false;
-        sessionStorage.setItem('dataUseAgree', dataUseAgree)
-        $("a.resource-url-analytics").hide();
-        $("a.heading").css({cursor:"default"});
-        $('#chkDataUseAgreement').attr('checked', false);
-        $("a.btn").hide();
-    });
+        $("a.heading").click(function(event){
+            if (!dataUseAgree){
+                $(this).css({cursor:"default"});
+                event.preventDefault();
+            }
+            else
+            {
+                $(this).css({cursor:"pointer"});
+            }
+        });
 
-    $('#chkDataUseAgreement').click(function(){
-         if($(this).is(':checked')){
-            showDataUseAgreementDialog();
-         }
-         else{
+        $('#btnDataUseAgree').click(function(){
+            dataUseAgree = true;
+            sessionStorage.setItem('dataUseAgree', dataUseAgree)
+            $("a.resource-url-analytics").show();
+            $("a.heading").css({cursor:"pointer"});
+            $("a.btn").show();
+        });
+
+        $('#btnDataUseDecline').click(function(){
             dataUseAgree = false;
             sessionStorage.setItem('dataUseAgree', dataUseAgree)
             $("a.resource-url-analytics").hide();
             $("a.heading").css({cursor:"default"});
+            $('#chkDataUseAgreement').attr('checked', false);
             $("a.btn").hide();
-        }
-    });
+        });
+
+        $('#chkDataUseAgreement').click(function(){
+             if($(this).is(':checked')){
+                showDataUseAgreementDialog();
+             }
+             else{
+                dataUseAgree = false;
+                sessionStorage.setItem('dataUseAgree', dataUseAgree)
+                $("a.resource-url-analytics").hide();
+                $("a.heading").css({cursor:"default"});
+                $("a.btn").hide();
+            }
+        });
+    }
+    else{
+        sessionStorage.clear();
+    }
+
 });
 
 function showDataUseAgreementDialog()
