@@ -3,7 +3,7 @@
 
 {% block resource_actions_inner %}
     {% if h.check_access('package_update', {'id':pkg.id }) and (h.check_if_user_owns_dataset(pkg.id, c.user) or h.has_user_group_or_org_admin_role(pkg.owner_org, c.user)) %}
-      <li>{% link_for _('Edit-1'), controller='package', action='resource_edit', id=pkg.name, resource_id=res.id, class_='btn', icon='wrench' %}</li>
+      <li>{% link_for _('Edit'), controller='package', action='resource_edit', id=pkg.name, resource_id=res.id, class_='btn', icon='wrench' %}</li>
     {% endif %}
     {% if res.url %}
       <li>
