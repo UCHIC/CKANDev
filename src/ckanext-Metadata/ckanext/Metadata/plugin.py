@@ -23,6 +23,7 @@ required_metadata = (
                      {'id': 'access_information', 'validators': [v.String(max=500)]},   # use_constraints
                      {'id': 'status', 'validators': [v.String(max=100)]},
                      {'id': 'observed_variables', 'validators': [v.String(max=100)]},
+                     # used for testing schema change {'id': 'test_element', 'validators': [v.String(max=100)]},
 
                      #TODO should this unique_id be validated against any other unique IDs for this agency?
                      #{'id':'unique_id', 'validators': [v.String(max=100)]}
@@ -63,6 +64,93 @@ expanded_metadata = (
                         {'id': 'required_software', 'validators': [v.String(max=100)]},
 
 )
+
+# needed for repeatable data elements
+def creator_schema():
+    validator = p.toolkit.get_validator('ignore_missing')
+    schema = {
+        'name': [validator, convert_to_extras_custom],
+        'email': [validator, convert_to_extras_custom],
+        'phone': [validator, convert_to_extras_custom],
+        'address': [validator, convert_to_extras_custom],
+        'organization': [validator, convert_to_extras_custom],
+    }
+
+    return schema
+
+
+# needed for repeatable data elements
+def convert_to_extras_custom(key, data, errors, context):
+
+    #    print "key :====> ", key, "data : ====>", data[key]
+    extras = data.get(('extras',), [])
+
+    if not extras:
+        data[('extras',)] = extras
+
+    keyStr = ':'.join([str(x) for x in key])
+
+    extras.append({'key': keyStr, 'value': data[key]})
+
+
+# needed for repeatable data elements
+def convert_from_extras_custom(key, data, errors, context):
+    print "key : <====", key, "\n"
+
+    def remove_from_extras(data, keyList):
+        to_remove = []
+        for data_key, data_value in data.iteritems():
+            if data_key[0] == 'extras' and data_key[1] in keyList:
+                to_remove.append(data_key)
+
+        for item in to_remove:
+            del data[item]
+
+    indexList = []  # A list containing the index of items in extras to be removed.
+    new_data = {}   # A new dictionary for data stored in extras with the given key
+
+    for data_key, data_value in data.iteritems():
+        if data_key[0] == 'extras' and data_key[-1] == 'key':
+            #Extract the key components separated by ':'
+            keyList = data_value.split(':')
+
+            #Check for multiple value inputs and convert the list item index to integer
+            if len(keyList) > 1:
+                keyList[1] = int(keyList[1])
+
+            #Construct the key for the stored value(s)
+            newKey = tuple(keyList)
+
+            if key[-1] == newKey[0]:
+                #Retrieve data from extras and add it to new_data so it can be added to the data dictionary.
+                new_data[newKey] = data[('extras', data_key[1], 'value')]
+
+                #Add the data index in extras to the list of items to be removed.
+                indexList.append(data_key[1])
+
+    #Remove all data from extras with the given index
+    remove_from_extras(data, indexList)
+    #Remove previous data stored under the given key
+    del data[key]
+    deleteIndex = []
+
+    for data_key, data_value in new_data.iteritems():
+        #If this is a deleted record then add it to the deleted list to be removed from data later.
+        if 'delete' in data_key and data_value == '1':
+            deleteIndex.append(data_key[1])
+
+    deleted = []
+
+    for data_key, data_value in new_data.iteritems():
+        if len(data_key) > 1 and data_key[1] in deleteIndex:
+            deleted.append(data_key)
+
+    for item in deleted:
+        del new_data[item]
+
+    #Add data extracted from extras to the data dictionary
+    for data_key, data_value in new_data.iteritems():
+        data[data_key] = data_value
 
 
 #add validator 'not-empty' for all required metadata fields
@@ -375,6 +463,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         for update in schema_updates_for_create:
             schema.update(update)
 
+        #schema.update({'creators': creator_schema()}) # needed for repeatable elements
         return schema
 
     #See ckan.plugins.interfaces.IDatasetForm
@@ -395,7 +484,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     #See ckan.plugins.interfaces.IDatasetForm
     def show_package_schema(self):
         schema = super(MetadataPlugin, self).show_package_schema()
-
+        ignore_missing = p.toolkit.get_validator('ignore_missing')
         # Don't show vocab tags mixed in with normal 'free' tags
         # (e.g. on dataset pages, or on the search page)
         schema['tags']['__extras'].append(p.toolkit.get_converter('free_tags_only'))
@@ -403,6 +492,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         for update in schema_updates_for_show:
             schema.update(update)
 
+        #schema.update({'creators': [convert_from_extras_custom, ignore_missing]}) # needed for repeatable elements
         return schema
 
     #Method below allows functions and other methods to be called from the Jinja template using the h variable
@@ -411,8 +501,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 'required_metadata': required_metadata,
                 'load_data_into_dict':  self.load_data_into_dict,
                 'study_area': self.get_study_area,
-                'get_status':self.get_status,
-                'get_types':self.get_types,
+                'get_status': self.get_status,
+                'get_types': self.get_types,
                 'update_frequency': self.get_update_frequency,
                 'check_if_user_owns_dataset': self.check_if_user_owns_dataset,
                 'get_pylons_context_obj': self.get_pylons_context_obj,
@@ -553,6 +643,12 @@ def pkg_update(context, data_dict):
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
     context['validate'] = True
 
+    # this is needed when adding a resource to an existing dataset
+    if context.get('save', None) is None:
+        for extra in origpkg['extras']:
+            if data_dict.get(extra['key'], None) is None:
+                data_dict[extra['key']] = extra['value']
+
     #get name of the author to use in citation
     author = data_dict.get('author', None)
 
@@ -589,6 +685,7 @@ def pkg_update(context, data_dict):
             data_dict['citation'] = u''
     else:
         data_dict['citation'] = createcitation(context, data_dict, subname=author)
+        context['validate'] = False
 
     # This was added to allow creation metadata only dataset (dataset without resources)
     # Here we are deleting our dummy resource if it exists
@@ -631,7 +728,6 @@ def show_package(context, data_dict):
     # this function solves the missing value error
     # when dataset schema is changed and we have old datasets
     # that were created prior to the schema change
-
     if context.get('for_view', None) or context.get('for_edit', None) or context.get('pending', None) or \
             context.get('allow_partial_update', None):
         context['validate'] = False
@@ -645,7 +741,7 @@ def createcitation(context, data_dict, subname=None, year=None):
     # turning context 'validate' key on/off to allow schema changes to work with existing dataset
     context['validate'] = False
     origpkg = p.toolkit.get_action('package_show')(context, data_dict)
-    context['validate'] = True
+
     name = subname
     try:
         if len(data_dict['author']) > 0:
@@ -666,6 +762,8 @@ def createcitation(context, data_dict, subname=None, year=None):
         
     citation = '{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, ' \
                '{url}'.format(creator=creator, year=year, title=data_dict['title'], version=version, url=url)
+
+    context['validate'] = True
     return citation
 
 
