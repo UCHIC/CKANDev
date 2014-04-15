@@ -19,7 +19,7 @@
 {% block package_additional_info %}
 
 {% set pkg_dict = h.load_data_into_dict(pkg) %}
-
+{% set creators = pkg_dict.custom_meta.creators %}
 {# display common core metadata #}
 	
 	<div class="citation-block">
@@ -273,40 +273,40 @@
 								<td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.custom_meta.sub_email, name=pkg_dict.custom_meta.sub_name) }}</td>
 							</tr>
                             {% endif %}
+                            <tr>
+                              <th scope="row" class="dataset-label">{{ _("Creators") }}</th>
+                              <td class="dataset-details" ></td>
+                            </tr>
 
-							{% if pkg_dict.author_email %}
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Creator") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=pkg_dict.author_email, name=pkg_dict.author) }}</td>
-							</tr>
-							{% elif pkg_dict.author %}
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Creator") }}</th>
-								<td class="dataset-details" property="dc:creator">{{ pkg_dict.author }}</td>
-							</tr>
-							{% endif %}
-							
-							{% if pkg_dict.custom_meta.creator_organization %}
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Creator Organization") }}</th>
-								<td class="dataset-details" >{{ pkg_dict.custom_meta.creator_organization }}</td>
-							</tr>
-							{% endif %}
-							
-							{% if pkg_dict.custom_meta.creator_address %}
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Creator Address") }}</th>
-								<td class="dataset-details" >{{ pkg_dict.custom_meta.creator_address }}</td>
-							</tr>
-							{% endif %}
-							
-							{% if pkg_dict.custom_meta.creator_phone %}
-							<tr>
-								<th scope="row" class="dataset-label">{{ _("Creator Phone") }}</th>
-								<td class="dataset-details" >{{ pkg_dict.custom_meta.creator_phone }}</td>
-							</tr>
-							{% endif %}
-							
+                            {%  for creator in creators %}
+                                <tr style="border: none">
+                                    <td scope="row" class="dataset-label">{{ _("Name:") }}</td>
+                                    {%  if creator['email'] %}
+                                        <td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=creator['email'], name=creator['name']) }}</td>
+                                    {%  else %}
+                                        <td class="dataset-details" property="dc:creator">{{ creator['name'] }}</td>
+                                    {%  endif %}
+                                </tr>
+                                {% if creator['organization'] %}
+                                    <tr style="border: none">
+                                        <td scope="row" class="dataset-label" style="border-top: none">{{ _("Organization:") }}</td>
+                                        <td class="dataset-details" style="border-top: none" >{{ creator['organization'] }}</td>
+                                    </tr>
+                                {% endif %}
+                                {% if creator['address'] %}
+                                    <tr style="border: none">
+                                        <td scope="row" class="dataset-label" style="border-top: none">{{ _("Address:") }}</td>
+                                        <td class="dataset-details" style="border-top: none" >{{ creator['address'] }}</td>
+                                    </tr>
+                                {% endif %}
+                                {% if creator['phone'] %}
+                                    <tr style="border: none">
+                                        <td scope="row" class="dataset-label" style="border-top: none">{{ _("Phone:") }}</td>
+                                        <td class="dataset-details" style="border-top: none" >{{ creator['phone'] }}</td>
+                                    </tr>
+                                {% endif %}
+                            {%  endfor %}
+
 							{% if pkg_dict.maintainer_email %}
 							<tr>
 								<th scope="row" class="dataset-label">{{ _('Maintainer') }}</th>

@@ -39,9 +39,6 @@ expanded_metadata = (
 
                         {'id': 'sub_name', 'validators': [v.String(max=100)]},
                         {'id': 'sub_email', 'validators': [v.String(max=100)]},
-                        {'id': 'creator_organization', 'validators': [v.String(max=100)]},
-                        {'id': 'creator_address', 'validators': [v.String(max=100)]},
-                        {'id': 'creator_phone', 'validators': [v.String(max=50)]},
                         {'id': 'license_id', 'validators': [v.String(max=50)]},
                         {'id': 'version', 'validators': [v.String(max=50)]},
 
@@ -60,20 +57,23 @@ expanded_metadata = (
                         {'id': 'data_processing_method', 'validators': [v.String(max=500)]},
                         {'id': 'data_collection_method', 'validators': [v.String(max=500)]},
                         {'id': 'citation', 'validators': [v.String(max=500)]},
-
                         {'id': 'required_software', 'validators': [v.String(max=100)]},
 
 )
 
+
 # needed for repeatable data elements
 def creator_schema():
-    validator = p.toolkit.get_validator('ignore_missing')
+    ignore_missing = p.toolkit.get_validator('ignore_missing')
+    not_empty = p.toolkit.get_validator('not_empty')
+
     schema = {
-        'name': [validator, convert_to_extras_custom],
-        'email': [validator, convert_to_extras_custom],
-        'phone': [validator, convert_to_extras_custom],
-        'address': [validator, convert_to_extras_custom],
-        'organization': [validator, convert_to_extras_custom],
+        'name': [not_empty, convert_to_extras_custom],
+        'email': [ignore_missing, convert_to_extras_custom],
+        'phone': [ignore_missing, convert_to_extras_custom],
+        'address': [ignore_missing, convert_to_extras_custom],
+        'organization': [ignore_missing, convert_to_extras_custom],
+        'delete': [ignore_missing, convert_to_extras_custom]
     }
 
     return schema
@@ -94,7 +94,7 @@ def convert_to_extras_custom(key, data, errors, context):
 
 
 # needed for repeatable data elements
-def convert_from_extras_custom(key, data, errors, context):
+def convert_from_extras(key, data, errors, context):
     print "key : <====", key, "\n"
 
     def remove_from_extras(data, keyList):
@@ -116,7 +116,7 @@ def convert_from_extras_custom(key, data, errors, context):
 
             #Check for multiple value inputs and convert the list item index to integer
             if len(keyList) > 1:
-                keyList[1] = int(keyList[1])
+                    keyList[1] = int(keyList[1])
 
             #Construct the key for the stored value(s)
             newKey = tuple(keyList)
@@ -147,6 +147,40 @@ def convert_from_extras_custom(key, data, errors, context):
 
     for item in deleted:
         del new_data[item]
+
+    # update the index in the keys for the creators since some of the creators may have been deleted by the user
+    # so that we can have the indexes in the keys in a sequence starting at 0
+    creator_index_to_adjust = 0
+    last_used_deleted_index = 0
+    keys_to_delete = []
+    new_data_to_add = []
+
+    if len(deleteIndex) > 0:
+        for data_key, data_value in new_data.iteritems():
+            if len(data_key) > 1:
+                if data_key[1] > min(deleteIndex) and data_key[1] != 0:
+                    if creator_index_to_adjust != 0 and creator_index_to_adjust != data_key[1]:
+                        del deleteIndex[last_used_deleted_index]
+                    if creator_index_to_adjust == data_key[1]:
+                        new_data_key = (data_key[0], min(deleteIndex), data_key[2])
+                        new_data_to_add.append({new_data_key: new_data[data_key]})
+                        #new_data[new_data_key] = new_data[data_key]
+                        keys_to_delete.append(data_key)
+                    else:
+                        creator_index_to_adjust = data_key[1]
+                        last_used_deleted_index = min(deleteIndex)
+                        new_data_key = (data_key[0], last_used_deleted_index, data_key[2])
+                        new_data_to_add.append({new_data_key: new_data[data_key]})
+                        #new_data[new_data_key] = new_data[data_key]
+                        keys_to_delete.append(data_key)
+
+        for key in keys_to_delete:
+            del new_data[key]
+
+        for dict in new_data_to_add:
+            for key, value in dict.iteritems():
+                new_data[key] = value
+                break
 
     #Add data extracted from extras to the data dictionary
     for data_key, data_value in new_data.iteritems():
@@ -229,24 +263,63 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         '''
 
-        #new_dict = data_dict.copy()
         new_dict = copy.deepcopy(data_dict)
         common_metadata = [x['id'] for x in required_metadata+expanded_metadata]
+        # needed for repeatable metadata
+        # the original data_dict will have the creator set of data keys as follows:
+        # creators:0:name # for creator#1
+        # creators:0:email
+        # creators:0:phone
+        # creators:0:address
+        # creators:0:organization
 
+        # creators:1:name # for creator#2
+        # creators:1:email
+        # creators:1:phone
+        # creators:1:address
+        # creators:1:organization
+
+        # In the generated new new_dict we want the set of creator data as follows:
+        # new_dict['custom_meta']['creators'] = [
+        #                           {'name': name1-value, 'email': email1-value, 'phone': phone1-value, 'address': address1-value, 'organization': org1-value}
+        #                           {'name': name2-value, 'email': email2-value, 'phone': phone2-value, 'address': address2-value, 'organization': org2-value}
+        #                           { .......}
+        #                        ]
         try:
             new_dict['custom_meta']
         except KeyError:
             new_dict['custom_meta'] = {}
 
+        new_dict['custom_meta']['creators'] = []
+
         reduced_extras = []
 
+        sub_name = ''
+        sub_email = ''
         try:
             for extra in new_dict['extras']:
-
                 if extra['key'] in common_metadata:
                     new_dict['custom_meta'][extra['key']] = extra['value']
+                    # grab the submitter name and email to set default first creator name and email
+                    if extra['key'] == 'sub_name':
+                        sub_name = extra['value']
+                    if extra['key'] == 'sub_email':
+                        sub_email = extra['value']
                 else:
-                    reduced_extras.append(extra)
+                    # check if the key matches the creators repeatable metadata element
+                    data_key_parts = extra['key'].split(':')
+                    if data_key_parts[0] == 'creators' and len(data_key_parts) == 3:
+                        creator_dataset_index = int(data_key_parts[1])
+                        if creator_dataset_index == len(new_dict['custom_meta']['creators']):
+                            creator = {data_key_parts[2]: extra['value']}
+                            new_dict['custom_meta']['creators'].append(creator)
+                        else:
+                            new_dict['custom_meta']['creators'][creator_dataset_index][data_key_parts[2]] = extra['value']
+                    else:
+                        reduced_extras.append(extra)
+
+            # add the default creator if no creator exists at this point
+            set_default_creator(new_dict, sub_name, sub_email)
 
             new_dict['extras'] = reduced_extras
         except KeyError as ex:
@@ -260,7 +333,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             keys_to_remove = []
 
             log.debug('common core metadata: {0}'.format(common_metadata))
-            for key,value in new_dict.iteritems():
+            for key, value in new_dict.iteritems():
                 #TODO remove debug
                 log.debug('checking key: {0}'.format(key))
                 if key in common_metadata:
@@ -269,8 +342,21 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                     new_dict['custom_meta'][key] = value
                     keys_to_remove.append(key)
 
+                    # grab the submitter name and email to set default first creator name and email
+                    if key == 'sub_name':
+                        sub_name = value
+                    if key == 'sub_email':
+                        sub_email = value
+
             for key in keys_to_remove:
                 del new_dict[key]
+
+            # add the default creator if no creator exists at this point
+            set_default_creator(new_dict, sub_name, sub_email)
+
+        # remove any creators marked as deleted from the dict
+        creators = [c for c in new_dict['custom_meta']['creators'] if c['delete'] != '1']
+        new_dict['custom_meta']['creators'] = creators
 
         return new_dict
 
@@ -463,7 +549,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         for update in schema_updates_for_create:
             schema.update(update)
 
-        #schema.update({'creators': creator_schema()}) # needed for repeatable elements
+        schema.update({'creators': creator_schema()}) # needed for repeatable elements
         return schema
 
     #See ckan.plugins.interfaces.IDatasetForm
@@ -492,7 +578,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         for update in schema_updates_for_show:
             schema.update(update)
 
-        #schema.update({'creators': [convert_from_extras_custom, ignore_missing]}) # needed for repeatable elements
+        schema.update({'creators': [convert_from_extras, ignore_missing]}) # needed for repeatable elements
         return schema
 
     #Method below allows functions and other methods to be called from the Jinja template using the h variable
@@ -667,24 +753,25 @@ def pkg_update(context, data_dict):
         data_dict['sub_name'] = sub_name
         data_dict['sub_email'] = sub_email
 
+    # TODO: may be we do not need the original CKAN author information
     if not author:
-        author = data_dict['sub_name']
         data_dict['author'] = data_dict['sub_name']
         data_dict['author_email'] = data_dict['sub_email']
-        data_dict['creator_organization'] = u''
-        data_dict['creator_address'] = u''
-        data_dict['creator_phone'] = u''
+
 
     data_dict['version'] = u'1.0'
     data_dict['license_id'] = u'cc-by'
 
+    dateval = origpkg['metadata_created']
+    year = dateval.split("-")[0]
+
     if origpkg['state'] != 'active':
         if data_dict.get('author', None):
-            data_dict['citation'] = createcitation(context, data_dict, subname=author)
+            data_dict['citation'] = createcitation(context, data_dict, year)  # createcitation(context, data_dict, subname=author)
         else:
             data_dict['citation'] = u''
     else:
-        data_dict['citation'] = createcitation(context, data_dict, subname=author)
+        data_dict['citation'] = createcitation(context, data_dict, year)  # createcitation(context, data_dict, subname=author)
         context['validate'] = False
 
     # This was added to allow creation metadata only dataset (dataset without resources)
@@ -735,33 +822,37 @@ def show_package(context, data_dict):
     return package_show(context, data_dict)
 
 
-def createcitation(context, data_dict, subname=None, year=None):
+def createcitation(context, data_dict, year):    # (context, data_dict, subname=None, year=None)
     
     url = h.url_for(controller='package', action='read', id=data_dict['name'], qualified=True)
     # turning context 'validate' key on/off to allow schema changes to work with existing dataset
     context['validate'] = False
-    origpkg = p.toolkit.get_action('package_show')(context, data_dict)
 
-    name = subname
-    try:
-        if len(data_dict['author']) > 0:
-            name = data_dict['author']
-    except:
-        name = subname           
-    
-    creator = "{last}, {fi}.".format(last=name.split(" ")[-1], fi=name.split(" ")[0][0])
+    creators = data_dict.get('creators', None)
+    citation_authors = ''
+    if creators:
+        for creator in creators:
+            if creator['delete'] == '1':
+                continue
+
+            name_parts = creator['name'].split(" ")
+            if len(name_parts) > 1: # this is when the name contains first name and last name
+                citation_authors += "{last_name}, {first_initial}.".format(last_name=name_parts[-1],
+                                                                           first_initial=name_parts[0][0]) \
+                                    + ", "
+            elif len(name_parts) > 0:   # if only one name is provided use that as the last name
+                citation_authors += "{last_name}.".format(last_name=name_parts[-1]) + ", "
+
+    # get rid of the last comma followed by a space (last 2 chars)
+    citation_authors = citation_authors[:-2]
     version = 0       
     try:
         version = data_dict['version']
     except:
-        version = 0 
-    
-    if not year:        
-        dateval = p.toolkit.get_action('package_show')(context, data_dict)['metadata_created']
-        year = dateval.split("-")[0]
+        version = 0
         
     citation = '{creator} ({year}), {title}, {version}, iUTAH Modeling & Data Federation, ' \
-               '{url}'.format(creator=creator, year=year, title=data_dict['title'], version=version, url=url)
+               '{url}'.format(creator=citation_authors, year=year, title=data_dict['title'], version=version, url=url)
 
     context['validate'] = True
     return citation
@@ -794,3 +885,8 @@ def pkg_create(context, data_dict):
     pkg = package_create(context, data_dict)
     return pkg
 
+
+def set_default_creator(data_dict, sub_name, sub_email):
+    if len(data_dict['custom_meta']['creators']) == 0:
+        creator = {'name': sub_name, 'email': sub_email, 'phone': '', 'address': '', 'organization': '', 'delete': ''}
+        data_dict['custom_meta']['creators'].append(creator)

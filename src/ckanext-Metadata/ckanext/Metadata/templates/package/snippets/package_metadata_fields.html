@@ -1,14 +1,12 @@
 {% ckan_extends %}
 {% block package_metadata_author %}
-{% set data = h.load_data_into_dict(data) %}
-{{ form.input('author', label=_('Creator'), id='field-author', placeholder=_('Joe Bloggs'), value=data.author, error=errors.author, classes=['control-medium'], attrs={'title': 'FirstName LastName'}) }}
+    {% set data = h.load_data_into_dict(data) %}
 
-{{ form.input('author_email', label=_('Creator Email'), id='field-author-email', placeholder=_('joe@example.com'), value=data.author_email, error=errors.author_email, classes=['control-medium']) }}
-
-{{ form.input('creator_organization', label=_('Creator Organization'), id='field-creator-organization', placeholder=_('Utah State University'), value=data.custom_meta.creator_organization, error=errors.corg, classes=['control-medium'])}}
-{{ form.input('creator_address', label=_('Creator Address'), id='field-creator-address', placeholder=_('795 E DRAGRAM TUCSON AZ 85705'), value=data.custom_meta.creator_address, error=errors.caddress, classes=['control-medium'] )}}
-{{ form.input('creator_phone', label=_('Creator Phone'), id='field-creator-phone', placeholder=_('123-456-7890'), value=data.custom_meta.creator_phone, error=errors.cphone, classes=['control-medium'])}}
-	
+    {% set creators = data.custom_meta.creators %}
+    {% if not creators %}
+        {% set creators = [{'name':"", 'email':"", 'phone':"", 'address':""}] %}
+    {% endif %}
+    {% snippet 'package/snippets/creator_fields.html', creators=creators, errors=errors %}
 {% endblock %}
 
 {% block package_metadata_fields_version %}
