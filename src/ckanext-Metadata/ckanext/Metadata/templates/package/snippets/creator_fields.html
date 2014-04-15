@@ -1,0 +1,68 @@
+{#
+  adds input fields of creator  information.
+  
+  ccreators - The creator fields to add (list of creators).
+  errors   - A dict of errors for the fields.
+  
+  Example:
+  	{snippet 'snippets/creator_fields.html', creators=data.creators, errors=errors %}
+  	
+#}
+
+{% import "macros/form.html" as form %}
+{%- block scripts %}
+  {% resource 'metadata_resources/scripts/repeatable_element.js' %}
+{% endblock -%}
+
+{% set creators = creators or [] %}
+{# {% set organizations_available = h.edc_orgs() %} #}
+<div id="creator_list">
+    {%  for creator in creators %}
+        {% if errors.creators %}
+            {% set email_error = errors.creators[loop.index0].email %}
+            {% set name_error = errors.creators[loop.index0].name %}
+            {% set org_error = errors.creators[loop.index0].organization %}
+            {% set phone_error = errors.creators[loop.index0].phone %}
+            {% set address_error = errors.creators[loop.index0].address %}
+        {% endif %}
+        <div id="creator_{{ loop.index0 }}">
+            {% set creator_name = creator['name'] %}
+            {% set creator_email = creator['email'] %}
+            {% set creator_phone = creator['phone'] %}
+            {% set creator_address = creator['address'] %}
+            {% set creator_organization = creator['organization'] %}
+            {% set creator_name_field =  "creators__%s__name" % loop.index0 %}
+            {% set creator_email_field =  "creators__%s__email" % loop.index0 %}
+            {% set creator_phone_field =  "creators__%s__phone" % loop.index0 %}
+            {% set creator_address_field =  "creators__%s__address" % loop.index0 %}
+            {% set creator_organization_field =  "creators__%s__organization" % loop.index0 %}
+            {%  set index = loop.index0 %}
+            {{ form.input(creator_name_field, label=_('*Creator Name'), id='field-creators-%d-name' % index, placeholder=_('Joe Bloggs'), value=creator_name, error=name_error, classes=['control-medium'], attrs={'title': 'FirstName LastName'}) }}
+            {{ form.input(creator_email_field, label=_('Creator Email'), id='field-creators-%d-email' % index, placeholder=_('jowb@gmail.com'), value=creator_email, error=email_error, classes=['control-medium'], attrs={'title': 'Email'}) }}
+            {{ form.input(creator_phone_field, label=_('Creator Phone'), id='field-creators-%d-phone' % index, placeholder=_('435-345-7890'), value=creator_phone, error=name_error, classes=['control-medium'], attrs={'title': 'Phone'}) }}
+            {{ form.input(creator_address_field, label=_('Creator Address'), id='field-creators-%d-address' % index, placeholder=_('city, state, country'), value=creator_address, error=address_error, classes=['control-medium'], attrs={'title': 'Address'}) }}
+            {{ form.input(creator_organization_field, label=_('Creator Organization'), id='field-creators-%d-organization' % index, placeholder=_('Utah State University'), value=creator_organization, error=org_error, classes=['control-medium'], attrs={'title': 'Organization where you work'}) }}
+
+            <input id="field-creators-{{ loop.index0 }}-delete"
+				   			type="hidden"
+				   			name="creators__{{ loop.index0 }}__delete"
+				   			value="{{ creators['delete'] }}" style="display: none">
+            <div id="delete_{{ loop.index0 }}_creator" align="right">
+                <a id="btn_{{ loop.index0 }}_delete" class="btn btn-danger" >
+                    <i class="icon-minus-sign"></i>
+                    Delete
+                </a>
+            </div>
+        <hr>
+        </div>
+    {% endfor %}
+
+</div>
+<div id="addCreator" align="left">
+        <a class="btn btn-primary" >
+            <i class="icon-plus-sign-alt"></i>
+            Add another creator
+        </a>
+</div>
+<br>
+<br>
