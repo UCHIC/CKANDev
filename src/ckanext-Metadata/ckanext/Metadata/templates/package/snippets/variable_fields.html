@@ -1,15 +1,65 @@
 {# See https://github.com/project-open-data/project-open-data.github.io/blob/master/schema.md#expanded-fields #}
+{#
+  adds input fields of variable  information.
+
+  variables - The variable fields to add (list of of variables).
+  errors   - A dict of errors for the fields.
+
+  Example:
+  	{snippet 'snippets/variable_fields.html', variables=variables, errors=errors %}
+
+#}
 
 {% import "macros/form.html" as form %}
 
+{%- block scripts %}
+  {% resource 'metadata_resources/scripts/repeatable_element.js' %}
+{% endblock -%}
+
 {% set data = data or {} %}
+{% set variables = data.custom_meta.variables %}
+{# TODO: data entry error needs to be used in showing the data fields in error status #}
 {% set errors = errors or {} %}
 
 {% block package_variable_metadata %}
+<div id="variable_list">
+  {% if not variables %}
+    {% set variables = [{'name':'', 'unit':'', 'delete': '0'}] %}
+  {% endif %}
+  <label>{{ _('Observed Variables') }}</label>
+  {% for variable in variables %}
+      {% if errors.variables %}
+          {% set name_error = errors.variables[loop.index0].name %}
+          {% set unit_error = errors.variables[loop.index0].unit %}
+      {% endif %}
+      {% set variable_name_field =  "variables__%s__name" % loop.index0 %}
+      {% set variable_unit_field =  "variables__%s__unit" % loop.index0 %}
+      {% set variable_delet_field =  "variables__%s__delete" % loop.index0 %}
+      {% if name_error %}
+        {%  set name_class = "add-on text-error" %}
+      {% else %}
+        {%  set name_class = "add-on" %}
+      {% endif %}
+      <div class="input-prepend" id="variable_{{ loop.index0 }}">
+          <label for="{{ 'field-variables-%d-name' % loop.index0 }}" class={{ name_class }}>*Name</label>
+          <input id="{{ 'field-variables-%d-name' % loop.index0 }}" type="text" name="{{ variable_name_field}}" value="{{ variable.name | empty_and_escape }}" placeholder="Temp" />
+          <label for="{{ 'field-variables-%d-unit' % loop.index0 }}" class="add-on">*Unit</label>
+          <input id="{{ 'field-variables-%d-unit' % loop.index0 }}" type="text" name="{{ variable_unit_field }}" value="{{ variable.unit | empty_and_escape }}" placeholder="deg C" />
+          <button id="btn_{{ loop.index0 }}_delete_variable" class="btn btn-danger" type="button"><i class="icon-remove-circle"></i>Delete</button>
+          <input id="field-variables-{{ loop.index0 }}-delete"
+                            type="hidden"
+				   			name="variables__{{ loop.index0 }}__delete"
+				   			value="{{ variable['delete'] }}" style="display: none">
+      </div>
 
-
-{# {{ form.input('observed_variables', id='field-observed_variables', label=_('Observed Variables'), placeholder=_('temperature, streamflow, land cover, elevation'), value=data.custom_meta.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}, is_required=true) }}#}
-{{ form.input('observed_variables', id='field-observed_variables', label=_('* Observed Variables'), placeholder=_('temperature, streamflow, land cover, elevation'), value=data.custom_meta.observed_variables, error=errors.obsvar, classes=['control-full', 'control-medium'], attrs={'title': 'comma separated list of measured/observed variables'}) }}
+  {% endfor %}
+</div>
+<div id="addVariable" align="right">
+    <a class="btn btn-primary" >
+        <i class="icon-plus-sign-alt"></i>
+        Add a variable
+    </a>
+</div>
 
 {#optional Metadata#}
 <div class="panel panel-default">
@@ -19,10 +69,6 @@
 		</span>
 	</div>
 	<div id="vmDiv" class="panel-collapse collapse out">
-
-		<p>
-			{{ form.input('units', label=_('Units'), id='field-units', placeholder=_('Celsius, feet, percentage'), value=data.custom_meta.units, error=errors.units, classes=['control-medium'], attrs={'title': 'What units are the data expressed in?'} )}}
-		</p>
 		<p>
 			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('YSI EXO sonde used to measuer temperature. Values logged using a Campbell Scientivic datalogger and streamd to iUTAH servers. Calibration conducted weekly'), value=data.custom_meta.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
 		</p>

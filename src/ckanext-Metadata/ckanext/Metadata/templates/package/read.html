@@ -21,6 +21,7 @@
 {% set pkg_dict = h.load_data_into_dict(pkg) %}
 {% set creators = pkg_dict.custom_meta.creators %}
 {% set contributors = pkg_dict.custom_meta.contributors %}
+{% set variables = pkg_dict.custom_meta.variables %}
 {# display common core metadata #}
 	
 	<div class="citation-block">
@@ -230,12 +231,11 @@
 				<div class="tab-pane" id="varmethTab">
 					<table class="table  table-condensed table-no-border-top">
 						<tbody>
-							
 							<tr>
-								<th scope="row" class="dataset-label">{{ _("Observed Variables") }}</th>
-								<td class="dataset-details">{{ pkg_dict.custom_meta.observed_variables }}</td>
-							</tr>
-							
+                              <th scope="row" class="dataset-label">{{ _("Observed Variables") }}</th>
+                              <td class="dataset-details" ></td>
+                            </tr>
+                            {% snippet 'package/snippets/variables_read.html', variables=variables, errors=errors %}
 			
 							{% if pkg_dict.custom_meta.units %}
 							<tr>

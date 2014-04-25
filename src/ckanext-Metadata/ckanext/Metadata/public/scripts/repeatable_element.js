@@ -3,9 +3,13 @@
  */
 var numberOfCreators = 0;
 var numberOfContributors = 0;
+var numberOfVariables = 0;
 var deleteCreatorCount = 0;
+var deleteVariableCount = 0;
 var addCreatorCount = 0;
+var addVariableCount = 0;
 var originalCreatorCount = 0;
+var originalVariableCount = 0;
 var deleteContributorCount = 0;
 var addContributorCount = 0;
 
@@ -13,6 +17,8 @@ $(document).ready(function(){
     numberOfCreators = $('#creator_list > div').length
     originalCreatorCount = numberOfCreators;
     numberOfContributors = $('#contributor_list > div').length
+    numberOfVariables = $('#variable_list > div').length
+    originalVariableCount = numberOfVariables;
 
     // initially we want to have one contributor element that is hidden
     // from which the first clone can be made when the user selects add contributor button
@@ -38,6 +44,11 @@ $(document).ready(function(){
         addContributor();
      })
 
+    var addVariableButton = $('#addVariable').find('a').first();
+    addVariableButton.click(function(){
+        addVariable();
+     })
+
     $("[id^=btn_]").click(function(){
         var idSplit = new String(this.id).split("_");
 
@@ -48,6 +59,10 @@ $(document).ready(function(){
         else if(idSplit[3] == "contributor")
         {
             deleteContributor(idSplit[1]);
+        }
+        else if(idSplit[3] == "variable")
+        {
+            deleteVariable(idSplit[1]);
         }
     })
 });
@@ -112,6 +127,38 @@ function addContributor(){
     numberOfContributors++;
 }
 
+function addVariable(){
+    var $clone = $('#variable_list').find('[id^=variable_]').last().clone().appendTo('#variable_list');
+
+    $clone.attr('id', increment(numberOfVariables,'variable_0'));
+    $clone.attr('style', "");
+    // find all the input elements
+    $clone.find("input").each(function(){
+        this.id = increment(numberOfVariables, this.id);
+        this.name = increment(numberOfVariables, this.name);
+        if (this.name.indexOf('__delete') > -1){
+            this.value = '0'
+        }
+        else{
+          this.value ="";
+        }
+
+    });
+    $clone.find("div").each(function(){
+        this.id = increment(numberOfVariables, this.id);
+    })
+    $clone.find("button").each(function(){
+        this.id = increment(numberOfVariables, this.id);
+    })
+
+    addVariableCount++;
+
+    $("#btn_" + numberOfVariables + "_delete_variable").click(function(){
+        var idSplit = new String(this.id).split("_");
+        deleteVariable(idSplit[1]);
+    })
+    numberOfVariables++;
+}
 function deleteCreator(index){
     var displayedCount = originalCreatorCount + addCreatorCount - deleteCreatorCount;
     if(displayedCount == 1){
@@ -129,6 +176,18 @@ function deleteContributor(index){
     $('#field-contributors-' +index + '-delete').attr('value', 1);
     $('#contributor_' + index).hide();
     deleteContributorCount++;
+}
+
+function deleteVariable(index){
+    var displayedCount = originalVariableCount + addVariableCount - deleteVariableCount;
+    if(displayedCount == 1){
+        alert("There has to be at least one variable.");
+        return;
+    }
+    // set the delete field of the deleted creator to 1
+    $('#field-variables-' +index + '-delete').attr('value', 1);
+    $('#variable_' + index).hide();
+    deleteVariableCount++;
 }
 
 function increment(index, string) {

@@ -1,7 +1,7 @@
 {#
   adds input fields of contributor  information.
   
-  ccontributors - The contributor fields to add (list of contributors).
+  contributors - The contributor fields to add (list of contributors).
   errors   - A dict of errors for the fields.
   
   Example:
@@ -46,7 +46,14 @@
             {% set contributor_address_field =  "contributors__%s__address" % loop.index0 %}
             {% set contributor_organization_field =  "contributors__%s__organization" % loop.index0 %}
             {%  set index = loop.index0 %}
-            <label>Contributor</label>
+            <div id="delete_{{ loop.index0 }}_contributor" style="white-space: nowrap">
+                <label style="display: inline">Contributor</label>
+                <a id="btn_{{ loop.index0 }}_delete_contributor" class="btn btn-danger" style="display: inline">
+                    <i class="icon-remove-circle"></i>
+                    Delete
+                </a>
+            </div>
+            <br>
             {{ form.input(contributor_name_field, label=_('*Name'), id='field-contributors-%d-name' % index, placeholder=_('Joe Bloggs'), value=contributor_name, error=name_error, classes=['control-medium'], attrs={'title': 'FirstName LastName'}) }}
             {{ form.input(contributor_email_field, label=_('Email'), id='field-contributors-%d-email' % index, placeholder=_('jowb@gmail.com'), value=contributor_email, error=email_error, classes=['control-medium'], attrs={'title': 'Email'}) }}
             {{ form.input(contributor_phone_field, label=_('Phone'), id='field-contributors-%d-phone' % index, placeholder=_('435-345-7890'), value=contributor_phone, error=phone_error, classes=['control-medium'], attrs={'title': 'Phone'}) }}
@@ -57,12 +64,7 @@
                             type="hidden"
 				   			name="contributors__{{ loop.index0 }}__delete"
 				   			value="{{ contributor_delete_field }}" style="display: none">
-            <div id="delete_{{ loop.index0 }}_contributor" style="display: inline">
-                <a id="btn_{{ loop.index0 }}_delete_contributor" class="btn btn-danger" >
-                    <i class="icon-minus-sign"></i>
-                    Delete
-                </a>
-            </div>
+
         <hr>
         </div>
     {% endfor %}

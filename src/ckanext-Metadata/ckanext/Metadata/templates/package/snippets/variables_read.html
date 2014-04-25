@@ -1,0 +1,15 @@
+{% set variables = variables or [] %}
+{%  for variable in variables %}    
+    {% if variable['name'] %}
+        <tr style="border: none">
+            <td scope="row" class="dataset-label">{{ _("Name:") }}</td>
+            <td class="dataset-details" >{{ variable['name'] }}</td>
+        </tr>
+    {% endif %}
+    {% if variable['unit'] %}
+        <tr style="border: none">
+            <td scope="row" class="dataset-label" style="border-top: none">{{ _("Unit:") }}</td>
+            <td class="dataset-details" style="border-top: none" >{{ variable['unit'] }}</td>
+        </tr>
+    {% endif %}
+{%  endfor %}
