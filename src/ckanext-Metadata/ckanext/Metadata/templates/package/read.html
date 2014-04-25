@@ -20,6 +20,7 @@
 
 {% set pkg_dict = h.load_data_into_dict(pkg) %}
 {% set creators = pkg_dict.custom_meta.creators %}
+{% set contributors = pkg_dict.custom_meta.contributors %}
 {# display common core metadata #}
 	
 	<div class="citation-block">
@@ -259,9 +260,7 @@
 						</tbody>
 					</table>
 				</div>
-				
-				
-			
+
 				<div class="tab-pane" id="contactTab">
 			
 					<table class="table  table-condensed table-no-border-top">
@@ -277,35 +276,13 @@
                               <th scope="row" class="dataset-label">{{ _("Creators") }}</th>
                               <td class="dataset-details" ></td>
                             </tr>
+                            {% snippet 'package/snippets/contacts_read.html', contacts=creators, errors=errors %}
 
-                            {%  for creator in creators %}
-                                <tr style="border: none">
-                                    <td scope="row" class="dataset-label">{{ _("Name:") }}</td>
-                                    {%  if creator['email'] %}
-                                        <td class="dataset-details" property="dc:creator">{{ h.mail_to(email_address=creator['email'], name=creator['name']) }}</td>
-                                    {%  else %}
-                                        <td class="dataset-details" property="dc:creator">{{ creator['name'] }}</td>
-                                    {%  endif %}
-                                </tr>
-                                {% if creator['organization'] %}
-                                    <tr style="border: none">
-                                        <td scope="row" class="dataset-label" style="border-top: none">{{ _("Organization:") }}</td>
-                                        <td class="dataset-details" style="border-top: none" >{{ creator['organization'] }}</td>
-                                    </tr>
-                                {% endif %}
-                                {% if creator['address'] %}
-                                    <tr style="border: none">
-                                        <td scope="row" class="dataset-label" style="border-top: none">{{ _("Address:") }}</td>
-                                        <td class="dataset-details" style="border-top: none" >{{ creator['address'] }}</td>
-                                    </tr>
-                                {% endif %}
-                                {% if creator['phone'] %}
-                                    <tr style="border: none">
-                                        <td scope="row" class="dataset-label" style="border-top: none">{{ _("Phone:") }}</td>
-                                        <td class="dataset-details" style="border-top: none" >{{ creator['phone'] }}</td>
-                                    </tr>
-                                {% endif %}
-                            {%  endfor %}
+                            <tr>
+                              <th scope="row" class="dataset-label">{{ _("Contributors") }}</th>
+                              <td class="dataset-details" ></td>
+                            </tr>
+                            {% snippet 'package/snippets/contacts_read.html', contacts=contributors, errors=errors %}
 
 							{% if pkg_dict.maintainer_email %}
 							<tr>
@@ -321,9 +298,7 @@
 						</tbody>
 					</table>
 				</div>
-			
-			
-			
+
 				<div class="tab-pane" id="addTab">
 			
 					<section class="additional-info">

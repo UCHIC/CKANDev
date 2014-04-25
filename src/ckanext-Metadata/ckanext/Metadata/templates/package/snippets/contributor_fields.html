@@ -1,0 +1,76 @@
+{#
+  adds input fields of contributor  information.
+  
+  ccontributors - The contributor fields to add (list of contributors).
+  errors   - A dict of errors for the fields.
+  
+  Example:
+  	{snippet 'snippets/contributor_fields.html', contributors=data.contributors, errors=errors %}
+  	
+#}
+
+{% import "macros/form.html" as form %}
+{%- block scripts %}
+  {% resource 'metadata_resources/scripts/repeatable_element.js' %}
+{% endblock -%}
+
+{% set contributors = contributors or [] %}
+<div id="contributor_list">
+    {%  for contributor in contributors %}
+        {% if errors.contributors %}
+            {% set email_error = errors.contributors[loop.index0].email %}
+            {% set name_error = errors.contributors[loop.index0].name %}
+            {% set org_error = errors.contributors[loop.index0].organization %}
+            {% set phone_error = errors.contributors[loop.index0].phone %}
+            {% set address_error = errors.contributors[loop.index0].address %}
+        {% endif %}
+        {# if the contributor has name error, then we set the delete attribute value to '0'
+           so that javascript code will not hide it the time of document reload
+           and the contributor element witth error is displayed.
+        #}
+        {% if name_error %}
+            {%  set contributor_delete_field = '0' %}
+        {% else %}
+            {%  set contributor_delete_field = contributor['delete'] %}
+        {%  endif %}
+
+        <div id="contributor_{{ loop.index0 }}">
+            {% set contributor_name = contributor['name'] %}
+            {% set contributor_email = contributor['email'] %}
+            {% set contributor_phone = contributor['phone'] %}
+            {% set contributor_address = contributor['address'] %}
+            {% set contributor_organization = contributor['organization'] %}
+            {% set contributor_name_field =  "contributors__%s__name" % loop.index0 %}
+            {% set contributor_email_field =  "contributors__%s__email" % loop.index0 %}
+            {% set contributor_phone_field =  "contributors__%s__phone" % loop.index0 %}
+            {% set contributor_address_field =  "contributors__%s__address" % loop.index0 %}
+            {% set contributor_organization_field =  "contributors__%s__organization" % loop.index0 %}
+            {%  set index = loop.index0 %}
+            <label>Contributor</label>
+            {{ form.input(contributor_name_field, label=_('*Name'), id='field-contributors-%d-name' % index, placeholder=_('Joe Bloggs'), value=contributor_name, error=name_error, classes=['control-medium'], attrs={'title': 'FirstName LastName'}) }}
+            {{ form.input(contributor_email_field, label=_('Email'), id='field-contributors-%d-email' % index, placeholder=_('jowb@gmail.com'), value=contributor_email, error=email_error, classes=['control-medium'], attrs={'title': 'Email'}) }}
+            {{ form.input(contributor_phone_field, label=_('Phone'), id='field-contributors-%d-phone' % index, placeholder=_('435-345-7890'), value=contributor_phone, error=phone_error, classes=['control-medium'], attrs={'title': 'Phone'}) }}
+            {{ form.input(contributor_address_field, label=_('Address'), id='field-contributors-%d-address' % index, placeholder=_('city, state, country'), value=contributor_address, error=address_error, classes=['control-medium'], attrs={'title': 'Address'}) }}
+            {{ form.input(contributor_organization_field, label=_('Organization'), id='field-contributors-%d-organization' % index, placeholder=_('Utah State University'), value=contributor_organization, error=org_error, classes=['control-medium'], attrs={'title': 'Organization where you work'}) }}
+
+            <input id="field-contributors-{{ loop.index0 }}-delete"
+                            type="hidden"
+				   			name="contributors__{{ loop.index0 }}__delete"
+				   			value="{{ contributor_delete_field }}" style="display: none">
+            <div id="delete_{{ loop.index0 }}_contributor" style="display: inline">
+                <a id="btn_{{ loop.index0 }}_delete_contributor" class="btn btn-danger" >
+                    <i class="icon-minus-sign"></i>
+                    Delete
+                </a>
+            </div>
+        <hr>
+        </div>
+    {% endfor %}
+</div>
+<div id="addContributor" align="right">
+    <a class="btn btn-primary" >
+        <i class="icon-plus-sign-alt"></i>
+        Add a contributor
+    </a>
+</div>
+<br>

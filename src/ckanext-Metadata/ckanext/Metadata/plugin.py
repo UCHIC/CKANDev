@@ -80,6 +80,23 @@ def creator_schema():
 
 
 # needed for repeatable data elements
+def contributor_schema():
+    ignore_missing = p.toolkit.get_validator('ignore_missing')
+    not_empty = p.toolkit.get_validator('not_empty')
+
+    schema = {
+        'name': [not_empty, convert_to_extras_custom],
+        'email': [ignore_missing, convert_to_extras_custom],
+        'phone': [ignore_missing, convert_to_extras_custom],
+        'address': [ignore_missing, convert_to_extras_custom],
+        'organization': [ignore_missing, convert_to_extras_custom],
+        'delete': [ignore_missing, convert_to_extras_custom]
+    }
+
+    return schema
+
+
+# needed for repeatable data elements
 def convert_to_extras_custom(key, data, errors, context):
 
     #    print "key :====> ", key, "data : ====>", data[key]
@@ -132,59 +149,72 @@ def convert_from_extras(key, data, errors, context):
     remove_from_extras(data, indexList)
     #Remove previous data stored under the given key
     del data[key]
-    deleteIndex = []
+
+    # get rid of all repeatable elements if they are marked as deleted (delete = '1')
+    deleteIndex_creators = []
+    deleteIndex_contributors = []
 
     for data_key, data_value in new_data.iteritems():
         #If this is a deleted record then add it to the deleted list to be removed from data later.
         if 'delete' in data_key and data_value == '1':
-            deleteIndex.append(data_key[1])
+            if 'creators' == data_key[0]:
+                deleteIndex_creators.append(data_key[1])
+            elif 'contributors' == data_key[0]:
+                deleteIndex_contributors.append(data_key[1])
 
     deleted = []
 
     for data_key, data_value in new_data.iteritems():
-        if len(data_key) > 1 and data_key[1] in deleteIndex:
-            deleted.append(data_key)
+        if len(data_key) > 1:
+            if data_key[0] == 'creators' and data_key[1] in deleteIndex_creators:
+                deleted.append(data_key)
+            elif data_key[0] == 'contributors' and data_key[1] in deleteIndex_contributors:
+                deleted.append(data_key)
 
     for item in deleted:
         del new_data[item]
 
-    # update the index in the keys for the creators since some of the creators may have been deleted by the user
-    # so that we can have the indexes in the keys in a sequence starting at 0
-    creator_index_to_adjust = 0
-    last_used_deleted_index = 0
-    keys_to_delete = []
-    new_data_to_add = []
-
-    if len(deleteIndex) > 0:
-        for data_key, data_value in new_data.iteritems():
-            if len(data_key) > 1:
-                if data_key[1] > min(deleteIndex) and data_key[1] != 0:
-                    if creator_index_to_adjust != 0 and creator_index_to_adjust != data_key[1]:
-                        del deleteIndex[last_used_deleted_index]
-                    if creator_index_to_adjust == data_key[1]:
-                        new_data_key = (data_key[0], min(deleteIndex), data_key[2])
-                        new_data_to_add.append({new_data_key: new_data[data_key]})
-                        #new_data[new_data_key] = new_data[data_key]
-                        keys_to_delete.append(data_key)
-                    else:
-                        creator_index_to_adjust = data_key[1]
-                        last_used_deleted_index = min(deleteIndex)
-                        new_data_key = (data_key[0], last_used_deleted_index, data_key[2])
-                        new_data_to_add.append({new_data_key: new_data[data_key]})
-                        #new_data[new_data_key] = new_data[data_key]
-                        keys_to_delete.append(data_key)
-
-        for key in keys_to_delete:
-            del new_data[key]
-
-        for dict in new_data_to_add:
-            for key, value in dict.iteritems():
-                new_data[key] = value
-                break
-
     #Add data extracted from extras to the data dictionary
     for data_key, data_value in new_data.iteritems():
         data[data_key] = data_value
+
+
+# TODO: the following method is not used
+def _process_deleted_repeatables(data_dict, deleted_indexes, repeatable_name):
+    # removes all deleted repeatable elements form the data_dict
+    # param: data_dict from which keys to be removed
+    # param: deleted_indexes a list of indexes for the specified repeatable element
+    # param: repeatable_element name of the repeatable element
+
+    last_used_deleted_index = 0
+    index_to_adjust = 0
+    keys_to_delete = []
+    new_data_to_add = []
+
+    if len(deleted_indexes) > 0:
+        for data_key, data_value in data_dict.iteritems():
+            if len(data_key) > 1 and data_key[0] == repeatable_name:
+                if data_key[1] > min(deleted_indexes) and data_key[1] != 0:
+                    if index_to_adjust != 0 and index_to_adjust != data_key[1]:
+                        del deleted_indexes[last_used_deleted_index]
+                    if index_to_adjust == data_key[1]:
+                        new_data_key = (data_key[0], min(deleted_indexes), data_key[2])
+                        new_data_to_add.append({new_data_key: data_dict[data_key]})
+                        keys_to_delete.append(data_key)
+                    else:
+                        index_to_adjust = data_key[1]
+                        last_used_deleted_index = min(deleted_indexes)
+                        new_data_key = (data_key[0], last_used_deleted_index, data_key[2])
+                        new_data_to_add.append({new_data_key: data_dict[data_key]})
+                        keys_to_delete.append(data_key)
+
+        for key in keys_to_delete:
+            del data_dict[key]
+
+        for dict_item in new_data_to_add:
+            for key, value in dict_item.iteritems():
+                data_dict[key] = value
+                break
 
 
 #add validator 'not-empty' for all required metadata fields
@@ -265,32 +295,37 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         new_dict = copy.deepcopy(data_dict)
         common_metadata = [x['id'] for x in required_metadata+expanded_metadata]
-        # needed for repeatable metadata
-        # the original data_dict will have the creator set of data keys as follows:
-        # creators:0:name # for creator#1
-        # creators:0:email
-        # creators:0:phone
-        # creators:0:address
-        # creators:0:organization
+        """
+        needed for repeatable metadata
+        the original data_dict will have the creator set of data keys as follows:
+        creators:0:name # for creator#1
+        creators:0:email
+        creators:0:phone
+        creators:0:address
+        creators:0:organization
 
-        # creators:1:name # for creator#2
-        # creators:1:email
-        # creators:1:phone
-        # creators:1:address
-        # creators:1:organization
+        creators:1:name # for creator#2
+        creators:1:email
+        creators:1:phone
+        creators:1:address
+        creators:1:organization
 
-        # In the generated new new_dict we want the set of creator data as follows:
-        # new_dict['custom_meta']['creators'] = [
-        #                           {'name': name1-value, 'email': email1-value, 'phone': phone1-value, 'address': address1-value, 'organization': org1-value}
-        #                           {'name': name2-value, 'email': email2-value, 'phone': phone2-value, 'address': address2-value, 'organization': org2-value}
-        #                           { .......}
-        #                        ]
+        In the generated new new_dict we want the set of creator data as follows:
+        new_dict['custom_meta']['creators'] = [
+                                  {'name': name1-value, 'email': email1-value, 'phone': phone1-value, 'address': address1-value, 'organization': org1-value}
+                                  {'name': name2-value, 'email': email2-value, 'phone': phone2-value, 'address': address2-value, 'organization': org2-value}
+                                  { .......}
+                               ]
+        the same logic above applies to the 'contributor' repeatable element
+        """
         try:
             new_dict['custom_meta']
         except KeyError:
             new_dict['custom_meta'] = {}
 
-        new_dict['custom_meta']['creators'] = []
+        repeatable_elements = ['creators', 'contributors']
+        for element in repeatable_elements:
+            new_dict['custom_meta'][element] = []
 
         reduced_extras = []
 
@@ -306,15 +341,23 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                     if extra['key'] == 'sub_email':
                         sub_email = extra['value']
                 else:
-                    # check if the key matches the creators repeatable metadata element
+                    # check if the key matches the creators or contributors repeatable metadata element
                     data_key_parts = extra['key'].split(':')
-                    if data_key_parts[0] == 'creators' and len(data_key_parts) == 3:
-                        creator_dataset_index = int(data_key_parts[1])
-                        if creator_dataset_index == len(new_dict['custom_meta']['creators']):
-                            creator = {data_key_parts[2]: extra['value']}
-                            new_dict['custom_meta']['creators'].append(creator)
-                        else:
-                            new_dict['custom_meta']['creators'][creator_dataset_index][data_key_parts[2]] = extra['value']
+                    if data_key_parts[0] in repeatable_elements and len(data_key_parts) == 3:
+                        if data_key_parts[0] == 'creators':
+                            creator_dataset_index = int(data_key_parts[1])
+                            if creator_dataset_index == len(new_dict['custom_meta'][data_key_parts[0]]):
+                                creator = {data_key_parts[2]: extra['value']}
+                                new_dict['custom_meta'][data_key_parts[0]].append(creator)
+                            else:
+                                new_dict['custom_meta'][data_key_parts[0]][creator_dataset_index][data_key_parts[2]] = extra['value']
+                        elif data_key_parts[0] == 'contributors':
+                            contributor_dataset_index = int(data_key_parts[1])
+                            if contributor_dataset_index == len(new_dict['custom_meta'][data_key_parts[0]]):
+                                contributor = {data_key_parts[2]: extra['value']}
+                                new_dict['custom_meta'][data_key_parts[0]].append(contributor)
+                            else:
+                                new_dict['custom_meta'][data_key_parts[0]][contributor_dataset_index][data_key_parts[2]] = extra['value']
                     else:
                         reduced_extras.append(extra)
 
@@ -354,9 +397,10 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             # add the default creator if no creator exists at this point
             set_default_creator(new_dict, sub_name, sub_email)
 
-        # remove any creators marked as deleted from the dict
-        creators = [c for c in new_dict['custom_meta']['creators'] if c['delete'] != '1']
-        new_dict['custom_meta']['creators'] = creators
+        # remove any repeatable elements marked as deleted from the dict
+        for element in repeatable_elements:
+            valid_repeatables = [c for c in new_dict['custom_meta'][element] if c['delete'] != '1']
+            new_dict['custom_meta'][element] = valid_repeatables
 
         return new_dict
 
@@ -549,7 +593,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         for update in schema_updates_for_create:
             schema.update(update)
 
-        schema.update({'creators': creator_schema()}) # needed for repeatable elements
+        schema.update({'creators': creator_schema()})   # needed for repeatable elements
+        schema.update({'contributors': contributor_schema()})   # needed for repeatable elements
         return schema
 
     #See ckan.plugins.interfaces.IDatasetForm
@@ -578,7 +623,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         for update in schema_updates_for_show:
             schema.update(update)
 
-        schema.update({'creators': [convert_from_extras, ignore_missing]}) # needed for repeatable elements
+        schema.update({'creators': [convert_from_extras, ignore_missing]})  # needed for repeatable elements
+        schema.update({'contributors': [convert_from_extras, ignore_missing]})  # needed for repeatable elements
         return schema
 
     #Method below allows functions and other methods to be called from the Jinja template using the h variable
@@ -767,11 +813,11 @@ def pkg_update(context, data_dict):
 
     if origpkg['state'] != 'active':
         if data_dict.get('author', None):
-            data_dict['citation'] = createcitation(context, data_dict, year)  # createcitation(context, data_dict, subname=author)
+            data_dict['citation'] = createcitation(context, data_dict, year)
         else:
             data_dict['citation'] = u''
     else:
-        data_dict['citation'] = createcitation(context, data_dict, year)  # createcitation(context, data_dict, subname=author)
+        data_dict['citation'] = createcitation(context, data_dict, year)
         context['validate'] = False
 
     # This was added to allow creation metadata only dataset (dataset without resources)
@@ -796,6 +842,10 @@ def pkg_update(context, data_dict):
     else:
         if data_dict['owner_org'] == iutahorg['id']:
             data_dict['private'] = origpkg['private']
+
+    # remove if there any deleted repeatable elements from the data_dict
+    _remove_deleted_repeatable_elements(data_dict, 'creators')
+    _remove_deleted_repeatable_elements(data_dict, 'contributors')
 
     return package_update(context, data_dict)
 
@@ -822,7 +872,7 @@ def show_package(context, data_dict):
     return package_show(context, data_dict)
 
 
-def createcitation(context, data_dict, year):    # (context, data_dict, subname=None, year=None)
+def createcitation(context, data_dict, year):
     
     url = h.url_for(controller='package', action='read', id=data_dict['name'], qualified=True)
     # turning context 'validate' key on/off to allow schema changes to work with existing dataset
@@ -836,7 +886,7 @@ def createcitation(context, data_dict, year):    # (context, data_dict, subname=
                 continue
 
             name_parts = creator['name'].split(" ")
-            if len(name_parts) > 1: # this is when the name contains first name and last name
+            if len(name_parts) > 1:     # this is when the name contains first name and last name
                 citation_authors += "{last_name}, {first_initial}.".format(last_name=name_parts[-1],
                                                                            first_initial=name_parts[0][0]) \
                                     + ", "
@@ -888,5 +938,12 @@ def pkg_create(context, data_dict):
 
 def set_default_creator(data_dict, sub_name, sub_email):
     if len(data_dict['custom_meta']['creators']) == 0:
-        creator = {'name': sub_name, 'email': sub_email, 'phone': '', 'address': '', 'organization': '', 'delete': ''}
+        creator = {'name': sub_name, 'email': sub_email, 'phone': '', 'address': '', 'organization': '', 'delete': '0'}
         data_dict['custom_meta']['creators'].append(creator)
+
+
+def _remove_deleted_repeatable_elements(data_dict, element_name):
+    if element_name in data_dict:
+        deleted_contributors = [c for c in data_dict[element_name] if c['delete'] == '1']
+        for contributor in deleted_contributors:
+            data_dict[element_name].remove(contributor)

@@ -1,0 +1,29 @@
+{% set contacts = contacts or [] %}
+{%  for contact in contacts %}
+    <tr style="border: none">
+        <td scope="row" class="dataset-label">{{ _("Name:") }}</td>
+        {%  if contact['email'] %}
+            <td class="dataset-details" property="dc:contact">{{ h.mail_to(email_address=contact['email'], name=contact['name']) }}</td>
+        {%  else %}
+            <td class="dataset-details" property="dc:contact">{{ contact['name'] }}</td>
+        {%  endif %}
+    </tr>
+    {% if contact['organization'] %}
+        <tr style="border: none">
+            <td scope="row" class="dataset-label" style="border-top: none">{{ _("Organization:") }}</td>
+            <td class="dataset-details" style="border-top: none" >{{ contact['organization'] }}</td>
+        </tr>
+    {% endif %}
+    {% if contact['address'] %}
+        <tr style="border: none">
+            <td scope="row" class="dataset-label" style="border-top: none">{{ _("Address:") }}</td>
+            <td class="dataset-details" style="border-top: none" >{{ contact['address'] }}</td>
+        </tr>
+    {% endif %}
+    {% if contact['phone'] %}
+        <tr style="border: none">
+            <td scope="row" class="dataset-label" style="border-top: none">{{ _("Phone:") }}</td>
+            <td class="dataset-details" style="border-top: none" >{{ contact['phone'] }}</td>
+        </tr>
+    {% endif %}
+{%  endfor %}

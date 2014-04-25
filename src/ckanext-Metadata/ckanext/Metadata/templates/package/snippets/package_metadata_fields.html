@@ -3,10 +3,15 @@
     {% set data = h.load_data_into_dict(data) %}
 
     {% set creators = data.custom_meta.creators %}
+    {% set contributors = data.custom_meta.contributors %}
     {% if not creators %}
-        {% set creators = [{'name':"", 'email':"", 'phone':"", 'address':""}] %}
+        {% set creators = [{'name':"", 'email':"", 'phone':"", 'address':"", 'delete': '0'}] %}
+    {% endif %}
+    {% if not contributors %}
+        {% set contributors = [{'name':"", 'email':"", 'phone':"", 'address':"", 'delete': '1'}] %}
     {% endif %}
     {% snippet 'package/snippets/creator_fields.html', creators=creators, errors=errors %}
+    {% snippet 'package/snippets/contributor_fields.html', contributors=contributors, errors=errors %}
 {% endblock %}
 
 {% block package_metadata_fields_version %}
