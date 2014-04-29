@@ -2,40 +2,24 @@
 
 
 {% block package_basic_fields_description %}
-{# {{ form.markdown('notes', id='field-notes', label=_('Description'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'}, is_required=true) }}#}
 {{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'}) }}
 {% endblock package_basic_fields_description%}
 
 {% block package_basic_fields_tags %}
-{% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?', 'title':'Tags (or keywords) help users discover your dataset, please include terms that would be used by technical and non-technical users.'} %}
-{# {{ form.input('tag_string', id='field-tags', label=_('Keywords'), placeholder=_('eg. water, temperature, Little Bear River'), value=data.tag_string, error=errors.tags, classes=['control-full'], attrs=tag_attrs, is_required=true) }}#}
-{{ form.input('tag_string', id='field-tags', label=_('* Keywords'), placeholder=_('eg. water, temperature, Little Bear River'), value=data.tag_string, error=errors.tags, classes=['control-full'], attrs=tag_attrs) }}
+    {% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?', 'title':'Tags (or keywords) help users discover your dataset, please include terms that would be used by technical and non-technical users.'} %}
+
+    {%  if errors.tag_string %}
+        {% set tag_data = '' %}
+    {% else %}
+        {% set tag_data = data.tag_string %}
+    {% endif %}
+
+    {{ form.input('tag_string', id='field-tags', label=_('* Keywords'), placeholder=_('eg. water, temperature, Little Bear River'), value=tag_data, error=errors.tag_string, classes=['control-full'], attrs=tag_attrs) }}
 {% endblock package_basic_fields_tags %}
 
 
 {% block package_basic_fields_license %}
-{#
-<div class="control-group">
-	{% set error = errors.license_id %}
-	<label class="control-label" for="field-license"> <span title="This field is required" class="control-required">*</span> {{ _("Rights") }}</label>
-	<div class="controls">
-		<select id="field-license" name="license_id" data-module="autocomplete">
-			{% for license_desc, license_id in licenses|sort if license_desc  %}
-			<option value="{{ license_id }}" {% if data.get('license_id', 'notspecified') == license_id %}selected="selected"{% endif %}>{{ license_desc }}</option>
-			{% endfor %}
-		</select>
-		{% if error %}<span class="error-block">{{ error }}</span>{% endif %} <span class="info-block info-inline"> <i class="icon-info-sign"></i> {% trans %}
-			License definitions and additional information can be found
-			at <a href="http://opendefinition.org/licenses/">opendefinition.org</a> {% endtrans %} </span>
-	</div>
-</div>
-#}
 {% endblock %}
-
-
-
-
-
 
 {% block package_basic_fields_org %}
   {# if we have a default group then this wants remembering #}

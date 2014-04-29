@@ -22,11 +22,6 @@ required_metadata = (
                      {'id': 'data_type', 'validators': [v.String(max=100)]},
                      {'id': 'access_information', 'validators': [v.String(max=500)]},   # use_constraints
                      {'id': 'status', 'validators': [v.String(max=100)]},
-                     #{'id': 'observed_variables', 'validators': [v.String(max=100)]},
-                     # used for testing schema change {'id': 'test_element', 'validators': [v.String(max=100)]},
-
-                     #TODO should this unique_id be validated against any other unique IDs for this agency?
-                     #{'id':'unique_id', 'validators': [v.String(max=100)]}
 )
 
 #optional metadata
@@ -53,7 +48,6 @@ expanded_metadata = (
                         {'id': 'update_frequency', 'validators': [v.Regex(r'^([Dd]aily)|([Hh]ourly)|([Ww]eekly)|([yY]early)|([oO]ther)$')]},
 
                         {'id': 'study_area', 'validators': [v.String(max=100)]},
-                        #{'id': 'units', 'validators': [v.String(max=100)]},
                         {'id': 'data_processing_method', 'validators': [v.String(max=500)]},
                         {'id': 'data_collection_method', 'validators': [v.String(max=500)]},
                         {'id': 'citation', 'validators': [v.String(max=500)]},
@@ -108,6 +102,7 @@ def variable_schema():
     }
 
     return schema
+
 
 # needed for repeatable data elements
 def convert_to_extras_custom(key, data, errors, context):
@@ -313,29 +308,29 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         new_dict = copy.deepcopy(data_dict)
         common_metadata = [x['id'] for x in required_metadata+expanded_metadata]
-        """
-        needed for repeatable metadata
-        the original data_dict will have the creator set of data keys as follows:
-        creators:0:name # for creator#1
-        creators:0:email
-        creators:0:phone
-        creators:0:address
-        creators:0:organization
 
-        creators:1:name # for creator#2
-        creators:1:email
-        creators:1:phone
-        creators:1:address
-        creators:1:organization
+        # needed for repeatable metadata
+        # the original data_dict will have the creator set of data keys as follows:
+        # creators:0:name # for creator#1
+        # creators:0:email
+        # creators:0:phone
+        # creators:0:address
+        # creators:0:organization
+        #
+        # creators:1:name # for creator#2
+        # creators:1:email
+        # creators:1:phone
+        # creators:1:address
+        # creators:1:organization
+        #
+        # In the generated new new_dict we want the set of creator data as follows:
+        # new_dict['custom_meta']['creators'] = [
+        #                           {'name': name1-value, 'email': email1-value, 'phone': phone1-value, 'address': address1-value, 'organization': org1-value}
+        #                           {'name': name2-value, 'email': email2-value, 'phone': phone2-value, 'address': address2-value, 'organization': org2-value}
+        #                           { .......}
+        #                        ]
+        # the same logic above applies to any other repeatable element that we have in the schema
 
-        In the generated new new_dict we want the set of creator data as follows:
-        new_dict['custom_meta']['creators'] = [
-                                  {'name': name1-value, 'email': email1-value, 'phone': phone1-value, 'address': address1-value, 'organization': org1-value}
-                                  {'name': name2-value, 'email': email2-value, 'phone': phone2-value, 'address': address2-value, 'organization': org2-value}
-                                  { .......}
-                               ]
-        the same logic above applies to any other repeatable element that we have in the schema
-        """
         try:
             new_dict['custom_meta']
         except KeyError:
@@ -614,9 +609,15 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
     #See ckan.plugins.interfaces.IDatasetForm
     def _modify_package_schema(self, schema):
         #log.debug("_modify_package_schema called")
+        not_empty = p.toolkit.get_validator('not_empty')
+        tag_string_convert = p.toolkit.get_validator('tag_string_convert')
 
         for update in schema_updates_for_create:
             schema.update(update)
+
+        # update the ckan's tag_string element making it required - which would force the user to enter
+        # at least on keyword (tag item)
+        schema.update({'tag_string': [not_empty, tag_string_convert]})
 
         schema.update({'creators': creator_schema()})   # needed for repeatable elements
         schema.update({'contributors': contributor_schema()})   # needed for repeatable elements
@@ -874,6 +875,12 @@ def pkg_update(context, data_dict):
     _remove_deleted_repeatable_elements(data_dict, 'creators')
     _remove_deleted_repeatable_elements(data_dict, 'contributors')
     _remove_deleted_repeatable_elements(data_dict, 'variables')
+
+    # add tag names to the tag_string element if 'tag_string' is missing from the data_dict
+    # needed to make the entry of one tag (keyword) as required
+    if not 'tag_string' in data_dict.keys():
+        tags = ','.join(tag['name'] for tag in data_dict['tags'])
+        data_dict['tag_string'] = tags
 
     return package_update(context, data_dict)
 
