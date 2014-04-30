@@ -619,6 +619,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         # at least on keyword (tag item)
         schema.update({'tag_string': [not_empty, tag_string_convert]})
 
+        schema['resources']['name'][0] = not_empty
+
         schema.update({'creators': creator_schema()})   # needed for repeatable elements
         schema.update({'contributors': contributor_schema()})   # needed for repeatable elements
         schema.update({'variables': variable_schema()})   # needed for repeatable elements
