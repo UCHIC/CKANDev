@@ -8,16 +8,16 @@
 {% block package_general_metadata %}
 
 {#  {{ form.input('language', label=_('Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset.'}, is_required=true )}}#}
-{{ form.input('language', label=_('* Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset.'} )}}
+{{ form.input('language', label=_('* Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset. (e.g., English'} )}}
 {# used for testing schema change {{ form.input('test_element', label=_('* Test Element'), id='field-test_element', placeholder=_('Test element'), value=data.custom_meta.test_element, error=errors.test_element, classes=['control-medium'], attrs={'title': 'This is the schema change element.'} )}}#}
 
 {# {{ form.markdown('access_information', id='field-access_information', label=_('Access Information'), placeholder=_('Are there constraints on who can access the data? Is it in the public or private domain? Are there associated costs?'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A statement or URL that points to the rights management or usage statement for the resource.'}, is_required=true) }}#}
-{{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('Are there constraints on who can access the data? Is it in the public or private domain? Are there associated costs?'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A statement or URL that points to the rights management or usage statement for the resource.'}) }}
+{{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('e.g., limited to iUTAH participants, limited to IRB researchers'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A desciption of any constraints limiting access to the resource.'}) }}
 
 <div class="control-group">
 	<label class="control-label" for="field-data_type"> <span title="This field is required" class="control-required">*</span> {{ _("Type") }}</label>
 	<div class="controls">
-		<select id="field-data_type" name="data_type" data-module="autocomplete" title="The type of the resource (e.g., Time Series,  River Cross Section, Raster)">
+		<select id="field-data_type" name="data_type" data-module="autocomplete" title="The type of the resource (e.g., Time Series,  River Cross Section, Raster)" >
 			{% for type in h.get_types() %}
 			<option value="{{ type }}" {% if type == data.custom_meta.data_type %}selected{% endif %} > {{ type }} </option>
 			{% endfor %}
@@ -36,19 +36,19 @@
 	<div id="generalDiv" class="panel-collapse collapse out">
 
 		<p>
-			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('Regulation, Research, Education'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
+			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('e.g., Educational, Research, Regulatory'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
 		</p>
 		<p>
-			{{ form.input('collection', label=_('Relation'), id='field-collection', placeholder=_('http://data.iutahepscor.org/resource/2341'), value=data.custom_meta.collection, error=errors.collection, classes=['control-medium'], attrs={'title': 'Other iUTAH datasets that should be included as references for this dataset.'} )}}
+			{{ form.input('collection', label=_('Relation'), id='field-collection', placeholder=_('http://data.iutahepscor.org/resource/2341'), value=data.custom_meta.collection, error=errors.collection, classes=['control-medium'], attrs={'title': 'Other iUTAH datasets or resources that are related to this dataset.'} )}}
 		</p>
 		<p>
-			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Is specific software required to view/use this data? If so, what is it?'} )}}
+			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Any software required to open or use the resource.'} )}}
 		</p>
 		<p>
 			<div class="control-group">
 				<label class="control-label" for="field-research_focus"> {{ _("Research Focus Area") }}</label>
 				<div class="controls">
-					<select id="field-research_focus" name="research_focus" data-module="autocomplete" title="Which research focus area will the data be useful for?">
+					<select id="field-research_focus" name="research_focus" data-module="autocomplete" title="Select the iUTAH Research Focus Area to which the dataset is most relevant.">
                         <option value="" > {{ _('Select a value') }}</option>
                         {% for type in h.get_research_focus() %}
 						    <option value="{{ type }}" {% if type == data.custom_meta.research_focus %} selected="selected" {% endif %} > {{ type }} </option>

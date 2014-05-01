@@ -54,11 +54,11 @@
                 </a>
             </div>
             <br>
-            {{ form.input(contributor_name_field, label=_('*Name'), id='field-contributors-%d-name' % index, placeholder=_('Joe Bloggs'), value=contributor_name, error=name_error, classes=['control-medium'], attrs={'title': 'FirstName LastName'}) }}
-            {{ form.input(contributor_email_field, label=_('Email'), id='field-contributors-%d-email' % index, placeholder=_('jowb@gmail.com'), value=contributor_email, error=email_error, classes=['control-medium'], attrs={'title': 'Email'}) }}
-            {{ form.input(contributor_phone_field, label=_('Phone'), id='field-contributors-%d-phone' % index, placeholder=_('435-345-7890'), value=contributor_phone, error=phone_error, classes=['control-medium'], attrs={'title': 'Phone'}) }}
-            {{ form.input(contributor_address_field, label=_('Address'), id='field-contributors-%d-address' % index, placeholder=_('city, state, country'), value=contributor_address, error=address_error, classes=['control-medium'], attrs={'title': 'Address'}) }}
-            {{ form.input(contributor_organization_field, label=_('Organization'), id='field-contributors-%d-organization' % index, placeholder=_('Utah State University'), value=contributor_organization, error=org_error, classes=['control-medium'], attrs={'title': 'Organization where you work'}) }}
+            {{ form.input(contributor_name_field, label=_('*Name'), id='field-contributors-%d-name' % index, placeholder=_('e.g., Joe Bloggs'), value=contributor_name, error=name_error, classes=['control-medium'], attrs={'title': 'Name of the contributor to the resource.'}) }}
+            {{ form.input(contributor_email_field, label=_('Email'), id='field-contributors-%d-email' % index, placeholder=_('e.g., jowb@gmail.com'), value=contributor_email, error=email_error, classes=['control-medium'], attrs={'title': "Contributor's email address."}) }}
+            {{ form.input(contributor_phone_field, label=_('Phone'), id='field-contributors-%d-phone' % index, placeholder=_('e.g., 435-345-7890'), value=contributor_phone, error=phone_error, classes=['control-medium'], attrs={'title': "Contributor's main phone number."}) }}
+            {{ form.input(contributor_address_field, label=_('Address'), id='field-contributors-%d-address' % index, placeholder=_('e.g., 100 Old Main Hill, Logan, UT 84322-8200'), value=contributor_address, error=address_error, classes=['control-medium'], attrs={'title': "Contributor's physical address."}) }}
+            {{ form.input(contributor_organization_field, label=_('Organization'), id='field-contributors-%d-organization' % index, placeholder=_('e.g., Utah Water Research Laboratory'), value=contributor_organization, error=org_error, classes=['control-medium'], attrs={'title': "Contributor's home organization."}) }}
 
             <input id="field-contributors-{{ loop.index0 }}-delete"
                             type="hidden"

@@ -1,5 +1,9 @@
 {% ckan_extends %}
 
+{% block package_basic_fields_title %}
+{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. A descriptive title'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A title given to the resource (e.g., Water quality data collectied in red Butte Creek, Utah, USA as part of the iUTAH GAMUT network.'}) }}
+{% endblock %}
+
 {% block package_basic_fields_url %}
 {% set prefix = h.url_for(controller='package', action='read', id='') %}
 {% set domain = h.url_for(controller='package', action='read', id='', qualified=true) %}
@@ -15,11 +19,11 @@
 {% endblock %}
 
 {% block package_basic_fields_description %}
-{{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'Human-readable description (e.g., an abstract) with sufficient detail to enable a user to quickly understand whether the asset is of interest.'}) }}
+{{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('eg. Some useful notes about the data'), value=data.notes, error=errors.notes, attrs={'title' : 'A short description (or abstract) for the resource.'}) }}
 {% endblock package_basic_fields_description%}
 
 {% block package_basic_fields_tags %}
-    {% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?', 'title':'Tags (or keywords) help users discover your dataset, please include terms that would be used by technical and non-technical users.'} %}
+    {% set tag_attrs = {'data-module': 'autocomplete', 'data-module-tags': '', 'data-module-source': '/api/2/util/tag/autocomplete?incomplete=?', 'title':'Keyword(s) that describe the resource (e.g., water, temperature, Red Butte Creek).'} %}
 
     {%  if errors.tag_string %}
         {% set tag_data = '' %}
