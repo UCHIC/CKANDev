@@ -39,10 +39,10 @@
 			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('Regulation, Research, Education'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
 		</p>
 		<p>
-			{{ form.input('collection', label=_('Relation'), id='field-collection', placeholder=_('http://data.iutahepscor.org/resource/2341'), value=data.collection, error=errors.collection, classes=['control-medium'], attrs={'title': 'Other iUTAH datasets that should be included as references for this dataset.'} )}}
+			{{ form.input('collection', label=_('Relation'), id='field-collection', placeholder=_('http://data.iutahepscor.org/resource/2341'), value=data.custom_meta.collection, error=errors.collection, classes=['control-medium'], attrs={'title': 'Other iUTAH datasets that should be included as references for this dataset.'} )}}
 		</p>
 		<p>
-			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Is specific software required to view/use this data? If so, what is it?'} )}}
+			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Is specific software required to view/use this data? If so, what is it?'} )}}
 		</p>
 		<p>
 			<div class="control-group">

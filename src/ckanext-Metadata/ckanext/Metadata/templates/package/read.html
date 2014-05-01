@@ -278,11 +278,13 @@
                             </tr>
                             {% snippet 'package/snippets/contacts_read.html', contacts=creators, errors=errors %}
 
-                            <tr>
-                              <th scope="row" class="dataset-label">{{ _("Contributors") }}</th>
-                              <td class="dataset-details" ></td>
-                            </tr>
-                            {% snippet 'package/snippets/contacts_read.html', contacts=contributors, errors=errors %}
+                            {%  if contributors %}
+                                <tr>
+                                  <th scope="row" class="dataset-label">{{ _("Contributors") }}</th>
+                                  <td class="dataset-details" ></td>
+                                </tr>
+                                {% snippet 'package/snippets/contacts_read.html', contacts=contributors, errors=errors %}
+                            {% endif %}
 
 							{% if pkg_dict.maintainer_email %}
 							<tr>

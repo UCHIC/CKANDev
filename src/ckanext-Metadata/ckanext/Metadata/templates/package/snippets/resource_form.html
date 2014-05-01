@@ -1,5 +1,12 @@
 {% ckan_extends %}
 
+{% block stages %}
+    {{ super() }}
+    <span class="info-block info-block-small" style="margin-left: 100px" >
+          <i class="icon-info-sign" ></i>
+          {{ _('Metatdata may be submitted without any resources' ) }}
+        </span>
+  {% endblock %}
 
 {% block basic_fields_name %}
         {{ form.input('name', id='field-name', label=_('*Name'), placeholder=_('eg. January 2011 Gold Prices'), value=data.name, error=errors.name, classes=['control-full']) }}
