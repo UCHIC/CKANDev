@@ -44,8 +44,7 @@ expanded_metadata = (
                         {'id': 'horz_coord_system', 'validators': [v.String(max=100)]},
                         {'id': 'vert_coord_system', 'validators': [v.String(max=100)]},
 
-                        {'id': 'update_frequency', 'validators': [v.Regex(r'^([Dd]aily)|([Hh]ourly)|([Ww]eekly)|([yY]early)|([oO]ther)$')]},
-
+                        {'id': 'update_frequency', 'validators': []},
                         {'id': 'study_area', 'validators': [v.String(max=100)]},
                         {'id': 'data_processing_method', 'validators': [v.String(max=500)]},
                         {'id': 'data_collection_method', 'validators': [v.String(max=500)]},
