@@ -1,6 +1,13 @@
 {% ckan_extends %}
 
 {% block package_basic_fields_title %}
+    {# display the following notice only when creating a dataset but not when editing a dataset #}
+    {%  if not data.id %}
+        <span class="info-block info-block-large">
+            <i class="icon-info-sign"></i>
+            {{ _('NOTE:Your dataset will be private until approved by a system administrator. However, you can see your newly submitted datasets in your Dashboard.') }}
+        </span>
+    {% endif %}
 {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. A descriptive title'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A title given to the resource (e.g., Water quality data collectied in red Butte Creek, Utah, USA as part of the iUTAH GAMUT network.'}) }}
 {% endblock %}
 
