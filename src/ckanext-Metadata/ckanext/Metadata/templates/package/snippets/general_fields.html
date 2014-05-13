@@ -38,9 +38,7 @@
 		<p>
 			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('e.g., Educational, Research, Regulatory'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
 		</p>
-		<p>
-			{{ form.input('collection', label=_('Relation'), id='field-collection', placeholder=_('http://data.iutahepscor.org/resource/2341'), value=data.custom_meta.collection, error=errors.collection, classes=['control-medium'], attrs={'title': 'Other iUTAH datasets or resources that are related to this dataset.'} )}}
-		</p>
+
 		<p>
 			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Any software required to open or use the resource.'} )}}
 		</p>

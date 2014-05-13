@@ -29,7 +29,6 @@ expanded_metadata = (
                         {'id': 'spatial', 'validators': [v.String(max=500)]},
                         {'id': 'temporal', 'validators': [v.String(max=300)]},
                         {'id': 'purpose', 'validators': [v.String(max=100)]},
-                        {'id': 'collection', 'validators': [v.String(max=1000)]},
                         {'id': 'research_focus', 'validators': [v.String(max=50)]},
 
                         {'id': 'sub_name', 'validators': [v.String(max=100)]},
