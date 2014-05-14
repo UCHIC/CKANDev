@@ -3,6 +3,7 @@
 {% block packages_list %}
   {% if c.page.items %}
     {% set filtered_items = [] %}
+
     {% for item in c.page.items %}
         {% if item['private'] == True and (h.check_if_user_owns_dataset(item.id, c.user) or h.has_user_group_or_org_admin_role(item.owner_org, c.user))  %}
             {% do filtered_items.append(item) %}
@@ -10,6 +11,7 @@
             {% do filtered_items.append(item) %}
         {% endif %}
     {% endfor %}
+
     {{ h.snippet('snippets/package_list.html', packages=filtered_items) }}
 
   {% endif %}

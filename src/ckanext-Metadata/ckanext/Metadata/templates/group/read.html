@@ -1,7 +1,23 @@
 {% ckan_extends %}
 
+{% block packages_list %}
+  {% if c.page.items %}
+    {% set filtered_items = [] %}
+
+    {% for item in c.page.items %}
+        {% if item['private'] == True and (h.check_if_user_owns_dataset(item.id, c.user) or h.has_user_group_or_org_admin_role(item.owner_org, c.user))  %}
+            {% do filtered_items.append(item) %}
+        {% elif item['private'] == False %}
+            {% do filtered_items.append(item) %}
+        {% endif %}
+    {% endfor %}
+
+    {{ h.snippet('snippets/package_list.html', packages=filtered_items) }}
+
+  {% endif %}
+{% endblock %}
+
 {% block secondary_content %}
-  {#  {{ super() }}#}
   {% snippet "group/snippets/info.html", group=c.group_dict, show_nums=true %}
   {% for facet in c.facet_titles %}
       {# Since we have only one license no need to see the license facet #}

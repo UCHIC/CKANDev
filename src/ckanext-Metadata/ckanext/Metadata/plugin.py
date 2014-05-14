@@ -687,6 +687,8 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             input from specific fields.
 
         '''
+        # when listing datasets outside an organization, get only the
+        # public (private:false) datasets
         if not 'owner_org' in search_params['q']:
             if len(search_params['q']) > 0:
                 search_params['q'] += ' private:false'
@@ -713,13 +715,11 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
 
         '''
         if 'owner_org' in search_params['q']:
-            ds_count = 0
             datasets = search_results['results']
             for dataset in datasets:
                 if dataset['private'] and not (meta_helper.is_user_owns_package(dataset['id'], p.toolkit.c.user) or
                                                self.has_user_group_or_org_admin_role(dataset['owner_org'],
                                                                                      p.toolkit.c.user)):
-                    ds_count += 1
 
                     # update dataset count for dataset groups
                     for group in dataset['groups']:
@@ -756,7 +756,24 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                                 updated_formats.append(res_format)
                                 break
 
-            search_results['count'] -= ds_count
+                    # remove the dataset since the user does not have access to it
+                    search_results['results'].remove(dataset)
+
+            # remove any facet items that has a count of zero or less
+            facet_items_to_delete = {}
+            facets = search_results['search_facets']
+            for key, value in facets.iteritems():
+                for facet_item in value['items']:
+                    if facet_item['count'] <= 0:
+                        if key not in facet_items_to_delete:
+                            facet_items_to_delete[key] = {'items': []}
+                            facet_items_to_delete[key]['items'].append(facet_item)
+                        else:
+                            facet_items_to_delete[key]['items'].append(facet_item)
+
+            for facet_key in facet_items_to_delete:
+                for item_to_delete in facet_items_to_delete[facet_key]['items']:
+                    search_results['search_facets'][facet_key]['items'].remove(item_to_delete)
 
         return search_results
 
