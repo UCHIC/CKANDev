@@ -1,0 +1,12 @@
+{% ckan_extends %}
+
+{% block secondary_content %}
+  {#  {{ super() }}#}
+  {% snippet "group/snippets/info.html", group=c.group_dict, show_nums=true %}
+  {% for facet in c.facet_titles %}
+      {# Since we have only one license no need to see the license facet #}
+      {% if c.facet_titles[facet] != 'License' %}
+        {{ h.snippet('snippets/facet_list.html', title=c.facet_titles[facet], name=facet, extras={'id':c.group_dict.id}) }}
+      {%  endif %}
+  {% endfor %}
+{% endblock %}

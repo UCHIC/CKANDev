@@ -14,3 +14,12 @@
 
   {% endif %}
 {% endblock %}
+
+{% block organization_facets %}
+  {% for facet in c.facet_titles %}
+      {# Since we have only one license no need to see the license facet #}
+      {% if c.facet_titles[facet] != 'License' %}
+        {{ h.snippet('snippets/facet_list.html', title=c.facet_titles[facet], name=facet, extras={'id':c.group_dict.id}) }}
+      {%  endif %}
+  {% endfor %}
+{% endblock %}
