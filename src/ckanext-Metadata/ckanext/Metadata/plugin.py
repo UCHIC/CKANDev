@@ -441,7 +441,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             data = {'name': tag, 'vocabulary_id': vocab['id']}
             p.toolkit.get_action('tag_create')(context, data)
         return vocab
-    
+
     @classmethod
     def __update_vocabulary(cls, name, *values):
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
@@ -459,6 +459,28 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 "Adding tag {0} to vocab {1}'".format(tag, name))
             data = {'name': tag, 'vocabulary_id': vocab['id']}
             p.toolkit.get_action('tag_create')(context, data)
+        return vocab
+
+    @classmethod
+    def __add_tag_to_vocabulary(cls, name, *values):
+        user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
+        context = {'user': user['name']}
+
+        log.debug("Updating vocab '{0}'".format(name))
+        data = {'id': name}
+        vocab = p.toolkit.get_action('vocabulary_show')(context, data)
+        #data = {'name': name, 'id': vocab['id']}
+        #vocab = p.toolkit.get_action('vocabulary_update')(context, data)
+
+        log.debug('Vocab updated: {0}'.format(vocab))
+        for tag in values:
+            log.debug(
+                "Adding tag {0} to vocab {1}'".format(tag, name))
+            data = {'name': tag, 'vocabulary_id': vocab['id']}
+            p.toolkit.get_action('tag_create')(context, data)
+
+        data = {'id': name}
+        vocab = p.toolkit.get_action('vocabulary_show')(context, data)
         return vocab
 
     # template helper function
@@ -537,6 +559,9 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         '''        log.debug('type() called')
             Jinja2 template helper function, gets the vocabulary for type
         '''
+        # NOTE: any time you want to include new tag for the vocabulary term 'type' add the tag name
+        # to the following list. Nothing else need to be changed
+        type_tags = ['collection', 'dataset', 'image', 'interactive resource', 'model', 'service', 'software', 'text']
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
  
@@ -544,9 +569,15 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         try:
             data = {'id': 'type'}   # we can use the id or name for id param
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
+            existing_tags = [tag['display_name'] for tag in vocab['tags']]
+            # check if we need to create additional tags for this vocabulary term
+            tags_to_add = [tag_name for tag_name in type_tags if tag_name not in existing_tags]
+            if len(tags_to_add) > 0:
+                vocab = cls.__add_tag_to_vocabulary('type', *tags_to_add)
+
         except:
             log.debug("vocabulary_show failed, meaning the vocabulary for type doesn't exist")
-            vocab = cls.__create_vocabulary(u'type', u'dataset', u'model', u'collection', u'other')
+            vocab = cls.__create_vocabulary('type', *type_tags)
 
         types = [x['display_name'] for x in vocab['tags']]
         log.debug("vocab tags: %s" % types)
