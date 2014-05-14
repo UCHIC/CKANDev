@@ -469,8 +469,6 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         log.debug("Updating vocab '{0}'".format(name))
         data = {'id': name}
         vocab = p.toolkit.get_action('vocabulary_show')(context, data)
-        #data = {'name': name, 'id': vocab['id']}
-        #vocab = p.toolkit.get_action('vocabulary_update')(context, data)
 
         log.debug('Vocab updated: {0}'.format(vocab))
         for tag in values:
@@ -489,20 +487,11 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         '''        log.debug('get_research_focus() called')
             Jinja2 template helper function, gets the vocabulary for research focus
         '''
-        user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
-        context = {'user': user['name']}
-
-        vocab = None
-        try:
-            data = {'id': 'research_focus'}  # we can use the id or name for id param
-            vocab = p.toolkit.get_action('vocabulary_show')(context, data)
-        except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for research focus doesn't exist")
-            vocab = cls.__create_vocabulary('research_focus', u'RFA1', u'RFA2', u'RFA3', u'other', u'CI', u'EOD')
-
-        research_focus = [x['display_name'] for x in vocab['tags']]
-        log.debug("vocab tags: %s" % research_focus)
-
+        # NOTE: any time you want to include new tag for the vocabulary term 'research_focus' add the tag name
+        # to the following list (research_focus_tags). Nothing else need to be changed
+        research_focus_tags = [u'RFA1', u'RFA2', u'RFA3', u'other', u'CI', u'EOD']
+        vocab_name = 'research_focus'
+        research_focus = cls.__get_tags(vocab_name, research_focus_tags)
         return research_focus
 
     # template helper function
@@ -512,21 +501,11 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         log.debug('get_update_frequency() called')
             Jinja2 template helper function, gets the vocabulary for update_frequency
         '''
-        user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
-        context = {'user': user['name']}
-
-        vocab = None
-        try:
-            data = {'id': 'update_frequency'}  # we can use the id or name for id param
-            vocab = p.toolkit.get_action('vocabulary_show')(context, data)
-        except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for update_frequency doesn't exist")
-            vocab = cls.__create_vocabulary('update_frequency', u'hourly', u'daily', u'weekly', u'yearly', u'monthly',
-                                            u'real time', u'other')
-
-        update_frequency = [x['display_name'] for x in vocab['tags']]
-        log.debug("vocab tags: %s" % update_frequency)
-
+        # NOTE: any time you want to include new tag for the vocabulary term 'update_frequency' add the tag name
+        # to the following list. Nothing else need to be changed
+        update_frequency_tags = ['none', 'real time', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'other']
+        vocab_name = 'update_frequency'
+        update_frequency = cls.__get_tags(vocab_name, update_frequency_tags)
         return update_frequency
 
     # template helper function
@@ -535,22 +514,12 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         '''        log.debug('get_study_area() called')
             Jinja2 template helper function, gets the vocabulary for access levels
         '''
-        user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
-        context = {'user': user['name']}
- 
-        vocab = None
-        try:
-            data = {'id': 'study_area'}  # we can use the id or name for id param
-            vocab = p.toolkit.get_action('vocabulary_show')(context, data)
-        except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for study area doesn't exist")
-            vocab = cls.__create_vocabulary(u'study_area', u'other', u'WRMA-Wasatch Range Metropolitan Area',
-                                            u'Logan River Watershed', u'Red Butte Creek Watershed',
-                                            u'Provo River Watershed', u'Multiple Watersheds')
- 
-        study_area = [x['display_name'] for x in vocab['tags']]
-        log.debug("vocab tags: %s" % study_area)
- 
+        # NOTE: any time you want to include new tag for the vocabulary term 'study_area' add the tag name
+        # to the following list (study_area_tags). Nothing else need to be changed
+        study_area_tags = [u'other', u'WRMA-Wasatch Range Metropolitan Area', u'Logan River Watershed',
+                           u'Red Butte Creek Watershed',  u'Provo River Watershed', u'Multiple Watersheds']
+        vocab_name = 'study_area'
+        study_area = cls.__get_tags(vocab_name, study_area_tags)
         return study_area
 
     # template helper function
@@ -560,28 +529,10 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             Jinja2 template helper function, gets the vocabulary for type
         '''
         # NOTE: any time you want to include new tag for the vocabulary term 'type' add the tag name
-        # to the following list. Nothing else need to be changed
+        # to the following list (type_tags). Nothing else need to be changed
         type_tags = ['collection', 'dataset', 'image', 'interactive resource', 'model', 'service', 'software', 'text']
-        user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
-        context = {'user': user['name']}
- 
-        vocab = None
-        try:
-            data = {'id': 'type'}   # we can use the id or name for id param
-            vocab = p.toolkit.get_action('vocabulary_show')(context, data)
-            existing_tags = [tag['display_name'] for tag in vocab['tags']]
-            # check if we need to create additional tags for this vocabulary term
-            tags_to_add = [tag_name for tag_name in type_tags if tag_name not in existing_tags]
-            if len(tags_to_add) > 0:
-                vocab = cls.__add_tag_to_vocabulary('type', *tags_to_add)
-
-        except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for type doesn't exist")
-            vocab = cls.__create_vocabulary('type', *type_tags)
-
-        types = [x['display_name'] for x in vocab['tags']]
-        log.debug("vocab tags: %s" % types)
- 
+        vocab_name = 'type'
+        types = cls.__get_tags(vocab_name, type_tags)
         return types
 
     # template helper function
@@ -590,22 +541,37 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         '''        log.debug('get_study_area() called')
             Jinja2 template helper function, gets the vocabulary for status
         '''
+        # NOTE: any time you want to include new tag for the vocabulary term 'status' add the tag name
+        # to the following list (status_tags). Nothing else need to be changed
+        status_tags = [u'complete', u'ongoing', u'planned', u'unknown']
+        vocab_name = 'status'
+        status = cls.__get_tags(vocab_name, status_tags)
+        return status
+
+    @classmethod
+    def __get_tags(cls, vocab_name, tags):
+
         user = p.toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
         context = {'user': user['name']}
- 
-        vocab = None
+
         try:
-            data = {'id': 'status'}  # we can use the id or name for id param
+            data = {'id': vocab_name}  # we can use the id or name for id param
             vocab = p.toolkit.get_action('vocabulary_show')(context, data)
+            existing_tags = [tag['display_name'] for tag in vocab['tags']]
+            # check if we need to create additional tags for this vocabulary term
+            tags_to_add = [tag_name for tag_name in tags if tag_name not in existing_tags]
+            if len(tags_to_add) > 0:
+                vocab = cls.__add_tag_to_vocabulary(vocab_name, *tags_to_add)
         except:
-            log.debug("vocabulary_show failed, meaning the vocabulary for status doesn't exist")
-            vocab = cls.__create_vocabulary(u'status', u'complete', u'ongoing', u'planned', u'unknown')
- 
-        status = [x['display_name'] for x in vocab['tags']]
-        log.debug("vocab tags: %s" % status)
- 
-        return status
-    
+            log.debug("vocabulary_show failed, meaning the vocabulary for %s doesn't exist", vocab_name)
+            vocab = cls.__create_vocabulary(vocab_name, *tags)
+
+        new_tags = [x['display_name'] for x in vocab['tags']]
+        log.debug("vocab tags: %s" % new_tags)
+
+        return new_tags
+
+
     #See ckan.plugins.interfaces.IDatasetForm
     def is_fallback(self):
         # Return False so that we use the CKAN's default for
