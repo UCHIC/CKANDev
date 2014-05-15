@@ -45,7 +45,7 @@
           <input id="{{ 'field-variables-%d-name' % loop.index0 }}" type="text" name="{{ variable_name_field}}" value="{{ variable.name | empty_and_escape }}" placeholder="e.g., temperature" title="A variable that is measured, recorded, reported, or observed within the dataset." />
           <label for="{{ 'field-variables-%d-unit' % loop.index0 }}" class="add-on">*Unit</label>
           <input id="{{ 'field-variables-%d-unit' % loop.index0 }}" type="text" name="{{ variable_unit_field }}" value="{{ variable.unit | empty_and_escape }}" placeholder="e.g., Celsius" title="The units of measure associated with a variable."/>
-          <button id="btn_{{ loop.index0 }}_delete_variable" class="btn btn-danger" type="button"><i class="icon-remove-circle"></i>Delete</button>
+          <button id="btn_{{ loop.index0 }}_delete_variable" class="btn btn-danger" type="button" style="width: 113px;"><i class="icon-remove-circle"></i>Delete</button>
           <input id="field-variables-{{ loop.index0 }}-delete"
                             type="hidden"
 				   			name="variables__{{ loop.index0 }}__delete"

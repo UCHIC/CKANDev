@@ -36,9 +36,9 @@
             {% set creator_address_field =  "creators__%s__address" % loop.index0 %}
             {% set creator_organization_field =  "creators__%s__organization" % loop.index0 %}
             {%  set index = loop.index0 %}
-            <div id="delete_{{ loop.index0 }}_creator" style="white-space: nowrap; margin-top: 10px">
+            <div id="delete_{{ loop.index0 }}_creator" style="white-space: nowrap">
                 <label style="display: inline">Creator</label>
-                <a id="btn_{{ loop.index0 }}_delete_creator" class="btn btn-danger" style="display: inline">
+                <a id="btn_{{ loop.index0 }}_delete_creator" class="btn btn-danger" style="display: inline; float: right">
                     <i class="icon-remove-circle"></i>
                     Delete
                 </a>
