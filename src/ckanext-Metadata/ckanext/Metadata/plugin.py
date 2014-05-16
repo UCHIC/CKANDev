@@ -408,6 +408,11 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                         sub_name = value
                     if key == 'sub_email':
                         sub_email = value
+                else:
+                    # check if the key matches any of the repeatable metadata element
+                    if key in repeatable_elements:
+                        for repeat_item in value:
+                            new_dict['custom_meta'][key].append(repeat_item)
 
             for key in keys_to_remove:
                 del new_dict[key]
@@ -979,7 +984,12 @@ def pkg_create(context, data_dict):
 
     if data_dict['owner_org'] == iutahorg['id']:
         data_dict['private'] = True
-                       
+
+    # remove if there any deleted repeatable elements from the data_dict
+    _remove_deleted_repeatable_elements(data_dict, 'creators')
+    _remove_deleted_repeatable_elements(data_dict, 'contributors')
+    _remove_deleted_repeatable_elements(data_dict, 'variables')
+
     p.toolkit.check_access('package_create',context, data_dict)
     pkg = package_create(context, data_dict)
     return pkg
