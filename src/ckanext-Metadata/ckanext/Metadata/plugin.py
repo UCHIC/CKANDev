@@ -65,6 +65,7 @@ def creator_schema():
         'phone': [ignore_missing, convert_to_extras_custom],
         'address': [ignore_missing, convert_to_extras_custom],
         'organization': [ignore_missing, convert_to_extras_custom],
+        'is_a_group': [ignore_missing, convert_to_extras_custom],
         'delete': [ignore_missing, convert_to_extras_custom]
     }
 
@@ -939,13 +940,18 @@ def createcitation(context, data_dict, year):
             if creator['delete'] == '1':
                 continue
 
-            name_parts = creator['name'].split(" ")
-            if len(name_parts) > 1:     # this is when the name contains first name and last name
-                citation_authors += "{last_name}, {first_initial}.".format(last_name=name_parts[-1],
-                                                                           first_initial=name_parts[0][0]) \
-                                    + ", "
-            elif len(name_parts) > 0:   # if only one name is provided use that as the last name
-                citation_authors += "{last_name}.".format(last_name=name_parts[-1]) + ", "
+            # check first if the creator is a group and if so no need need to split the name
+            if 'is_a_group' in creator:
+                if creator['is_a_group'] == '1':
+                    citation_authors += creator['name'] + ", "
+            else:
+                name_parts = creator['name'].split(" ")
+                if len(name_parts) > 1:     # this is when the name contains first name and last name
+                    citation_authors += "{last_name}, {first_initial}.".format(last_name=name_parts[-1],
+                                                                               first_initial=name_parts[0][0]) \
+                                        + ", "
+                elif len(name_parts) > 0:   # if only one name is provided use that as the last name
+                    citation_authors += "{last_name}.".format(last_name=name_parts[-1]) + ", "
 
     # get rid of the last comma followed by a space (last 2 chars)
     citation_authors = citation_authors[:-2]
@@ -997,7 +1003,8 @@ def pkg_create(context, data_dict):
 
 def set_default_creator(data_dict, sub_name, sub_email):
     if len(data_dict['custom_meta']['creators']) == 0:
-        creator = {'name': sub_name, 'email': sub_email, 'phone': '', 'address': '', 'organization': '', 'delete': '0'}
+        creator = {'name': sub_name, 'email': sub_email, 'phone': '', 'address': '', 'organization': '',
+                   'delete': '0', 'is_a_group': '0'}
         data_dict['custom_meta']['creators'].append(creator)
 
 

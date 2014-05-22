@@ -49,6 +49,11 @@ $(document).ready(function(){
         addVariable();
      })
 
+    $("[id$=-is_a_group]").click(function(){
+        var idSplit = new String(this.id).split("-");
+        checkboxToggle(idSplit[2])
+    })
+
     $("[id^=btn_]").click(function(){
         var idSplit = new String(this.id).split("_");
 
@@ -76,8 +81,27 @@ function addCreator(){
     $clone.find("input").each(function(){
         this.id = increment(numberOfCreators, this.id);
         this.name = increment(numberOfCreators, this.name);
-        this.value ="";
+        if(this.type == 'checkbox'){
+            this.checked = false;
+            this.value = '0'
+        }
+        else{
+            this.value ="";
+        }
+
     });
+
+    $("[id$=-is_a_group]").click(function(){
+        //alert('you selected')
+        var idSplit = new String(this.id).split("-");
+        checkboxToggle(idSplit[2])
+    })
+
+     var label = $clone.find(".checkbox", 'label').first();
+     var new_for = increment(numberOfCreators, label.attr('for'));
+     label.attr('for', new_for);
+
+
     $clone.find("div").each(function(){
         this.id = increment(numberOfCreators, this.id);
     })
@@ -188,6 +212,17 @@ function deleteVariable(index){
     $('#field-variables-' +index + '-delete').attr('value', 1);
     $('#variable_' + index).hide();
     deleteVariableCount++;
+}
+
+function checkboxToggle(index){
+
+    // set the delete field of the deleted creator to 1
+    if ($('#field-creators-' +index + '-is_a_group').is(':checked')){
+        $('#field-creators-' +index + '-is_a_group').attr('value', '1');
+    }
+    else{
+        $('#field-creators-' +index + '-is_a_group').attr('value', '0');
+    }
 }
 
 function increment(index, string) {
