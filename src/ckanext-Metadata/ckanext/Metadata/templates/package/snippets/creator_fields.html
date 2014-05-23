@@ -58,8 +58,15 @@
             {{ form.input(creator_address_field, label=_('Address'), id='field-creators-%d-address' % index, placeholder=_('e.g., 100 Old Main Hill, Logan, UT 84322-8200'), value=creator_address, error=address_error, classes=['control-medium'], attrs={'title': "Creator's physical address."}) }}
             {{ form.input(creator_organization_field, label=_('Organization'), id='field-creators-%d-organization' % index, placeholder=_('e.g., Utah Water Research Laboratory'), value=creator_organization, error=org_error, classes=['control-medium'], attrs={'title': "Creator's home organization."}) }}
 
-            {{ form.checkbox(creator_is_a_group_field, label=_('Select if this is the name of a group of people rather than the name of an individual'), id='field-creators-%d-is_a_group' % index, placeholder='', value=creator_is_a_group, checked=creator_is_a_group_checked, error='', classes=['control-medium'], attrs={'title': "Select if the ceator is a group and not a person."}) }}
-
+            {#  { form.checkbox(creator_is_a_group_field, label=_('Select if this is the name of a group of people rather than the name of an individual'), id='field-creators-%d-is_a_group' % index, placeholder='', value=creator_is_a_group, checked=creator_is_a_group_checked, error='', classes=['control-medium'], attrs={'title': "Select if the ceator is a group and not a person."}) }#}
+            <label class="checkbox" for='field-creators-{{ loop.index0 }}-is_a_group'>
+                {%  if creator_is_a_group_checked %}
+                    <input class="control-medium" type="checkbox" id='field-creators-{{ loop.index0 }}-is_a_group' name="{{ creator_is_a_group_field }}" value={{ creator_is_a_group }} checked>
+                {% else %}
+                    <input class="control-medium" type="checkbox" id='field-creators-{{ loop.index0 }}-is_a_group' name="{{ creator_is_a_group_field }}" value={{ creator_is_a_group }}>
+                {% endif %}
+                {{ 'Select if this is the name of a group of people rather than the name of an individual' }}
+            </label>
             <input id="field-creators-{{ loop.index0 }}-delete"
 				   			type="hidden"
 				   			name="creators__{{ loop.index0 }}__delete"
