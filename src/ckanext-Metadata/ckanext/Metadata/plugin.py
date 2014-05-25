@@ -9,6 +9,7 @@ import copy
 from ckan.logic.action.create import user_create as core_user_create, package_create
 from ckan.logic.action.update import package_update
 from ckan.logic.action.get import user_show, package_show
+import ckan.lib.dictization.model_dictize as model_dictize
 import ckan.lib.helpers as h
 import helpers as meta_helper
 import os
@@ -315,12 +316,14 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         # creators:0:phone
         # creators:0:address
         # creators:0:organization
-        #
+        # creators:0:is_a_group
+
         # creators:1:name # for creator#2
         # creators:1:email
         # creators:1:phone
         # creators:1:address
         # creators:1:organization
+        # creators:1:is_a_group
         #
         # In the generated new new_dict we want the set of creator data as follows:
         # new_dict['custom_meta']['creators'] = [
@@ -663,6 +666,7 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return {'get_research_focus': self.get_research_focus, 
                 'required_metadata': required_metadata,
                 'load_data_into_dict':  self.load_data_into_dict,
+                'check_if_dataset_using_older_schema': check_if_dataset_using_older_schema,
                 'study_area': self.get_study_area,
                 'get_status': self.get_status,
                 'get_types': self.get_types,
@@ -924,7 +928,35 @@ def show_package(context, data_dict):
             context.get('allow_partial_update', None):
         context['validate'] = False
 
+    if context.get('resource', None):
+        model = context['model']
+        pkg = model.Package.get(data_dict['id'])
+        data_dict = model_dictize.package_dictize(pkg, context)
+        if check_if_dataset_using_older_schema(data_dict['extras']):
+            context['validate'] = False
+
     return package_show(context, data_dict)
+
+
+def check_if_dataset_using_older_schema(dataset_extras):
+    # get the list of custom schema elements and check that against the dataset_extras
+    if len(dataset_extras) == 0:
+        return False
+
+    common_metadata = [x['id'] for x in required_metadata + expanded_metadata]
+    # only take into account the required repeatable elements
+    repeatable_elements = ['creators', 'variables']
+    extra_keys = [extra['key'] for extra in dataset_extras]
+    extra_repeat_keys = [extra['key'] for extra in dataset_extras if len(extra['key'].split(':')) == 3]
+    extra_repeat_keys_first_parts = [key.split(':')[0] for key in extra_repeat_keys]
+    for custom_element in common_metadata:
+        if custom_element not in extra_keys:
+            return True
+    for repeat_element in repeatable_elements:
+        if repeat_element not in extra_repeat_keys_first_parts:
+            return True
+
+    return False
 
 
 def createcitation(context, data_dict, year):

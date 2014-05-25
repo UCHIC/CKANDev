@@ -6,6 +6,15 @@
       {% if pkg.state.startswith('draft') %}
         [{{ _('Draft') }}]
       {% endif %}
+    {% set is_pkg_using_older_schema = h.check_if_dataset_using_older_schema(pkg.extras) %}
+    {%  if is_pkg_using_older_schema %}
+        <p>
+        <small>
+            <i class="icon-info-sign"></i>
+                {{ _('This dataset seems to be using an older metadata schema. It needs to be updated before any of it resources can be accessed.') }}
+        </small>
+        </p>
+    {%  endif %}
     {% if not c.user %}
         <div class="form-group">
             <div class="checkbox">
@@ -17,7 +26,6 @@
 
 
 {% block package_additional_info %}
-
 {% set pkg_dict = h.load_data_into_dict(pkg) %}
 {% set creators = pkg_dict.custom_meta.creators %}
 {% set contributors = pkg_dict.custom_meta.contributors %}

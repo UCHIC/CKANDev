@@ -12,13 +12,18 @@ Example:
 
 #}
 {% set resources = pkg.resources or [] %}
+{% set is_pkg_using_older_schema = h.check_if_dataset_using_older_schema(pkg.extras) %}
 {% if resources %}
   <section class="module module-narrow resources">
     <h2 class="module-heading"><i class="icon-copy"></i> {{ _("Resources") }}</h2>
     <ul class="unstyled nav nav-simple">
       {% for resource in resources %}
         <li class="nav-item{{ ' active' if active == resource.id }}">
-          {% link_for h.resource_display_name(resource)|truncate(25, True), controller='package', action=action or 'resource_read', id=pkg.name, resource_id=resource.id, inner_span=true %}
+            {% if not is_pkg_using_older_schema %}
+                {% link_for h.resource_display_name(resource)|truncate(25, True), controller='package', action=action or 'resource_read', id=pkg.name, resource_id=resource.id, inner_span=true %}
+            {% else %}
+                {{ h.resource_display_name(resource)|truncate(25, True) }}
+            {% endif %}
         </li>
       {% endfor %}
     </ul>
