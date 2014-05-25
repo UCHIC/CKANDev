@@ -33,7 +33,11 @@ Example:
         </li>
       {% endfor %}
       {% endblock %}
-      <li class="nav-btn"><a href="{{ h.url_for(controller='package', action='new_resource', id=pkg.name)  }}" class="btn{% if action == 'resource_new' or is_pkg_using_older_schema %} disabled{% endif %}"><i class="icon-plus"></i> {{ _('Add New Resource') }}</a></li>
+      {% if not is_pkg_using_older_schema %}
+        <li class="nav-btn"><a href="{{ h.url_for(controller='package', action='new_resource', id=pkg.name)  }}" class="btn{% if action == 'resource_new' %} disabled{% endif %}"><i class="icon-plus"></i> {{ _('Add New Resource') }}</a></li>
+      {% else %}
+        <li class="nav-btn"><a href="#" class="btn disabled"><i class="icon-plus"></i> {{ _('Add New Resource') }}</a></li>
+      {% endif %}
     </ul>
     {% if is_pkg_using_older_schema %}
         <p>
