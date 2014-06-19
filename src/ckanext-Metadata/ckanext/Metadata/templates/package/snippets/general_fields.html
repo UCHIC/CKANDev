@@ -27,7 +27,7 @@
 
 {#optional Metadata#}
 <div class="panel panel-default">
-	<div class = "panel-heading">
+	<div class = "panel-heading" >
 		<span class="panel-title">
 			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#generalDiv"> Optional Metadata  </a> 
 		</span>
@@ -35,14 +35,12 @@
 
 	<div id="generalDiv" class="panel-collapse collapse out">
 
-		<p>
+            <div style="margin-top: 20px">
 			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('e.g., Educational, Research, Regulatory'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
-		</p>
+            </div>
 
-		<p>
 			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Any software required to open or use the resource.'} )}}
-		</p>
-		<p>
+
 			<div class="control-group">
 				<label class="control-label" for="field-research_focus"> {{ _("Research Focus Area") }}</label>
 				<div class="controls">
@@ -54,7 +52,6 @@
 					</select>
 				</div>
 			</div>
-		</p>
 	</div>
 </div>
 

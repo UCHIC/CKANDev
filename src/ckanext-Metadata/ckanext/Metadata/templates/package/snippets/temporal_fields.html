@@ -23,16 +23,15 @@
 
 {#optional Metadata#}
 <div class="panel panel-default">
-	<div class = "panel-heading">
-		<span class="panel-title">
-			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#temporalDiv"> Optional Metadata  </a> 
+	<div class = "panel-heading" >
+		<span class="panel-title" >
+			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#temporalDiv" > Optional Metadata  </a>
 		</span>
 	</div>
-	<div id="temporalDiv" class="panel-collapse collapse out">
-		<p>
+	<div id="temporalDiv" class="panel-collapse collapse out" >
+        <div style="margin-top: 20px">
 		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('e.g., a period of time or a point of time'), value=data.custom_meta.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the resource'}) }}
-		</p>
-		<p>
+        </div>
 			<div class="control-group">
 				<label class="control-label" for="field-update_frequency"> {{ _("Update Frequency") }}</label>
 				<div class="controls">
@@ -44,7 +43,7 @@
 					</select>
 				</div>
 			</div>
-		</p>
+
 	</div>
 </div>
 {% endblock package_temporal_metadata %}
