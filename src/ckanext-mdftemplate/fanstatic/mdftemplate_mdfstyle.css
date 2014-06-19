@@ -10,8 +10,6 @@
 #main_title {
     padding-top: 4px;
     font-size: 25px;
-    margin-bottom: 0;
-
 }
 
 #second_title {
@@ -32,6 +30,19 @@
 
 #title_logo {
     height: 70px;
+}
+
+#main_title, #second_title {
+  font-weight: normal;
+  line-height: normal;
+}
+
+#main_title {
+  margin-bottom: 8px;
+}
+
+#second_title {
+  padding-bottom: 5px;
 }
 
 .center_header {
@@ -76,6 +87,8 @@ div[role=main], .hero {
 .account-masthead {
   background: none;
   height: 32px !important;
+  float: right;
+  margin-top: 4px;
 }
 
 .account-masthead li {
@@ -194,9 +207,9 @@ body {
 }
 
 p {
-    padding: 0 0 20px 0;
+    padding: 0 0 5px 0;
     line-height: 1.7em;
-    text-align: justify;
+    text-align: left;
 }
 
 .sideImage ~ p ~ h2
@@ -215,7 +228,6 @@ p {
 }
 
 h2 + p {
-    border-top-style: groove;
     border-top-left-radius: 4px;
     border-top-right-radius: 10px;
     margin-top: -12px;
@@ -338,15 +350,19 @@ h1 {
 
 h2 {
     font-size: 22px;
-    border-bottom: 2px lightgray;
-    border-bottom-style: solid;
-    border-bottom-style: groove;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 10px;
 }
 
 h3 {
     font-size: 18px;
+}
+
+.filter-list {
+	padding-bottom: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+.search-form {
+	padding-bottom: 0 !important;
 }
 
 /*
@@ -407,7 +423,6 @@ ol li {
 
 header {
     background: transparent;
-    height: 110px;
 }
 
 /*
