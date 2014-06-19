@@ -74,6 +74,9 @@ div[role=main], .hero {
   line-height: 1.6 !important;
 }
 
+.tab-content {
+  display: block !important;
+}
 
 .nav {
   margin-bottom: 0;
