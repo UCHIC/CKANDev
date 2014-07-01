@@ -52,9 +52,9 @@
                 </a>
             </div>
             <br>
-            {{ form.input(creator_name_field, label=_('*Name'), id='field-creators-%d-name' % index, placeholder=_('e.g., Joe Bloggs'), value=creator_name, error=name_error, classes=['control-medium'], attrs={'title': 'Name of the creator of the resource.'}) }}
-            {{ form.input(creator_email_field, label=_('Email'), id='field-creators-%d-email' % index, placeholder=_('e.g., jowb@gmail.com'), value=creator_email, error=email_error, classes=['control-medium'], attrs={'title': "Creator's email address."}) }}
-            {{ form.input(creator_phone_field, label=_('Phone'), id='field-creators-%d-phone' % index, placeholder=_('e.g., 435-345-7890'), value=creator_phone, error=phone_error, classes=['control-medium'], attrs={'title': "Creator's main phone number"}) }}
+            {{ form.input(creator_name_field, label=_('*Name'), id='field-creators-%d-name' % index, placeholder=_('e.g., John Doe'), value=creator_name, error=name_error, classes=['control-medium'], attrs={'title': 'Name of the dataset creator.'}) }}
+            {{ form.input(creator_email_field, label=_('Email'), id='field-creators-%d-email' % index, placeholder=_('e.g., john@university.edu'), value=creator_email, error=email_error, classes=['control-medium'], attrs={'title': "Creator's email address."}) }}
+            {{ form.input(creator_phone_field, label=_('Phone'), id='field-creators-%d-phone' % index, placeholder=_('e.g., 435-799-0000'), value=creator_phone, error=phone_error, classes=['control-medium'], attrs={'title': "Creator's main phone number."}) }}
             {{ form.input(creator_address_field, label=_('Address'), id='field-creators-%d-address' % index, placeholder=_('e.g., 100 Old Main Hill, Logan, UT 84322-8200'), value=creator_address, error=address_error, classes=['control-medium'], attrs={'title': "Creator's physical address."}) }}
             {{ form.input(creator_organization_field, label=_('Organization'), id='field-creators-%d-organization' % index, placeholder=_('e.g., Utah Water Research Laboratory'), value=creator_organization, error=org_error, classes=['control-medium'], attrs={'title': "Creator's home organization."}) }}
 

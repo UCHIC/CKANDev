@@ -17,13 +17,13 @@
 
 	<div id="spatialDiv" class="panel-collapse collapse out">
 		<div style="margin-top: 20px">
-			{{ form.input('spatial', label=_('Spatial Coverage'), id='field-spatial', placeholder=_('e.g., a point or an area'), value=data.custom_meta.spatial, error=errors.spatial, classes=['control-medium'], attrs={'title': 'Spatial coverage of the resource.'}) }}
+			{{ form.input('spatial', label=_('Spatial Coverage'), id='field-spatial', placeholder=_('e.g., Salt Lake County'), value=data.custom_meta.spatial, error=errors.spatial, classes=['control-medium'], attrs={'title': 'Spatial coverage of the dataset.'}) }}
 		</div>
 
 			<div class="control-group">
 				<label class="control-label" for="field-study_area"> {{ _("iUtah Study Area")}}</label>
 				<div class="controls">
-					<select id="field-study_area" name="study_area" data-module="autocomplete" title="Select an iUTAH watershed or geographic area(s) to which the dataset corresponds. (e.g., Red Butte Creek, Logan River)">
+					<select id="field-study_area" name="study_area" data-module="autocomplete" title="Select an iUTAH watershed or geographic area(s) to which the dataset corresponds.">
                         <option value="" > {{ _('Select a value') }}</option>
 						{% for area in h.study_area() %}
 						<option value="{{ area }}" {% if area == data.custom_meta.study_area %}selected{% endif %} > {{ area }} </option>
@@ -32,17 +32,17 @@
 				</div>
 			</div>
 
-			{{ form.input('north_extent', label=_('North Extent'), id='field-north_extent', placeholder=_(''), value=data.custom_meta.north_extent, error=errors.north_extent, classes=['control-medium'], attrs={'title': 'Latitude value reprsenting the northen boundary of the spatial coverage. Values in decimal degrees.'} )}}
+			{{ form.input('north_extent', label=_('North Extent'), id='field-north_extent', placeholder=_(''), value=data.custom_meta.north_extent, error=errors.north_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('south_extent', label=_('South Extent'), id='field-south_extent', placeholder=_(''), value=data.custom_meta.south_extent, error=errors.south_extent, classes=['control-medium'], attrs={'title': 'Latitude value reprsenting the southern boundary of the spatial coverage. Values in decimal degrees.'} )}}
+			{{ form.input('south_extent', label=_('South Extent'), id='field-south_extent', placeholder=_(''), value=data.custom_meta.south_extent, error=errors.south_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_(''), value=data.custom_meta.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={'title': 'Longitude value reprsenting the eastern boundary of the spatial coverage. Values in decimal degrees.'} )}}
+			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_(''), value=data.custom_meta.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_(''), value=data.custom_meta.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={'title': 'Longitude value reprsenting the western boundary of the spatial coverage. Values in decimal degrees.'} )}}
+			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_(''), value=data.custom_meta.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('e.g., points, lines, polygons, raster'), value=data.custom_meta.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'For geospatial data, the type of geographic feature.'} )}}
+			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('e.g., line, points, polygon, raster'), value=data.custom_meta.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'The type of geographic features in the dataset.'} )}}
 
-			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_('e.g., NAD83, WGS84'), value=data.custom_meta.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'For geospatial data, the projection used.'} )}}
+			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_('e.g., NAD83, WGS84'), value=data.custom_meta.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'The projection used for geospatial data.'} )}}
 
 			{{ form.input('vert_coord_system', label=_('Vertical Coordinate System'), id='field-vert_coord_system', placeholder=_('e.g., EGM84'), value=data.custom_meta.vert_coord_system, error=errors.vert_coord_system, classes=['control-medium'], attrs={'title': 'The vertical coordinate system for the geospatila data.'} )}}
 

@@ -30,12 +30,12 @@
 	</div>
 	<div id="temporalDiv" class="panel-collapse collapse out" >
         <div style="margin-top: 20px">
-		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('e.g., a period of time or a point of time'), value=data.custom_meta.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the resource'}) }}
+		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('e.g., 2013-01-01:2013-12-31'), value=data.custom_meta.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the dataset.'}) }}
         </div>
 			<div class="control-group">
 				<label class="control-label" for="field-update_frequency"> {{ _("Update Frequency") }}</label>
 				<div class="controls">
-					<select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="If data collection ongoing, how often are the data updated? (e.g., in real time, monthly, annually)">
+					<select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="If data collection ongoing, how often are the data updated?">
 						<option value="" > {{ _('Select a value') }}</option>
                         {% for level in h.update_frequency() %}
 						    <option value="{{ level }}" {% if level == data.custom_meta.update_frequency %}selected{% endif %} > {{ level }} </option>

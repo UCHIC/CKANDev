@@ -8,13 +8,21 @@
         </span>
   {% endblock %}
 
+{% block basic_fields_url %}
+    {{ form.input('url', id='field-url', label=_('Resource'), placeholder=_('e.g., http://gis.utah.gov/data/planning/water-related-land/RB_ARBR_AAWaterTemp_EXO2013.csv'), value=data.url, error=errors.url, classes=['control-full', 'control-large'], attrs={'title': 'The url of the resource.'}) }}
+{% endblock %}
+
 {% block basic_fields_name %}
-        {{ form.input('name', id='field-name', label=_('*Name'), placeholder=_('eg. January 2011 Gold Prices'), value=data.name, error=errors.name, classes=['control-full']) }}
+        {{ form.input('name', id='field-name', label=_('*Name'), placeholder=_('e.g., Water temperature in Red Butte Creek above Red Butte Creek Reservoir for 2013'), value=data.name, error=errors.name, classes=['control-full'], attrs={'title': 'A name to identify the resource.'}) }}
         <span class="info-block info-block-small" style="margin-left: 100px" >
           <i class="icon-info-sign" ></i>
           {{ _('Name for the resource is required if a resource has been provided.') }}
         </span>
         <br>
+{% endblock %}
+
+{% block basic_fields_description %}
+    {{ form.markdown('description', id='field-description', label=_('Description'), placeholder=_('e.g., The csv file contains water temperature observations collected in Red Butte Creek above Red Butte Reservoir. Data are limited to 2013.'), value=data.description, error=errors.description, attrs={'title': 'A short decsription (or abstarct) for the resource.'}) }}
 {% endblock %}
 
 {% block basic_fields_format %}

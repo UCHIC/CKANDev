@@ -21,8 +21,8 @@
 {% endblock %}
   
 {% block package_metadata_fields_maintainer %}
-{{ form.input('maintainer', label=_('Maintainer'), id='field-maintainer', placeholder=_('Joe Bloggs'), value=data.maintainer, error=errors.maintainer, classes=['control-medium'], attrs={'title': 'FirstName LastName'} )}}
-{{ form.input('maintainer_email', label=_('Maintainer Email'), id='field-maintainer-email', placeholder=_('joe@example.com'), value=data.maintainer_email, error=errors.maintainer_email, classes=['control-medium']) }}
+{{ form.input('maintainer', label=_('Maintainer'), id='field-maintainer', placeholder=_('e.g., Joe Bloggs'), value=data.maintainer, error=errors.maintainer, classes=['control-medium'], attrs={'title': 'Name of the person responsible for maintaining this dataset.'} )}}
+{{ form.input('maintainer_email', label=_('Maintainer Email'), id='field-maintainer-email', placeholder=_('e.g., joe@example.com'), value=data.maintainer_email, error=errors.maintainer_email, classes=['control-medium'], attrs={'title': 'Email address of the person responsible for maintaining this dataset.'} ) }}
 {% endblock %}
 
 

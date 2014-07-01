@@ -8,11 +8,11 @@
 {% block package_general_metadata %}
 
 {#  {{ form.input('language', label=_('Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset.'}, is_required=true )}}#}
-{{ form.input('language', label=_('* Language'), id='field-language', placeholder=_('en, de, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'The major language used in the dataset. (e.g., English'} )}}
+{{ form.input('language', label=_('* Language'), id='field-language', placeholder=_('e.g., en, es, fr'), value=data.custom_meta.language, error=errors.language, classes=['control-medium'], attrs={'title': 'Two letter code of the major language used in the dataset.'} )}}
 {# used for testing schema change {{ form.input('test_element', label=_('* Test Element'), id='field-test_element', placeholder=_('Test element'), value=data.custom_meta.test_element, error=errors.test_element, classes=['control-medium'], attrs={'title': 'This is the schema change element.'} )}}#}
 
 {# {{ form.markdown('access_information', id='field-access_information', label=_('Access Information'), placeholder=_('Are there constraints on who can access the data? Is it in the public or private domain? Are there associated costs?'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A statement or URL that points to the rights management or usage statement for the resource.'}, is_required=true) }}#}
-{{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('e.g., limited to iUTAH participants, limited to IRB researchers'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A desciption of any constraints limiting access to the resource.'}) }}
+{{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('e.g., limited to iUTAH participants, limited to IRB researchers'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A desciption of any constraints limiting access to the dataset.'}) }}
 
 <div class="control-group">
 	<label class="control-label" for="field-data_type"> <span title="This field is required" class="control-required">*</span> {{ _("Type") }}</label>
@@ -39,7 +39,7 @@
 			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('e.g., Educational, Research, Regulatory'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
             </div>
 
-			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Any software required to open or use the resource.'} )}}
+			{{ form.input('required_software', label=_('Required Software'), id='field-required_software', placeholder=_('e.g., ArcGIS, R, specific model application'), value=data.custom_meta.required_software, error=errors.reqsoft, classes=['control-medium'], attrs={'title': 'Any software required to open or use the dataset.'} )}}
 
 			<div class="control-group">
 				<label class="control-label" for="field-research_focus"> {{ _("Research Focus Area") }}</label>

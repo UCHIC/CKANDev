@@ -42,9 +42,9 @@
       {% endif %}
       <div class="input-prepend" id="variable_{{ loop.index0 }}">
           <label for="{{ 'field-variables-%d-name' % loop.index0 }}" class={{ name_class }}>*Name</label>
-          <input id="{{ 'field-variables-%d-name' % loop.index0 }}" type="text" name="{{ variable_name_field}}" value="{{ variable.name | empty_and_escape }}" placeholder="e.g., temperature" title="A variable that is measured, recorded, reported, or observed within the dataset." />
+          <input id="{{ 'field-variables-%d-name' % loop.index0 }}" type="text" name="{{ variable_name_field}}" value="{{ variable.name | empty_and_escape }}" placeholder="e.g., temperature" title="Variables that are measured, recorded, reported, or observed within the dataset. The list may be extensive." />
           <label for="{{ 'field-variables-%d-unit' % loop.index0 }}" class="add-on">*Unit</label>
-          <input id="{{ 'field-variables-%d-unit' % loop.index0 }}" type="text" name="{{ variable_unit_field }}" value="{{ variable.unit | empty_and_escape }}" placeholder="e.g., Celsius" title="The units of measure associated with a variable."/>
+          <input id="{{ 'field-variables-%d-unit' % loop.index0 }}" type="text" name="{{ variable_unit_field }}" value="{{ variable.unit | empty_and_escape }}" placeholder="e.g., deg C" title="The units of measure associated with a variable."/>
           <button id="btn_{{ loop.index0 }}_delete_variable" class="btn btn-danger" type="button" style="width: 113px;"><i class="icon-remove-circle"></i>Delete</button>
           <input id="field-variables-{{ loop.index0 }}-delete"
                             type="hidden"
@@ -70,10 +70,10 @@
 	</div>
 	<div id="vmDiv" class="panel-collapse collapse out">
 		<div style="margin-top: 20px">
-			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('YSI EXO sonde used to measuer temperature. Values logged using a Campbell Scientivic datalogger and streamd to iUTAH servers. Calibration conducted weekly'), value=data.custom_meta.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
+			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('e.g., Water temperature measured using YSI EXO sonde. Values logged using a Campbell Scientivic datalogger and streamd to iUTAH servers.'), value=data.custom_meta.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
 		</div>
 
-		{{ form.markdown('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_('Data quality control and post processing conducted with ODM tools Python by watershed technicians'), value=data.custom_meta.data_processing_method, error=errors.data_processing_method,  attrs={'title': 'The methods and programs used and specific steps undertaken to process the data.'} )}}
+		{{ form.markdown('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_('e.g., Quality control and post processing conducted using ODM tools to account for anomalous values.'), value=data.custom_meta.data_processing_method, error=errors.data_processing_method,  attrs={'title': 'The methods and programs used and specific steps undertaken to process the data.'} )}}
 	</div>
 </div>
 {% endblock package_variable_metadata %}
