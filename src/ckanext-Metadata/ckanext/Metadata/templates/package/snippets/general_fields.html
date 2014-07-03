@@ -12,7 +12,7 @@
 {# used for testing schema change {{ form.input('test_element', label=_('* Test Element'), id='field-test_element', placeholder=_('Test element'), value=data.custom_meta.test_element, error=errors.test_element, classes=['control-medium'], attrs={'title': 'This is the schema change element.'} )}}#}
 
 {# {{ form.markdown('access_information', id='field-access_information', label=_('Access Information'), placeholder=_('Are there constraints on who can access the data? Is it in the public or private domain? Are there associated costs?'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A statement or URL that points to the rights management or usage statement for the resource.'}, is_required=true) }}#}
-{{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('e.g., limited to iUTAH participants, limited to IRB researchers'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A desciption of any constraints limiting access to the dataset.'}) }}
+{{ form.markdown('access_information', id='field-access_information', label=_('* Access Information'), placeholder=_('e.g., limited to iUTAH participants, limited to specific IRB researchers'), value=data.custom_meta.access_information, error=errors.ai, classes=['control-full'], attrs={'title': 'A desciption of any constraints limiting access to the dataset.'}) }}
 
 <div class="control-group">
 	<label class="control-label" for="field-data_type"> <span title="This field is required" class="control-required">*</span> {{ _("Type") }}</label>

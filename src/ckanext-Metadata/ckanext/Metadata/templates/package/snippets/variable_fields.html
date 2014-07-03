@@ -70,7 +70,7 @@
 	</div>
 	<div id="vmDiv" class="panel-collapse collapse out">
 		<div style="margin-top: 20px">
-			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('e.g., Water temperature measured using YSI EXO sonde. Values logged using a Campbell Scientivic datalogger and streamd to iUTAH servers.'), value=data.custom_meta.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
+			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('e.g., Water temperature measured using a YSI EXO sonde instantaneously every 15 minutes. Values logged using a Campbell Scientific datalogger and streamed to iUTAH servers.'), value=data.custom_meta.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
 		</div>
 
 		{{ form.markdown('data_processing_method', label=_('Data Processing Method'), id='field-data_processing_method', placeholder=_('e.g., Quality control and post processing conducted using ODM tools to account for anomalous values.'), value=data.custom_meta.data_processing_method, error=errors.data_processing_method,  attrs={'title': 'The methods and programs used and specific steps undertaken to process the data.'} )}}

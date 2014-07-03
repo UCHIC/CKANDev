@@ -2,7 +2,7 @@ $(document).ready(function() {
 	
 	var privacyBubble = $('<span id="privateBubble" title="Datasets are private and not visible to the public until a moderator has reviewed and approved them." class="info-block info-inline" style="cursor:pointer"> ' +
 	        	'<i class="icon-question-sign"></i>' +
-	        	'Why is my dataset private?</span>');
+	        	'<span style="float:left; margin-top:7px">Why is my dataset private?</span></span>');
 
     var updatePrivacyDropdown = function() {
 		if ($('#field-organizations > option:selected').text() === 'iutah') {
