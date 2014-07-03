@@ -8,7 +8,7 @@
             {{ _('NOTE:Your dataset will be private until approved by a system administrator. However, you can see your newly submitted datasets in your Dashboard.') }}
         </span>
     {% endif %}
-{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. Red Butte Creek GAMUT Water Temperature Data.'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A name to idenitfy the dataset.'}) }}
+{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('e.g., Red Butte Creek GAMUT Water Temperature Data.'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A name to idenitfy the dataset.'}) }}
 {% endblock %}
 
 {% block package_basic_fields_url %}
@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block package_basic_fields_description %}
-{{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('eg. A short description (or abstract) for the dataset.'), value=data.notes, error=errors.notes, attrs={'title' : 'A short description (or abstract) for the dataset.'}) }}
+{{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('e.g., This dataset contains water temperature observations collected in Red Butte Creek Above Red Butte Reservoir as part of the iUTAH GAMUT Network. Data are limited to 2013. Data were collected using a YSI EXO sonde. The data values represent 15 minute instantaneous measurements. Quality control was performed by the Red Butte watershed technician using ODM Tools.'), value=data.notes, error=errors.notes, attrs={'title' : 'A short description (or abstract) for the dataset.'}) }}
 {% endblock package_basic_fields_description%}
 
 {% block package_basic_fields_tags %}
@@ -38,7 +38,7 @@
         {% set tag_data = data.tag_string %}
     {% endif %}
 
-    {{ form.input('tag_string', id='field-tags', label=_('* Keywords'), placeholder=_('eg. water quality, temperature, Red Butte Creek, time series'), value=tag_data, error=errors.tag_string, classes=['control-full'], attrs=tag_attrs) }}
+    {{ form.input('tag_string', id='field-tags', label=_('* Keywords'), placeholder=_('e.g., water quality, temperature, Red Butte Creek, time series'), value=tag_data, error=errors.tag_string, classes=['control-full'], attrs=tag_attrs) }}
 {% endblock package_basic_fields_tags %}
 
 
