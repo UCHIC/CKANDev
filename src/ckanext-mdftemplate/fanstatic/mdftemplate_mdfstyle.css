@@ -720,6 +720,11 @@ px solid #222
 
 }
 
+div.panel-tabs li a {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 /*
 .form_settings {
   margin: 15px 0 0 0;
@@ -781,11 +786,6 @@ px solid #222
   width: 14px;
   border: 0;
   background: none;
-}
-
-div.panel-tabs li a {
-  padding-left: 8px;
-  padding-right: 8px;
 }
 
 .separator {
