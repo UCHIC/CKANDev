@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	
-	var privacyBubble = $('<span id="privateBubble" title="Datasets are private and not visible to the public until a moderator has reviewed and approved them." class="info-block info-inline" style="cursor:pointer"> ' +
+	var privacyBubble = $('<span id="privateBubble" title="Datasets are private and not visible to the public until a moderator has reviewed and approved them." class="info-block info-inline" style="cursor:pointer; margin-top: -10px"> ' +
 	        	'<i class="icon-question-sign"></i>' +
 	        	'<span style="float:left; margin-top:7px">Why is my dataset private?</span></span>');
 

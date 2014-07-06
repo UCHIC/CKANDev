@@ -23,12 +23,14 @@
 			<div class="control-group">
 				<label class="control-label" for="field-study_area"> {{ _("iUtah Study Area")}}</label>
 				<div class="controls">
-					<select id="field-study_area" name="study_area" data-module="autocomplete" title="Select an iUTAH watershed or geographic area(s) to which the dataset corresponds.">
-                        <option value="" > {{ _('Select a value') }}</option>
-						{% for area in h.study_area() %}
-						<option value="{{ area }}" {% if area == data.custom_meta.study_area %}selected{% endif %} > {{ area }} </option>
-						{% endfor %}
-					</select>
+                    <span title="Select an iUTAH watershed or geographic area(s) to which the dataset corresponds.">
+                        <select id="field-study_area" name="study_area" data-module="autocomplete" >
+                            <option value="" > {{ _('Select a value') }}</option>
+                            {% for area in h.study_area() %}
+                            <option value="{{ area }}" {% if area == data.custom_meta.study_area %}selected{% endif %} > {{ area }} </option>
+                            {% endfor %}
+                        </select>
+                    </span>
 				</div>
 			</div>
 

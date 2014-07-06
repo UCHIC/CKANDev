@@ -8,7 +8,9 @@
             {{ _('NOTE:Your dataset will be private until approved by a system administrator. However, you can see your newly submitted datasets in your Dashboard.') }}
         </span>
     {% endif %}
-{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('e.g., Red Butte Creek GAMUT Water Temperature Data.'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A name to idenitfy the dataset.'}) }}
+
+    {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('e.g., Red Butte Creek GAMUT Water Temperature Data.'), value=data.title, error=errors.title, classes=['control-full control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A name to idenitfy the dataset.'}) }}
+
 {% endblock %}
 
 {% block package_basic_fields_url %}
@@ -37,8 +39,9 @@
     {% else %}
         {% set tag_data = data.tag_string %}
     {% endif %}
-
-    {{ form.input('tag_string', id='field-tags', label=_('* Keywords'), placeholder=_('e.g., water quality, temperature, Red Butte Creek, time series'), value=tag_data, error=errors.tag_string, classes=['control-full'], attrs=tag_attrs) }}
+    <span title="Keyword(s) that describe the dataset.">
+        {{ form.input('tag_string', id='field-tags', label=_('* Keywords'), placeholder=_('e.g., water quality, temperature, Red Butte Creek, time series'), value=tag_data, error=errors.tag_string, classes=['control-full'], attrs=tag_attrs) }}
+    </span>
 {% endblock package_basic_fields_tags %}
 
 

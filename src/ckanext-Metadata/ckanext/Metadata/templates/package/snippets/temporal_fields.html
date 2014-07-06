@@ -12,11 +12,13 @@
 <div class="control-group">
 	<label class="control-label" for="field-status"> <span title="This field is required" class="control-required">*</span> {{ _("Status") }}</label>
 	<div class="controls">
-		<select id="field-status" name="status" data-module="autocomplete" title="Is this dataset completed or is data collection ongoing or being planned?">
-			{% for status in h.get_status() %}
-			<option value="{{ status }}" {% if status == data.custom_meta.status %}selected{% endif %} > {{ status }} </option>
-			{% endfor %}
-		</select>
+        <span title="Is this dataset completed or is data collection ongoing or being planned?">
+            <select id="field-status" name="status" data-module="autocomplete" >
+                {% for status in h.get_status() %}
+                <option value="{{ status }}" {% if status == data.custom_meta.status %}selected{% endif %} > {{ status }} </option>
+                {% endfor %}
+            </select>
+        </span>
 	</div>
 </div>
 
@@ -35,12 +37,14 @@
 			<div class="control-group">
 				<label class="control-label" for="field-update_frequency"> {{ _("Update Frequency") }}</label>
 				<div class="controls">
-					<select id="field-update_frequency" name="update_frequency" data-module="autocomplete" title="If data collection ongoing, how often are the data updated?">
-						<option value="" > {{ _('Select a value') }}</option>
-                        {% for level in h.update_frequency() %}
-						    <option value="{{ level }}" {% if level == data.custom_meta.update_frequency %}selected{% endif %} > {{ level }} </option>
-						{% endfor %}
-					</select>
+                    <span title="If data collection ongoing, how often are the data updated?">
+                        <select id="field-update_frequency" name="update_frequency" data-module="autocomplete" >
+                            <option value="" > {{ _('Select a value') }}</option>
+                            {% for level in h.update_frequency() %}
+                                <option value="{{ level }}" {% if level == data.custom_meta.update_frequency %}selected{% endif %} > {{ level }} </option>
+                            {% endfor %}
+                        </select>
+                    </span>
 				</div>
 			</div>
 

@@ -17,11 +17,13 @@
 <div class="control-group">
 	<label class="control-label" for="field-data_type"> <span title="This field is required" class="control-required">*</span> {{ _("Type") }}</label>
 	<div class="controls">
+        <span title="Type of the dataset">
 		<select id="field-data_type" name="data_type" data-module="autocomplete" title="The type of the resource (e.g., Time Series,  River Cross Section, Raster)" >
 			{% for type in h.get_types() %}
 			<option value="{{ type }}" {% if type == data.custom_meta.data_type %}selected{% endif %} > {{ type }} </option>
 			{% endfor %}
 		</select>
+        </span>
 	</div>
 </div>
 
@@ -44,12 +46,14 @@
 			<div class="control-group">
 				<label class="control-label" for="field-research_focus"> {{ _("Research Focus Area") }}</label>
 				<div class="controls">
-					<select id="field-research_focus" name="research_focus" data-module="autocomplete" title="Select the iUTAH Research Focus Area to which the dataset is most relevant.">
-                        <option value="" > {{ _('Select a value') }}</option>
-                        {% for type in h.get_research_focus() %}
-						    <option value="{{ type }}" {% if type == data.custom_meta.research_focus %} selected="selected" {% endif %} > {{ type }} </option>
-						{% endfor %}
-					</select>
+                    <span title="Select the iUTAH Research Focus Area to which the dataset is most relevant.">
+                        <select id="field-research_focus" name="research_focus" data-module="autocomplete" title="Select the iUTAH Research Focus Area to which the dataset is most relevant.">
+                            <option value="" > {{ _('Select a value') }}</option>
+                            {% for type in h.get_research_focus() %}
+                                <option value="{{ type }}" {% if type == data.custom_meta.research_focus %} selected="selected" {% endif %} > {{ type }} </option>
+                            {% endfor %}
+                        </select>
+                    </span>
 				</div>
 			</div>
 	</div>
