@@ -15,7 +15,7 @@
         </small>
         </p>
     {%  endif %}
-    {% if not c.user %}
+    {% if not c.user  and pkg.resources %}
         <div class="form-group">
             <div class="checkbox">
                   <input type="checkbox" id="chkDataUseAgreement"> <small><strong>Agree to data use agreement for data preview/download.</strong></small>
@@ -24,6 +24,9 @@
     {% endif %}
 {% endblock %}
 
+{% block package_resources %}
+    {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources, user=c.user %}
+{% endblock %}
 
 {% block package_additional_info %}
 {% set pkg_dict = h.load_data_into_dict(pkg) %}
