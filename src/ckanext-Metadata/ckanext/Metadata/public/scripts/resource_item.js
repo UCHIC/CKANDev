@@ -25,12 +25,19 @@ $(document).ready(function(){
             $("a.resource-url-analytics").hide();
             $("a.btn").hide();
             $("a.heading").css({cursor:"default"});
+            var element = $("a.heading")
+            $("p.muted.ellipsis").hide();
+            $("#datapreview").hide();
+
         }
         else
         {
             $("a.resource-url-analytics").show();
             $("a.btn").show();
             $("a.heading").css({cursor:"pointer"});
+            $("p.muted.ellipsis").show();
+            $("#datapreview").show();
+
         }
 
         if (dataUseAgree){
@@ -57,6 +64,8 @@ $(document).ready(function(){
             $("a.resource-url-analytics").show();
             $("a.heading").css({cursor:"pointer"});
             $("a.btn").show();
+            $("p.muted.ellipsis").show();
+            $("#datapreview").show();
         });
 
         $('#btnDataUseDecline').click(function(){
@@ -66,6 +75,8 @@ $(document).ready(function(){
             $("a.heading").css({cursor:"default"});
             $('#chkDataUseAgreement').attr('checked', false);
             $("a.btn").hide();
+            $("p.muted.ellipsis").hide();
+            $("#datapreview").hide();
         });
 
         $('#chkDataUseAgreement').click(function(){
@@ -78,6 +89,8 @@ $(document).ready(function(){
                 $("a.resource-url-analytics").hide();
                 $("a.heading").css({cursor:"default"});
                 $("a.btn").hide();
+                $("p.muted.ellipsis").hide();
+                $("#datapreview").hide();
             }
         });
     }
