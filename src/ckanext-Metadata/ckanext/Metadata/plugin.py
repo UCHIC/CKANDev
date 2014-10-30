@@ -358,35 +358,24 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
                 else:
                     # check if the key matches the any of the repeatable metadata element
                     data_key_parts = extra['key'].split(':')
-                    if data_key_parts[0] in repeatable_elements and len(data_key_parts) == 3:
-                        if data_key_parts[0] == repeatable_elements[0]:     # creators
-                            creator_dataset_index = int(data_key_parts[1])
-                            if creator_dataset_index == len(new_dict['custom_meta'][data_key_parts[0]]):
-                                creator = {data_key_parts[2]: extra['value']}
-                                new_dict['custom_meta'][data_key_parts[0]].append(creator)
-                            else:
-                                new_dict['custom_meta'][data_key_parts[0]][creator_dataset_index][data_key_parts[2]] = extra['value']
-                        elif data_key_parts[0] == repeatable_elements[1]:   # contributors
-                            contributor_dataset_index = int(data_key_parts[1])
-                            if contributor_dataset_index == len(new_dict['custom_meta'][data_key_parts[0]]):
-                                contributor = {data_key_parts[2]: extra['value']}
-                                new_dict['custom_meta'][data_key_parts[0]].append(contributor)
-                            else:
-                                new_dict['custom_meta'][data_key_parts[0]][contributor_dataset_index][data_key_parts[2]] = extra['value']
-                        elif data_key_parts[0] == repeatable_elements[2]:   # variables
-                            variable_dataset_index = int(data_key_parts[1])
-                            if variable_dataset_index == len(new_dict['custom_meta'][data_key_parts[0]]):
-                                variable = {data_key_parts[2]: extra['value']}
-                                new_dict['custom_meta'][data_key_parts[0]].append(variable)
-                            else:
-                                new_dict['custom_meta'][data_key_parts[0]][variable_dataset_index][data_key_parts[2]] = extra['value']
-                    else:
+                    if data_key_parts[0] not in repeatable_elements or len(data_key_parts) != 3:
                         reduced_extras.append(extra)
+
+            # repeatable element key shorting is necessary so that a key like 'creators:10:name"
+            # does not come before a key like 'creators:2:name'
+            sorted_creator_keys = cls._get_sorted_repeatable_element_keys(new_dict['extras'], 'creators')
+            sorted_contributor_keys = cls._get_sorted_repeatable_element_keys(new_dict['extras'], 'contributors')
+            sorted_variable_keys = cls._get_sorted_repeatable_element_keys(new_dict['extras'], 'variables')
+
+            cls._load_repeatable_elements_to_dict(new_dict, sorted_creator_keys, new_dict['extras'])
+            cls._load_repeatable_elements_to_dict(new_dict, sorted_contributor_keys, new_dict['extras'])
+            cls._load_repeatable_elements_to_dict(new_dict, sorted_variable_keys, new_dict['extras'])
 
             # add the default creator if no creator exists at this point
             set_default_creator(new_dict, sub_name, sub_email)
 
             new_dict['extras'] = reduced_extras
+
         except KeyError as ex:
             log.debug('''Expected key ['%s'] not found, attempting to move common core keys to subdictionary''',
                       ex.message)
@@ -432,6 +421,43 @@ class MetadataPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         return new_dict
 
     @classmethod
+    def _load_repeatable_elements_to_dict(cls, dict_to_load_to, repeatable_element_keys, extra_data):
+        for element_key in repeatable_element_keys:
+                data_key_parts = element_key.split(':')
+                element_dataset_index = int(data_key_parts[1])
+                if element_dataset_index == len(dict_to_load_to['custom_meta'][data_key_parts[0]]):
+                    element = {data_key_parts[2]: cls._get_extra_value(extra_data, element_key)}
+                    dict_to_load_to['custom_meta'][data_key_parts[0]].append(element)
+                else:
+                    dict_to_load_to['custom_meta'][data_key_parts[0]][element_dataset_index][data_key_parts[2]] = \
+                        cls._get_extra_value(extra_data, element_key)
+        return dict_to_load_to
+
+    @classmethod
+    def _get_sorted_repeatable_element_keys(cls, extra_data, element_name):
+
+        def get_key(item):
+            # if the item is 'creators:0:name'
+            # after the split we will have parts = ['creators', 0, 'name']
+            parts = item.split(":")
+            return int(parts[1])
+
+        element_key_list = []
+        for extra in extra_data:
+            data_key_parts = extra['key'].split(':')
+            if data_key_parts[0] == element_name and len(data_key_parts) == 3:
+                element_key_list.append(extra['key'])
+
+        return sorted(element_key_list, key=get_key)
+
+    @classmethod
+    def _get_extra_value(cls, extra_dict, key):
+        for extra in extra_dict:
+            if extra['key'] == key:
+                return extra['value']
+
+        return None
+
     def __create_vocabulary(cls, name, *values):
         '''Create vocab and tags, if they don't exist already.
             name: the name or unique id of the vocabulary  e.g. 'flower_colors'
