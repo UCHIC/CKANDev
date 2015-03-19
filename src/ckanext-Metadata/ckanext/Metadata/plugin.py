@@ -860,11 +860,17 @@ def pkg_update(context, data_dict):
                 data_dict[extra['key']] = extra['value']
 
     #get name of the author to use in citation
-    author = data_dict.get('author', None)
-
+    author = origpkg.get('author', None)
     # get the name of the submitter to use in citation if author is not available
-    sub_name = origpkg.get('sub_name', None)
-    sub_email = origpkg.get('sub_email', '')
+    sub_name = None
+    sub_email = None
+    submitter_dict = [extra for extra in origpkg['extras'] if extra['key'] == 'sub_name' or extra['key'] == 'sub_email']
+    for extra in submitter_dict:
+        if extra['key'] == 'sub_name':
+            sub_name = extra['value']
+        if extra['key'] == 'sub_email':
+            sub_email = extra['value']
+
     if not sub_name:
         context['return_minimal'] = True
         # turning context 'validate' key on/off to allow schema changes to work with existing dataset
