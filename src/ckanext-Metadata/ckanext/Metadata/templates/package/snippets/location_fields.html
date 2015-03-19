@@ -34,13 +34,13 @@
 				</div>
 			</div>
 
-			{{ form.input('north_extent', label=_('North Extent'), id='field-north_extent', placeholder=_(''), value=data.custom_meta.north_extent, error=errors.north_extent, classes=['control-medium'], attrs={} )}}
+			{{ form.input('north_extent', label=_('North Extent'), id='field-north_extent', placeholder=_('e.g., 41.75765'), value=data.custom_meta.north_extent, error=errors.north_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('south_extent', label=_('South Extent'), id='field-south_extent', placeholder=_(''), value=data.custom_meta.south_extent, error=errors.south_extent, classes=['control-medium'], attrs={} )}}
+			{{ form.input('south_extent', label=_('South Extent'), id='field-south_extent', placeholder=_('e.g., 40.48343'), value=data.custom_meta.south_extent, error=errors.south_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_(''), value=data.custom_meta.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={} )}}
+			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_('e.g., -111.88232'), value=data.custom_meta.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={} )}}
 
-			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_(''), value=data.custom_meta.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={} )}}
+			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_('e.g., -111.48117'), value=data.custom_meta.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={} )}}
 
 			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('e.g., line, points, polygon, raster'), value=data.custom_meta.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'The type of geographic features in the dataset.'} )}}
 
