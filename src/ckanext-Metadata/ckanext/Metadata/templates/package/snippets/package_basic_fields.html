@@ -113,6 +113,9 @@
   {% snippet 'package/snippets/temporal_fields.html', data=data, errors=errors%}
 
   <h2>Variable & Method Information</h2>
+{#  <span title="Variable description.">#}
+        {{ form.input('variable_description', id='field-variable_description', label=_('* Variable description'), placeholder=_('e.g., Various in situ water quality variables'), value=data.custom_meta.variable_description, error=errors.variable_description, classes=['control-full'], attrs={}) }}
+{#  </span>#}
   {% snippet 'package/snippets/variable_fields.html', data=data, errors=errors%}
 
 {% endblock %}

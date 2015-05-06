@@ -23,6 +23,7 @@ required_metadata = (
                      {'id': 'data_type', 'validators': [v.String(max=100)]},
                      {'id': 'access_information', 'validators': [v.String(max=500)]},   # use_constraints
                      {'id': 'status', 'validators': [v.String(max=100)]},
+                     {'id': 'variable_description', 'validators': [v.String(max=100)]},
 )
 
 #optional metadata
@@ -93,11 +94,11 @@ def contributor_schema():
 # needed for repeatable data elements
 def variable_schema():
     ignore_missing = p.toolkit.get_validator('ignore_missing')
-    not_empty = p.toolkit.get_validator('not_empty')
+    #not_empty = p.toolkit.get_validator('not_empty')
 
     schema = {
-        'name': [not_empty, convert_to_extras_custom],
-        'unit': [not_empty, convert_to_extras_custom],
+        'name': [ignore_missing, convert_to_extras_custom],
+        'unit': [ignore_missing, convert_to_extras_custom],
         'delete': [ignore_missing, convert_to_extras_custom]
     }
 
@@ -932,6 +933,9 @@ def pkg_update(context, data_dict):
     _remove_deleted_repeatable_elements(data_dict, 'contributors')
     _remove_deleted_repeatable_elements(data_dict, 'variables')
 
+    # remove any invalid variables
+    _remove_invalid_variables(data_dict)
+
     # add tag names to the tag_string element if 'tag_string' is missing from the data_dict
     # needed to make the entry of one tag (keyword) as required
     if not 'tag_string' in data_dict.keys():
@@ -977,7 +981,7 @@ def check_if_dataset_using_older_schema(dataset_extras):
 
     common_metadata = [x['id'] for x in required_metadata + expanded_metadata]
     # only take into account the required repeatable elements
-    repeatable_elements = ['creators', 'variables']
+    repeatable_elements = ['creators']
     extra_keys = [extra['key'] for extra in dataset_extras]
     extra_repeat_keys = [extra['key'] for extra in dataset_extras if len(extra['key'].split(':')) == 3]
     extra_repeat_keys_first_parts = [key.split(':')[0] for key in extra_repeat_keys]
@@ -1060,6 +1064,9 @@ def pkg_create(context, data_dict):
     _remove_deleted_repeatable_elements(data_dict, 'contributors')
     _remove_deleted_repeatable_elements(data_dict, 'variables')
 
+    # remove any invalid variables
+    _remove_invalid_variables(data_dict)
+
     p.toolkit.check_access('package_create',context, data_dict)
     pkg = package_create(context, data_dict)
     return pkg
@@ -1077,3 +1084,10 @@ def _remove_deleted_repeatable_elements(data_dict, element_name):
         deleted_contributors = [c for c in data_dict[element_name] if c['delete'] == '1']
         for contributor in deleted_contributors:
             data_dict[element_name].remove(contributor)
+
+
+def _remove_invalid_variables(data_dict):
+    if 'variables' in data_dict:
+        for variable in data_dict['variables']:
+            if len(variable['name'].strip()) == 0 and len(variable['unit'].strip()) == 0:
+                data_dict['variables'].remove(variable)
