@@ -38,7 +38,9 @@
       {% endblock %}
     </section>
 {% endblock %}
+
 {% block home_secondary_content %}
+
       <div class="module module-shallow module-narrow module-dark info box">
         {% block home_search %}
           <form class="module-content search-form" method="get" action="{% url_for controller='package', action='search' %}" style="margin-bottom: -15px" >
@@ -61,6 +63,18 @@
             {% endfor %}
           </div>
         {% endblock %}
+      </div>
+      <div class="module module-shallow box" style="margin-top: 70px">
+        <a href=" http://data.iutahepscor.org/mdf/About/Training_Materials/" target="_blank">
+            <span><h3 style="text-align: center">Data Publication Tutorials</h3></span>
+        </a>
+        <div>
+            <p style="margin-left: 10px">
+                View tutorial videos explaining the iUTAH data publication process including how to use the Data Publication System
+                to search for, discover and access datasets and demonstrating how to submit metadata and data to the Repository.
+            </p>
+
+        </div>
       </div>
 {% endblock %}
 
