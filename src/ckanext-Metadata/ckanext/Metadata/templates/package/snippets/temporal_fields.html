@@ -30,7 +30,7 @@
 			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#temporalDiv" > Optional Metadata  </a>
 		</span>
 	</div>
-	<div id="temporalDiv" class="panel-collapse collapse out" >
+	<div id="temporalDiv" class="panel-collapse collapse in" >
         <div style="margin-top: 20px">
 		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('e.g., 2013-01-01:2013-12-31'), value=data.custom_meta.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the dataset.'}) }}
         </div>

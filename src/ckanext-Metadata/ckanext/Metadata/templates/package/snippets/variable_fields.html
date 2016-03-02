@@ -68,7 +68,7 @@
 			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#vmDiv"> Optional Metadata  </a> 
 		</span>
 	</div>
-	<div id="vmDiv" class="panel-collapse collapse out">
+	<div id="vmDiv" class="panel-collapse collapse in">
 		<div style="margin-top: 20px">
 			{{ form.markdown('data_collection_method', label=_('Data Collection Method'), id='field-data_collection_method', placeholder=_('e.g., Water temperature measured using a YSI EXO sonde instantaneously every 15 minutes. Values logged using a Campbell Scientific datalogger and streamed to iUTAH servers.'), value=data.custom_meta.data_collection_method, error=errors.data_collection_method,  attrs={'title': 'The methods used to generate, create, collect, or produce the data.'} )}}
 		</div>

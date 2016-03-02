@@ -31,11 +31,11 @@
 <div class="panel panel-default">
 	<div class = "panel-heading" >
 		<span class="panel-title">
-			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#generalDiv"> Optional Metadata  </a> 
+			<a data-toggle="collapse" class="accordion-toggle collapsed" data-parent="#accordion" href="#generalDiv"> Optional Metadata  </a>
 		</span>
 	</div>
 
-	<div id="generalDiv" class="panel-collapse collapse out">
+	<div id="generalDiv" class="panel-collapse collapse in">
 
             <div style="margin-top: 20px">
 			{{ form.input('purpose', label=_('Purpose'), id='field-purpose', placeholder=_('e.g., Educational, Research, Regulatory'), value=data.custom_meta.purpose, error=errors.purpose, classes=['control-medium'], attrs={'title': 'Purpose for which the dataset was created.'})}}
