@@ -47,7 +47,7 @@
         {% endif %}
       </li>
       <li>
-        <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
+        <a onclick="_gaq.push(['_trackEvent','Download','{{ res.format }}',this.href]);" href="{{ res.url }}" class="resource-url-analytics" target="_blank">
           {% if res.can_be_previewed %}
             <i class="icon-download"></i>
             {{ _('Download') }}
