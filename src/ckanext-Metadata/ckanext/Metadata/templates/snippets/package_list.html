@@ -19,7 +19,11 @@ Example:
   <ul class="{{ list_class or 'dataset-list unstyled' }}">
     {% for package in packages %}
         {% if package.state !='draft' %}
-            {% snippet 'snippets/package_item.html', package=package, item_class=item_class, hide_resources=hide_resources, banner=banner, truncate=truncate, truncate_title=truncate_title %}
+            {% if package.private == True and (h.check_if_user_owns_dataset(package.id, user.name) or h.has_user_group_or_org_admin_role(package.owner_org, user.name))  %}
+                {% snippet 'snippets/package_item.html', package=package, item_class=item_class, hide_resources=hide_resources, banner=banner, truncate=truncate, truncate_title=truncate_title %}
+            {% elif package.private == False  %}
+                {% snippet 'snippets/package_item.html', package=package, item_class=item_class, hide_resources=hide_resources, banner=banner, truncate=truncate, truncate_title=truncate_title %}
+            {% endif %}
         {% endif %}
     {% endfor %}
   </ul>
