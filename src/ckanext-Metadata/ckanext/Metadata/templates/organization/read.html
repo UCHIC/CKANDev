@@ -12,7 +12,7 @@
         {% endif %}
     {% endfor %}
 
-    {{ h.snippet('snippets/package_list.html', packages=filtered_items) }}
+    {{ h.snippet('snippets/package_list.html', packages=filtered_items, user=c.userobj) }}
 
   {% endif %}
 {% endblock %}
