@@ -3,14 +3,14 @@
 {% block package_basic_fields_title %}
     {# display the following notice only when creating a dataset but not when editing a dataset #}
     {%  if not data.id %}
-        <span class="info-block info-block-large">
+        <span class="info-block info-block-large" xmlns="http://www.w3.org/1999/html">
             <i class="icon-info-sign"></i>
             {{ _('NOTE:Your dataset will be private until approved by a system administrator. However, you can see your newly submitted datasets in your Dashboard.') }}
         </span>
     {% endif %}
-
-    {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('e.g., Red Butte Creek GAMUT Water Temperature Data.'), value=data.title, error=errors.title, classes=['control-full control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A name to idenitfy the dataset.'}) }}
-
+    <span title="A name to identify the dataset.">
+    {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('e.g., Red Butte Creek GAMUT Water Temperature Data.'), value=data.title, error=errors.title, classes=['control-full control-large'], attrs={'data-module': 'slug-preview-target', 'title': 'A name to identify the dataset.'}) }}
+    </span>
 {% endblock %}
 
 {% block package_basic_fields_url %}
@@ -28,7 +28,9 @@
 {% endblock %}
 
 {% block package_basic_fields_description %}
-{{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('e.g., This dataset contains water temperature observations collected in Red Butte Creek Above Red Butte Reservoir as part of the iUTAH GAMUT Network. Data are limited to 2013. Data were collected using a YSI EXO sonde. The data values represent 15 minute instantaneous measurements. Quality control was performed by the Red Butte watershed technician using ODM Tools.'), value=data.notes, error=errors.notes, attrs={'title' : 'A short description (or abstract) for the dataset.'}) }}
+     <span title='A short description (or abstract) for the dataset.'>
+        {{ form.markdown('notes', id='field-notes', label=_('* Description'), placeholder=_('e.g., This dataset contains water temperature observations collected in Red Butte Creek Above Red Butte Reservoir as part of the iUTAH GAMUT Network. Data are limited to 2013. Data were collected using a YSI EXO sonde. The data values represent 15 minute instantaneous measurements. Quality control was performed by the Red Butte watershed technician using ODM Tools.'), value=data.notes, error=errors.notes, attrs={'title' : 'A short description (or abstract) for the dataset.'}) }}
+    </span>
 {% endblock package_basic_fields_description%}
 
 {% block package_basic_fields_tags %}
@@ -68,8 +70,11 @@
   {% if show_organizations_selector %}
     {% set existing_org = data.owner_org or data.group_id %}
     <div class="control-group">
-      <label for="field-organizations" class="control-label">{{ _('Organization') }}</label>
+      <span title="Select an organization.">
+        <label for="field-organizations" class="control-label">{{ _('Organization') }}</label>
+      </span>
       <div class="controls">
+        <span title="Select an organization.">
         <select id="field-organizations" name="owner_org" data-module="autocomplete">
           {#<option value="" {% if not selected_org and data.id %} selected="selected" {% endif %}>{{ _('No organization') }}</option>#}
           {% for organization in organizations_available %}
@@ -78,6 +83,7 @@
             <option value="{{ organization.id }}" {% if selected_org %} selected="selected" {% endif %}>{{ organization.name }}</option>
           {% endfor %}
         </select>
+        </span>
       </div>
     </div>
   {% endif %}
@@ -85,13 +91,17 @@
   {% if show_visibility_selector %}
     {% block package_metadata_fields_visibility %}
       <div class="control-group">
-        <label for="field-private" class="control-label">{{ _('Visibility') }}</label>
+        <span title="Limit access to the dataset.">
+            <label for="field-private" class="control-label">{{ _('Visibility') }}</label>
+        </span>
         <div class="controls">
+          <span title="Limit access to the dataset.">
           <select id="field-private" name="private">
             {% for option in [('True', _('Private')), ('False', _('Public'))] %}
             <option value="{{ option[0] }}" {% if option[0] == data.private|trim %}selected="selected"{% endif %}>{{ option[1] }}</option>
             {% endfor %}
           </select>
+          </span>
         </div>
       </div>
     {% endblock %}
@@ -113,9 +123,9 @@
   {% snippet 'package/snippets/temporal_fields.html', data=data, errors=errors%}
 
   <h2>Variable & Method Information</h2>
-{#  <span title="Variable description.">#}
-        {{ form.input('variable_description', id='field-variable_description', label=_('* Variable description'), placeholder=_('e.g., Various in situ water quality variables'), value=data.custom_meta.variable_description, error=errors.variable_description, classes=['control-full'], attrs={}) }}
-{#  </span>#}
+  <span title="Describe variable.">
+        {{ form.input('variable_description', id='field-variable_description', label=_('* Variable description'), placeholder=_('e.g., Various in situ water quality variables'), value=data.custom_meta.variable_description, error=errors.variable_description, classes=['control-full'], attrs={'title': 'Describe variable.'}) }}
+  </span>
   {% snippet 'package/snippets/variable_fields.html', data=data, errors=errors%}
 
 {% endblock %}

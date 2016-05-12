@@ -11,11 +11,15 @@
   {% endblock %}
 
 {% block basic_fields_url %}
+    <span title="The url of the resource.">
     {{ form.input('url', id='field-url', label=_('Resource'), placeholder=_('e.g., http://gis.utah.gov/data/planning/water-related-land/'), value=data.url, error=errors.url, classes=['control-full', 'control-large'], attrs={'title': 'The url of the resource.'}) }}
+    </span>
 {% endblock %}
 
 {% block basic_fields_name %}
+        <span title="A name to identify the resource.">
         {{ form.input('name', id='field-name', label=_('*Name'), placeholder=_('e.g., Shapefile of water related land use in Utah distributed by the Utah AGRC.'), value=data.name, error=errors.name, classes=['control-full'], attrs={'title': 'A name to identify the resource.'}) }}
+        </span>
         <span class="info-block info-block-small" style="margin-left: 100px" >
           <i class="icon-info-sign" ></i>
           {{ _('Name for the resource is required if a resource has been provided.') }}
@@ -24,12 +28,16 @@
 {% endblock %}
 
 {% block basic_fields_description %}
+    <span title="A short description (or abstract) for the resource.">
     {{ form.markdown('description', id='field-description', label=_('Description'), placeholder=_('e.g., Water usage-related polygon map data, published annually by the Utah Division of Water Resources depicting irrigated crops, phreatophytes, wet/open water areas, dry land agriculture, and residential/industrial areas.'), value=data.description, error=errors.description, attrs={'title': 'A short decsription (or abstarct) for the resource.'}) }}
+    </span>
 {% endblock %}
 
 {% block basic_fields_format %}
-    {% set format_attrs = {'data-module': 'autocomplete', 'data-module-source': '/api/2/util/resource/format_autocomplete?incomplete=?'} %}
+    {% set format_attrs = {'data-module': 'autocomplete', 'data-module-source': '/api/2/util/resource/format_autocomplete?incomplete=?', 'title' : 'Resource file format.'} %}
+    <span title="Resource file format.">
     {% call form.input('format', id='field-format', label=_('Format'), placeholder=_('e.g., CSV, XML or JSON'), value=data.format, error=errors.format, classes=['control-medium'], attrs=format_attrs) %}
+    </span>
     <span class="info-block info-block-small" style="margin-left: -32px">
       <i class="icon-info-sign"></i>
       {{ _('This is generated automatically. You can edit if you wish') }}

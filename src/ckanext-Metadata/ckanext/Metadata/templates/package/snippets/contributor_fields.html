@@ -54,12 +54,21 @@
                 </a>
             </div>
             <br>
+            <span title="Name of the contributor to the dataset.">
             {{ form.input(contributor_name_field, label=_('*Name'), id='field-contributors-%d-name' % index, placeholder=_('e.g., John Doe'), value=contributor_name, error=name_error, classes=['control-medium'], attrs={'title': 'Name of the contributor to the dataset.'}) }}
+            </span>
+            <span title="Contributor's email address.">
             {{ form.input(contributor_email_field, label=_('Email'), id='field-contributors-%d-email' % index, placeholder=_('e.g., john@university.edu'), value=contributor_email, error=email_error, classes=['control-medium'], attrs={'title': "Contributor's email address."}) }}
+            </span>
+            <span title="Contributor's main phone number.">
             {{ form.input(contributor_phone_field, label=_('Phone'), id='field-contributors-%d-phone' % index, placeholder=_('e.g., 435-799-0000'), value=contributor_phone, error=phone_error, classes=['control-medium'], attrs={'title': "Contributor's main phone number."}) }}
+            </span>
+            <span title="Contributor's physical address.">
             {{ form.input(contributor_address_field, label=_('Address'), id='field-contributors-%d-address' % index, placeholder=_('e.g., 100 Old Main Hill, Logan, UT 84322-8200'), value=contributor_address, error=address_error, classes=['control-medium'], attrs={'title': "Contributor's physical address."}) }}
+            </span>
+            <span title="Contributor's home organization.">
             {{ form.input(contributor_organization_field, label=_('Organization'), id='field-contributors-%d-organization' % index, placeholder=_('e.g., Utah Water Research Laboratory'), value=contributor_organization, error=org_error, classes=['control-medium'], attrs={'title': "Contributor's home organization."}) }}
-
+            </span>
             <input id="field-contributors-{{ loop.index0 }}-delete"
                             type="hidden"
 				   			name="contributors__{{ loop.index0 }}__delete"

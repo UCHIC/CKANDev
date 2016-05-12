@@ -21,8 +21,12 @@
 {% endblock %}
   
 {% block package_metadata_fields_maintainer %}
-{{ form.input('maintainer', label=_('Maintainer'), id='field-maintainer', placeholder=_('e.g., Joe Bloggs'), value=data.maintainer, error=errors.maintainer, classes=['control-medium'], attrs={'title': 'Name of the person responsible for maintaining this dataset.'} )}}
-{{ form.input('maintainer_email', label=_('Maintainer Email'), id='field-maintainer-email', placeholder=_('e.g., joe@example.com'), value=data.maintainer_email, error=errors.maintainer_email, classes=['control-medium'], attrs={'title': 'Email address of the person responsible for maintaining this dataset.'} ) }}
+    <span title="Name of the person responsible for maintaining this dataset.">
+    {{ form.input('maintainer', label=_('Maintainer'), id='field-maintainer', placeholder=_('e.g., Joe Bloggs'), value=data.maintainer, error=errors.maintainer, classes=['control-medium'], attrs={'title': 'Name of the person responsible for maintaining this dataset.'} )}}
+    </span>
+    <span title="Email address of the person responsible for maintaining this dataset.">
+    {{ form.input('maintainer_email', label=_('Maintainer Email'), id='field-maintainer-email', placeholder=_('e.g., joe@example.com'), value=data.maintainer_email, error=errors.maintainer_email, classes=['control-medium'], attrs={'title': 'Email address of the person responsible for maintaining this dataset.'} ) }}
+    </span>
 {% endblock %}
 
 
@@ -52,8 +56,10 @@ they don't work when you have custom dataset schema.on that moves any common cor
     {% set c = h.get_pylons_context_obj() %}
     {% if h.has_user_group_or_org_admin_role(data.owner_org, c.user) %}
         {% set group_name = 'groups__%s__id' % data.groups|length %}
-        {% set group_attrs = {'data-module': 'autocomplete', 'data-module-source': '/api/2/util/group/autocomplete?q=?', 'data-module-key': 'id', 'data-module-label': 'title'} %}
+        {% set group_attrs = {'data-module': 'autocomplete', 'data-module-source': '/api/2/util/group/autocomplete?q=?', 'data-module-key': 'id', 'data-module-label': 'title', 'title': 'Make the dataset as part of a group.'} %}
+        <span title="Make the dataset as part of a group.">
         {{ form.input(group_name, label=_('Add Group'), id="field-group", value=data[group_name], classes=['control-medium'], attrs=group_attrs) }}
+        </span>
     {% endif %}
 
    {% if not data.resources or data.resources[0].get('dummy_resource', None) %}

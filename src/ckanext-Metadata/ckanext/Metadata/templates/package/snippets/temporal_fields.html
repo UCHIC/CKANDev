@@ -10,8 +10,10 @@
 
 
 <div class="control-group">
+    <span title="Is this dataset completed or is data collection ongoing or being planned?">
 	<label class="control-label" for="field-status"> <span title="This field is required" class="control-required">*</span> {{ _("Status") }}</label>
-	<div class="controls">
+	</span>
+    <div class="controls">
         <span title="Is this dataset completed or is data collection ongoing or being planned?">
             <select id="field-status" name="status" data-module="autocomplete" >
                 {% for status in h.get_status() %}
@@ -32,10 +34,14 @@
 	</div>
 	<div id="temporalDiv" class="panel-collapse collapse in" >
         <div style="margin-top: 20px">
+        <span title="Temporal coverage of the dataset.">
 		{{ form.input('temporal', label=_('Temporal Extent'), id='field-temporal', placeholder=_('e.g., 2013-01-01:2013-12-31'), value=data.custom_meta.temporal, error=errors.temporal, classes=['control-medium'], attrs={'title': 'Temporal coverage of the dataset.'}) }}
+        </span>
         </div>
 			<div class="control-group">
+                <span title="If data collection ongoing, how often are the data updated?">
 				<label class="control-label" for="field-update_frequency"> {{ _("Update Frequency") }}</label>
+                </span>
 				<div class="controls">
                     <span title="If data collection ongoing, how often are the data updated?">
                         <select id="field-update_frequency" name="update_frequency" data-module="autocomplete" >

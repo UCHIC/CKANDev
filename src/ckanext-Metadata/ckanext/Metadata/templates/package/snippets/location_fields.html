@@ -17,11 +17,15 @@
 
 	<div id="spatialDiv" class="panel-collapse collapse in">
 		<div style="margin-top: 20px">
+            <span title="Spatial coverage of the dataset.">
 			{{ form.input('spatial', label=_('Spatial Coverage'), id='field-spatial', placeholder=_('e.g., Salt Lake County'), value=data.custom_meta.spatial, error=errors.spatial, classes=['control-medium'], attrs={'title': 'Spatial coverage of the dataset.'}) }}
-		</div>
+		    </span>
+        </div>
 
 			<div class="control-group">
+                <span title="Select an iUTAH watershed or geographic area(s) to which the dataset corresponds.">
 				<label class="control-label" for="field-study_area"> {{ _("iUtah Study Area")}}</label>
+                </span>
 				<div class="controls">
                     <span title="Select an iUTAH watershed or geographic area(s) to which the dataset corresponds.">
                         <select id="field-study_area" name="study_area" data-module="autocomplete" >
@@ -41,13 +45,15 @@
 			{{ form.input('east_extent', label=_('East Extent'), id='field-east_extent', placeholder=_('e.g., -111.88232'), value=data.custom_meta.east_extent, error=errors.east_extent, classes=['control-medium'], attrs={} )}}
 
 			{{ form.input('west_extent', label=_('West Extent'), id='field-west_extent', placeholder=_('e.g., -111.48117'), value=data.custom_meta.west_extent, error=errors.west_extent, classes=['control-medium'], attrs={} )}}
-
+            <span title="The type of geographic features in the dataset.">
 			{{ form.input('feature_types', label=_('Feature Types'), id='field-feature_types', placeholder=_('e.g., line, points, polygon, raster'), value=data.custom_meta.feature_types, error=errors.fettypes, classes=['control-medium'], attrs={'title': 'The type of geographic features in the dataset.'} )}}
-
+            </span>
+            <span title="The projection used for geospatial data.">
 			{{ form.input('horz_coord_system', label=_('Horizontal Coordinate System'), id='field-horz_coord_system', placeholder=_('e.g., NAD83, WGS84'), value=data.custom_meta.horz_coord_system, error=errors.horz_coord_system, classes=['control-medium'], attrs={'title': 'The projection used for geospatial data.'} )}}
-
+            </span>
+            <span title="The vertical coordinate system for the geospatial data.">
 			{{ form.input('vert_coord_system', label=_('Vertical Coordinate System'), id='field-vert_coord_system', placeholder=_('e.g., EGM84'), value=data.custom_meta.vert_coord_system, error=errors.vert_coord_system, classes=['control-medium'], attrs={'title': 'The vertical coordinate system for the geospatial data.'} )}}
-
+            </span>
 	</div>
 </div>
 
